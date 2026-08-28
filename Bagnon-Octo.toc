@@ -1,0 +1,32 @@
+## Interface: 11200
+## Title: Bagnon |cffc79cff[Octo]|r
+## Notes: Displays inventory and bank in a single addon frame. Optimized for OctoWOW.
+## Author: Tuller, McPewPew, Fostercare5988
+## Version: 1.0.0-Octo
+## OptionalDeps: KC_Items
+## SavedVariablesPerCharacter: BagnonSets
+## SavedVariables: BagnonForeverData
+
+lib\TLib.lua
+lib\Infield.lua
+
+localization.lua
+
+core\Utility.lua
+core\Overrides.lua
+core\Frame.xml
+
+menu\Menu.xml
+spot\spot.xml
+
+Slash.lua
+Events.lua
+
+database\database.lua
+database\ui.xml
+BagnonForever.lua
+tooltips.lua
+
+options\Options.xml
+Bagnon.xml
+Banknon.xml

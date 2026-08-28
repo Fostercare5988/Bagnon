@@ -1,0 +1,15 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# WoW Addon specific formats
+*.lua text eol=crlf
+*.xml text eol=crlf
+*.toc text eol=crlf
+*.txt text eol=crlf
+*.md text eol=crlf
+
+# Binary files
+*.blp binary
+*.jpg binary
+*.png binary
+*.tga binary
