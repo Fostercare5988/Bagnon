@@ -1,0 +1,34 @@
+## Interface: 11200
+## Title: Bagnon
+## Notes: Single-window inventory and bank engine engineered for World of Warcraft 1.12.1 (ClassicAPI, SuperWoW 2.2+, NamPower 4.6.2+, UnitXP SP3, DXVK).
+## Author: Tuller, McPewPew, Fostercare5988
+## Version: 1.2.0
+## OptionalDeps: KC_Items
+## SavedVariablesPerCharacter: BagnonSets
+## SavedVariables: BagnonForeverData
+## X-Category: Inventory & Bank
+## X-Website: https://github.com/Fostercare5988/Bagnon
+
+lib\TLib.lua
+lib\Infield.lua
+
+localization.lua
+
+core\Utility.lua
+core\Overrides.lua
+core\Frame.xml
+
+menu\Menu.xml
+spot\spot.xml
+
+Slash.lua
+Events.lua
+
+database\database.lua
+database\ui.xml
+BagnonForever.lua
+tooltips.lua
+
+options\Options.xml
+Bagnon.xml
+Banknon.xml
