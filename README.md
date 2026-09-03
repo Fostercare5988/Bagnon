@@ -6,10 +6,10 @@
 [![SuperWoW: v2.2+](https://img.shields.io/badge/SuperWoW-v2.2+-brightgreen.svg)](https://github.com/balakethelock/SuperWoW)
 [![NamPower: v4.6.2+](https://img.shields.io/badge/NamPower-v4.6.2+-blueviolet.svg)](https://github.com/Emyrk/nampower)
 [![UnitXP: SP3](https://img.shields.io/badge/UnitXP-SP3-teal.svg)](https://codeberg.org/konaka/UnitXP_SP3)
-[![DXVK: 144Hz+](https://img.shields.io/badge/DXVK-144Hz+-red.svg)](https://github.com/doitsujin/dxvk)
+[![DXVK: Vulkan](https://img.shields.io/badge/DXVK-Vulkan-red.svg)](https://github.com/doitsujin/dxvk)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Bagnon v1.3.0** is an enterprise-grade, single-window inventory and bank engine engineered natively for **World of Warcraft 1.12.1 (Build 5875)** running on the **Enhanced Client Extension Stack** (**ClassicAPI v1.13.3+**, **SuperWoW v2.2+**, **NamPower 4.6.2+**, **UnitXP SP3**, and **DXVK 144Hz+**).
+**Bagnon v1.3.0** is an enterprise-grade, single-window inventory and bank engine engineered natively for **World of Warcraft 1.12.1 (Build 5875)** running on the **Enhanced Client Extension Stack** (**ClassicAPI v1.13.3+**, **SuperWoW v2.2+**, **NamPower 4.6.2+**, **UnitXP SP3**, and **DXVK**).
 
 Bagnon merges all fragmented inventory and bank bags into a unified, resizable grid. It enables remote bank viewing from anywhere in the world, memoized instant substring search, cross-character alt item aggregation on tooltips, and total realm gold tracking.
 
@@ -33,7 +33,7 @@ Bagnon is engineered around strict low-level system integration:
 | **SuperWoW** | `v2.2+` | Direct memory state access, zero-latency container sync, and OS-level window notifications. |
 | **NamPower** | `v4.6.2+` | Microsecond-precision combat pipeline and frame-0 event dispatching for bag swaps and item movement. |
 | **UnitXP** | `SP3` | High-precision unit state inspection and alt character inventory synchronization. |
-| **DXVK** | `Latest` | Decoupled high-refresh 144Hz+ rendering with zero garbage collection heap churn and hardware-synchronized cooldown spirals. |
+| **DXVK** | `Latest` | Decoupled high-refresh frame pacing with zero garbage collection heap churn and hardware-synchronized cooldown spirals. |
 
 ### Elimination of 2006 Legacy Techniques
 - **Zero OnUpdate Polling**: Eradicated legacy per-button `OnUpdate` polling loops across all 120+ bag/bank item slots; item slot states update exclusively on native events (`BAG_UPDATE`, `BAG_UPDATE_COOLDOWN`, `ITEM_LOCK_CHANGED`).
