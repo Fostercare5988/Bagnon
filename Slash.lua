@@ -16,6 +16,8 @@ function BagnonSlash_DisplayHelp()
 	end
 end
 
+local argsBuffer = {}
+
 SlashCmdList["BagnonCOMMAND"] = function(msg)
 	if(not msg or msg == "") then
 		if BagnonOptions then
@@ -24,12 +26,12 @@ SlashCmdList["BagnonCOMMAND"] = function(msg)
 			BagnonSlash_DisplayHelp()
 		end
 	else
-		local args = {};
-		local word;
+		table.wipe(argsBuffer)
+		local word
 		for word in string.gfind(msg, "[^%s]+") do
-			table.insert(args, word);
+			table.insert(argsBuffer, word)
 		end
-		local cmd = string.lower(args[1]);
+		local cmd = string.lower(argsBuffer[1] or "")
 		
 		if(cmd == BAGNON_COMMAND_HELP) then
 			BagnonSlash_DisplayHelp();
@@ -44,7 +46,7 @@ SlashCmdList["BagnonCOMMAND"] = function(msg)
 			BagnonSets.noDebug = 1;
 			BagnonMsg(BAGNON_DEBUG_DISABLED);
 		elseif(cmd == BAGNON_FOREVER_COMMAND_DELETE_CHARACTER and BagnonDB) then
-			BagnonForever_RemovePlayer(args[2], args[3] or GetRealmName());
+			BagnonForever_RemovePlayer(argsBuffer[2], argsBuffer[3] or GetRealmName());
 		end
 	end
 end

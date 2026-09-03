@@ -39,6 +39,9 @@ function BagnonItem_Create(name, parent)
 	-- Cache child widget references for O(1) access without string concatenation or getglobal lookups
 	item.border = getglobal(name .. "Border")
 	item.cooldown = getglobal(name .. "Cooldown")
+	if item.cooldown and item.cooldown.EnableMouse then
+		item.cooldown:EnableMouse(false)
+	end
 	item.normalTexture = getglobal(name .. "NormalTexture")
 	item.iconTexture = getglobal(name .. "IconTexture")
 	item.countText = getglobal(name .. "Count")

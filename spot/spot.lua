@@ -41,10 +41,9 @@ end
 
 function BagnonSpot_ClearSearch()
 	nameFilter = nil
-	if table.wipe then
-		table.wipe(lowerNameCache)
-	else
-		lowerNameCache = {}
+	table.wipe(lowerNameCache)
+	if BagnonSpot and BagnonSpot.ClearHighlightText then
+		BagnonSpot:ClearHighlightText()
 	end
 
 	if Bagnon and Bagnon:IsShown() then

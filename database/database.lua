@@ -40,24 +40,26 @@ end
 			for playerName, data in BagnonDB.GetPlayers()
 --]]
 
+local sortedNamesBuffer = {}
+
 function BagnonDB.GetPlayers(sort)
 	if not sort then
 		-- If sort is false, just return pairs
 		return pairs(BagnonForeverData[currentRealm])
 	end
 
-	-- If sort is true, create a sorted list of keys
-	local sortedNames = {}
+	-- If sort is true, create a sorted list of keys using zero-GC pre-allocated buffer
+	table.wipe(sortedNamesBuffer)
 	for name in pairs(BagnonForeverData[currentRealm]) do
-		table.insert(sortedNames, name)
+		table.insert(sortedNamesBuffer, name)
 	end
-	table.sort(sortedNames)
+	table.sort(sortedNamesBuffer)
 
 	-- Return a custom iterator function
 	local i = 0
 	return function()
 		i = i + 1
-		local playerName = sortedNames[i]
+		local playerName = sortedNamesBuffer[i]
 		return playerName, BagnonForeverData[currentRealm][playerName]
 	end
 end
