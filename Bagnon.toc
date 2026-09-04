@@ -1,6 +1,6 @@
 ## Interface: 11200
 ## Title: Bagnon
-## Notes: Single-window inventory and bank engine engineered for World of Warcraft 1.12.1 (ClassicAPI v1.13.3+, SuperWoW 2.2+, NamPower 4.6.3+, UnitXP SP3, DXVK).
+## Notes: Single-window inventory and bank engine engineered for World of Warcraft 1.12.1 (ClassicAPI v1.13.4+, SuperWoW 2.2+, NamPower 4.6.3+, UnitXP SP3, DXVK).
 ## Author: Tuller, McPewPew, Fostercare5988
 ## Version: 1.3.0
 ## OptionalDeps: KC_Items
