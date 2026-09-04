@@ -2,7 +2,7 @@
 	BagnonForever.lua
 		Records inventory data about the current player
 		Author: Tuller, McPewPew, Fostercare5988
-		Built natively for ClassicAPI, SuperWoW 2.2+, NamPower 4.6.2+, UnitXP SP3, DXVK
+		Built natively for ClassicAPI, SuperWoW 2.2+, NamPower 4.6.3+, UnitXP SP3, DXVK
 		
 	BagnonForeverData has the following format, which was adapted from KC_Items
 	BagnonForeverData = {

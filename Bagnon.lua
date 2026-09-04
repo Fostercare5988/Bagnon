@@ -2,7 +2,7 @@
 	Bagnon
 		Displays the player's inventory in a single frame
 		Author: Tuller, McPewPew, Fostercare5988
-		Built natively for ClassicAPI v1.13.3+, SuperWoW 2.2+, NamPower 4.6.2+, UnitXP SP3, DXVK
+		Built natively for ClassicAPI v1.13.3+, SuperWoW 2.2+, NamPower 4.6.3+, UnitXP SP3, DXVK
 --]]
 
 -- Strict Engine Dependency Guard (Mandatory ClassicAPI v1.13.3+ & SuperWoW v2.2+)

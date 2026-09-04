@@ -2,7 +2,7 @@
 	spot.lua
 		Scripts for Bagnon_Spot, which provides filtering functionality for Bagnon
 		Author: Tuller, McPewPew, Fostercare5988
-		Built natively for ClassicAPI, SuperWoW 2.2+, NamPower 4.6.2+, UnitXP SP3, DXVK
+		Built natively for ClassicAPI, SuperWoW 2.2+, NamPower 4.6.3+, UnitXP SP3, DXVK
 --]]
 
 local nameFilter
