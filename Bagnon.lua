@@ -30,17 +30,17 @@ end
 
 --[[ Event Handler ]]--
 
-function Bagnon_OnEvent(self, event, arg1, ...)
-	local evt = event
-	local a1 = arg1
-	if type(self) == "string" then
-		evt = self
-		a1 = event
+function Bagnon_OnEvent(arg1_param, arg2_param, arg3_param)
+	local ev, a1
+	if type(arg1_param) == "table" then
+		ev = arg2_param or event
+		a1 = arg3_param or arg1
+	else
+		ev = arg1_param or event
+		a1 = arg2_param or arg1
 	end
-	if not evt then evt = event end
-	if not a1 then a1 = arg1 end
 
-	if ( evt == "ADDON_LOADED" and a1 == "Bagnon" ) then
+	if ( ev == "ADDON_LOADED" and a1 == "Bagnon" ) then
 		Bagnon:UnregisterEvent("ADDON_LOADED");
 		Bagnon_Load();
 	end

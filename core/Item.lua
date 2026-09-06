@@ -71,11 +71,11 @@ function BagnonItem_OnClick(item, mouseButton, ignoreModifiers)
 	local btn, mb, ign
 	if type(item) == "string" or not item then
 		btn = this
-		mb = item
+		mb = item or arg1
 		ign = mouseButton
 	else
 		btn = item or this
-		mb = mouseButton
+		mb = mouseButton or arg1
 		ign = ignoreModifiers
 	end
 	if not btn then return end

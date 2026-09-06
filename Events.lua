@@ -149,10 +149,10 @@ local function Load(eventFrame)
 	eventFrame:RegisterEvent("MERCHANT_CLOSED")
 end
 
-local function OnEvent(self, event, arg1, ...)
-	local f = self or this or eventFrame
-	local ev = event or event
-	local a1 = arg1 or arg1
+local function OnEvent(arg1_param, arg2_param, arg3_param)
+	local f = (type(arg1_param) == "table" and arg1_param) or this or eventFrame
+	local ev = (type(arg1_param) == "string" and arg1_param) or arg2_param or event
+	local a1 = (type(arg1_param) == "string" and (arg2_param or arg1)) or arg3_param or arg1
 
 	--[[ Events For Updating Items ]]--
 	if ev == "BAG_UPDATE_COOLDOWN" then

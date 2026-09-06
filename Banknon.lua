@@ -40,26 +40,24 @@ end
 
 --[[ Event Handler ]]--
 
-function Banknon_OnEvent(self, event, arg1, ...)
-	local f = self
-	local evt = event
-	local a1 = arg1
-	if type(self) == "string" then
-		evt = self
-		a1 = event
-		f = this
+function Banknon_OnEvent(arg1_param, arg2_param, arg3_param)
+	local f, ev, a1
+	if type(arg1_param) == "table" then
+		f = arg1_param
+		ev = arg2_param or event
+		a1 = arg3_param or arg1
 	else
-		f = self or this
+		f = this or Banknon
+		ev = arg1_param or event
+		a1 = arg2_param or arg1
 	end
-	if not evt then evt = event end
-	if not a1 then a1 = arg1 end
 	if not f then f = Banknon end
 
-	if evt == "PLAYER_MONEY" or evt == "PLAYERBANKBAGSLOTS_CHANGED" then
+	if ev == "PLAYER_MONEY" or ev == "PLAYERBANKBAGSLOTS_CHANGED" then
 		if f:IsShown() then
 			Banknon_UpdateSlotCost()
 		end
-	elseif evt == "BANKFRAME_OPENED" then
+	elseif ev == "BANKFRAME_OPENED" then
 		f.player = UnitName("player")
 		local titleText = getglobal(f:GetName() .. "Title")
 		if titleText then
@@ -68,9 +66,9 @@ function Banknon_OnEvent(self, event, arg1, ...)
 		if f:IsShown() then
 			Banknon_UpdatePurchaseButtonVis()
 		end
-	elseif evt == "BANKFRAME_CLOSED" then
+	elseif ev == "BANKFRAME_CLOSED" then
 		f:Hide()
-	elseif evt == "ADDON_LOADED" then
+	elseif ev == "ADDON_LOADED" then
 		if a1 == "Bagnon" then
 			f:UnregisterEvent("ADDON_LOADED")
 			Banknon_Load(f)

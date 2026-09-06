@@ -35,11 +35,12 @@ local function UpdateFrameSize(bagFrame)
 	end
 end
 
-function BagnonBagFrame_OnEvent(self, event, arg1, ...)
-	local f = self or this
+function BagnonBagFrame_OnEvent(arg1_param, arg2_param, arg3_param)
+	local f = (type(arg1_param) == "table" and arg1_param) or this
+	local ev = (type(arg1_param) == "string" and arg1_param) or arg2_param or event
+	local a1 = (type(arg1_param) == "string" and (arg2_param or arg1)) or arg3_param or arg1
+
 	if not f or not f:IsVisible() or Bagnon_IsCachedFrame(f:GetParent()) then return end
-	local ev = event or event
-	local a1 = arg1 or arg1
 
 	if ev == "BAG_UPDATE" or ev == "PLAYERBANKSLOTS_CHANGED" or ev == "PLAYERBANKBAGSLOTS_CHANGED" then
 		--hack, the bank frame needs to always update due to unreliable events

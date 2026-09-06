@@ -178,9 +178,9 @@ BagnonForever:RegisterEvent("BANKFRAME_OPENED");
 BagnonForever:RegisterEvent("PLAYERBANKSLOTS_CHANGED");
 BagnonForever:RegisterEvent("PLAYER_MONEY");
 
-local function BagnonForever_OnEvent(self, event, arg1, ...)
-	local ev = event or event
-	local a1 = arg1 or arg1
+local function BagnonForever_OnEvent(arg1_param, arg2_param, arg3_param)
+	local ev = (type(arg1_param) == "string" and arg1_param) or arg2_param or event
+	local a1 = (type(arg1_param) == "string" and (arg2_param or arg1)) or arg3_param or arg1
 	if(ev == "BAG_UPDATE") then
 		SaveBagData(a1);
 	elseif(ev == "PLAYERBANKSLOTS_CHANGED") then
