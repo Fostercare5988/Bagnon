@@ -27,14 +27,19 @@ local function AddOwners(frame, id)
 
 	for player in BagnonDB.GetPlayers() do
 		if player ~= currentPlayer then
-			local invCount = BagnonDB.GetItemTotal(id, player, -2)
-			for bagID = 0, 4 do
-				invCount = invCount + BagnonDB.GetItemTotal(id, player, bagID)
-			end
+			local invCount, bankCount
+			if BagnonDB.GetPlayerItemTotals then
+				invCount, bankCount = BagnonDB.GetPlayerItemTotals(id, player)
+			else
+				invCount = BagnonDB.GetItemTotal(id, player, -2)
+				for bagID = 0, 4 do
+					invCount = invCount + BagnonDB.GetItemTotal(id, player, bagID)
+				end
 
-			local bankCount = BagnonDB.GetItemTotal(id, player, -1)
-			for bagID = 5, 10 do
-				bankCount = bankCount + BagnonDB.GetItemTotal(id, player, bagID)
+				bankCount = BagnonDB.GetItemTotal(id, player, -1)
+				for bagID = 5, 10 do
+					bankCount = bankCount + BagnonDB.GetItemTotal(id, player, bagID)
+				end
 			end
 
 			if (invCount + bankCount) > 0 then
@@ -93,17 +98,22 @@ end
 --[[ Money Frame Tooltip ]]--
 
 -- Alters the tooltip of bagnon moneyframes to show total gold across all characters on the current realm
-function BagnonFrameMoney_OnEnter()
-	if this:GetLeft() > (UIParent:GetRight() / 2) then
-		GameTooltip:SetOwner(this, "ANCHOR_LEFT")
+function BagnonFrameMoney_OnEnter(self)
+	local f = self or this
+	if not f then return end
+
+	if f:GetLeft() and f:GetLeft() > (UIParent:GetRight() / 2) then
+		GameTooltip:SetOwner(f, "ANCHOR_LEFT")
 	else
-		GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+		GameTooltip:SetOwner(f, "ANCHOR_RIGHT")
 	end
 	GameTooltip:SetText(string.format(BAGNON_FOREVER_MONEY_ON_REALM, GetRealmName()))
 
 	local money = 0
-	for player in BagnonDB.GetPlayers() do
-		money = money + BagnonDB.GetMoney(player)
+	if BagnonDB and BagnonDB.GetPlayers then
+		for player in BagnonDB.GetPlayers() do
+			money = money + BagnonDB.GetMoney(player)
+		end
 	end
 
 	SetTooltipMoney(GameTooltip, money)

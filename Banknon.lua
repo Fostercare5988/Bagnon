@@ -15,7 +15,8 @@ end
 
 --[[ Loading Functions ]]--
 
-function Banknon_OnLoad()
+function Banknon_OnLoad(self)
+	local f = self or this
 	--Create the confirmation dialog when purchasing a bank slot
 	StaticPopupDialogs["CONFIRM_BUY_BANK_SLOT_BANKNON"] = {
 		text = TEXT(CONFIRM_BUY_BANK_SLOT),
@@ -32,31 +33,47 @@ function Banknon_OnLoad()
 		timeout = 0,
 		hideOnEscape = 1,
 	}
-	this:RegisterEvent("ADDON_LOADED")
+	if f then
+		f:RegisterEvent("ADDON_LOADED")
+	end
 end
 
 --[[ Event Handler ]]--
 
-function Banknon_OnEvent(event)
-	if event == "PLAYER_MONEY" or event == "PLAYERBANKBAGSLOTS_CHANGED" then
-		if this:IsShown() then
+function Banknon_OnEvent(self, event, arg1, ...)
+	local f = self
+	local evt = event
+	local a1 = arg1
+	if type(self) == "string" then
+		evt = self
+		a1 = event
+		f = this
+	else
+		f = self or this
+	end
+	if not evt then evt = event end
+	if not a1 then a1 = arg1 end
+	if not f then f = Banknon end
+
+	if evt == "PLAYER_MONEY" or evt == "PLAYERBANKBAGSLOTS_CHANGED" then
+		if f:IsShown() then
 			Banknon_UpdateSlotCost()
 		end
-	elseif event == "BANKFRAME_OPENED" then
-		this.player = UnitName("player")
-		local titleText = getglobal(this:GetName() .. "Title")
+	elseif evt == "BANKFRAME_OPENED" then
+		f.player = UnitName("player")
+		local titleText = getglobal(f:GetName() .. "Title")
 		if titleText then
-			titleText:SetText(format(this.title or BAGNON_BANK_TITLE, UnitName("player")))
+			titleText:SetText(format(f.title or BAGNON_BANK_TITLE, UnitName("player")))
 		end
-		if this:IsShown() then
+		if f:IsShown() then
 			Banknon_UpdatePurchaseButtonVis()
 		end
-	elseif event == "BANKFRAME_CLOSED" then
-		this:Hide()
-	elseif event == "ADDON_LOADED" then
-		if arg1 == "Bagnon" then
-			this:UnregisterEvent("ADDON_LOADED")
-			Banknon_Load(this)
+	elseif evt == "BANKFRAME_CLOSED" then
+		f:Hide()
+	elseif evt == "ADDON_LOADED" then
+		if a1 == "Bagnon" then
+			f:UnregisterEvent("ADDON_LOADED")
+			Banknon_Load(f)
 		end
 	end
 end
@@ -95,15 +112,16 @@ end
 --[[ Bank Slots functions ]]--
 
 --Show/Hide the bag frame
-function Banknon_ToggleSlots()
+function Banknon_ToggleSlots(self)
+	local btn = self or this
 	if not BanknonBags:IsShown() then
 		BanknonBags:Show()
 		BagnonSets["Banknon"].bagsShown = 1
-		this:SetText(BAGNON_HIDEBAGS)
+		if btn and btn.SetText then btn:SetText(BAGNON_HIDEBAGS) end
 	else
 		BanknonBags:Hide()
 		BagnonSets["Banknon"].bagsShown = nil
-		this:SetText(BAGNON_SHOWBAGS)
+		if btn and btn.SetText then btn:SetText(BAGNON_SHOWBAGS) end
 	end
 
 	Banknon_UpdatePurchaseButtonVis(not BagnonSets["Banknon"].bagsShown)

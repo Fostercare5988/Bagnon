@@ -35,34 +35,39 @@ local function UpdateFrameSize(bagFrame)
 	end
 end
 
-function BagnonBagFrame_OnEvent()
-	if not this:IsVisible() or Bagnon_IsCachedFrame(this:GetParent()) then return end
+function BagnonBagFrame_OnEvent(self, event, arg1, ...)
+	local f = self or this
+	if not f or not f:IsVisible() or Bagnon_IsCachedFrame(f:GetParent()) then return end
+	local ev = event or event
+	local a1 = arg1 or arg1
 
-	if event == "BAG_UPDATE" or event == "PLAYERBANKSLOTS_CHANGED" or event == "PLAYERBANKBAGSLOTS_CHANGED" then
+	if ev == "BAG_UPDATE" or ev == "PLAYERBANKSLOTS_CHANGED" or ev == "PLAYERBANKBAGSLOTS_CHANGED" then
 		--hack, the bank frame needs to always update due to unreliable events
-		if not arg1 or this:GetParent() == Banknon then
-			ForAllBagSlots(this, BagnonBag_Update)
-		elseif tonumber(arg1) and arg1 > 0 then
-			local bag = getglobal(this:GetName() .. arg1)
+		if not a1 or f:GetParent() == Banknon then
+			ForAllBagSlots(f, BagnonBag_Update)
+		elseif tonumber(a1) and a1 > 0 then
+			local bag = getglobal(f:GetName() .. a1)
 			if bag then
 				BagnonBag_Update(bag)
 			end
 		end
-		UpdateFrameSize(this)
-	elseif event == "ITEM_LOCK_CHANGED" then
-		ForAllBagSlots(this, BagnonBag_UpdateLock)
-	elseif event == "CURSOR_UPDATE" then
-		ForAllBagSlots(this, BagnonBag_UpdateCursor)
+		UpdateFrameSize(f)
+	elseif ev == "ITEM_LOCK_CHANGED" then
+		ForAllBagSlots(f, BagnonBag_UpdateLock)
+	elseif ev == "CURSOR_UPDATE" then
+		ForAllBagSlots(f, BagnonBag_UpdateCursor)
 	end
 end
 
-function BagnonBagFrame_OnLoad()
-	this:RegisterEvent("BAG_UPDATE")
-	this:RegisterEvent("ITEM_LOCK_CHANGED")
-	this:RegisterEvent("CURSOR_UPDATE")
+function BagnonBagFrame_OnLoad(self)
+	local f = self or this
+	if not f then return end
+	f:RegisterEvent("BAG_UPDATE")
+	f:RegisterEvent("ITEM_LOCK_CHANGED")
+	f:RegisterEvent("CURSOR_UPDATE")
 
-	this:RegisterEvent("PLAYERBANKSLOTS_CHANGED")
-	this:RegisterEvent("PLAYERBANKBAGSLOTS_CHANGED")
+	f:RegisterEvent("PLAYERBANKSLOTS_CHANGED")
+	f:RegisterEvent("PLAYERBANKBAGSLOTS_CHANGED")
 end
 
 --[[ Individual Bag Slot Code ]]--
@@ -184,60 +189,70 @@ end
 
 --[[ OnX Functions ]]--
 
-function BagnonBag_OnLoad()
-	this:RegisterForDrag("LeftButton")
-	this:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+function BagnonBag_OnLoad(self)
+	local b = self or this
+	if not b then return end
+	b:RegisterForDrag("LeftButton")
+	b:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 end
 
-function BagnonBag_OnShow()
-	BagnonBag_UpdateTexture(this:GetParent():GetParent(), this:GetID())
+function BagnonBag_OnShow(self)
+	local b = self or this
+	if not b then return end
+	BagnonBag_UpdateTexture(b:GetParent():GetParent(), b:GetID())
 end
 
-function BagnonBag_OnClick()
-	if Bagnon_IsCachedBag(this:GetParent():GetParent().player, this:GetID()) then return end
+function BagnonBag_OnClick(self, mouseButton)
+	local b = self or this
+	if not b then return end
+	if Bagnon_IsCachedBag(b:GetParent():GetParent().player, b:GetID()) then return end
 
 	if not IsShiftKeyDown() then
 		--damn you blizzard for making the keyring specific code!
-		if this:GetID() == KEYRING_CONTAINER then
+		if b:GetID() == KEYRING_CONTAINER then
 			PutKeyInKeyRing()
-		elseif this:GetID() == 0 then
+		elseif b:GetID() == 0 then
 			PutItemInBackpack()
 		else
-			PutItemInBag(ContainerIDToInventoryID(this:GetID()))
+			PutItemInBag(ContainerIDToInventoryID(b:GetID()))
 		end
 	else
-		BagnonFrame_ToggleBag(this:GetParent():GetParent(), this:GetID())
+		BagnonFrame_ToggleBag(b:GetParent():GetParent(), b:GetID())
 	end
 end
 
-function BagnonBag_OnDrag()
-	if Bagnon_IsCachedBag(this:GetParent():GetParent().player, this:GetID()) then return end
+function BagnonBag_OnDrag(self)
+	local b = self or this
+	if not b then return end
+	if Bagnon_IsCachedBag(b:GetParent():GetParent().player, b:GetID()) then return end
 
-	PickupBagFromSlot(ContainerIDToInventoryID(this:GetID()))
+	PickupBagFromSlot(ContainerIDToInventoryID(b:GetID()))
 	PlaySound("BAGMENUBUTTONPRESS")
 end
 
 --tooltip functions
-function BagnonBag_OnEnter()
-	local frame = this:GetParent():GetParent()
+function BagnonBag_OnEnter(self)
+	local b = self or this
+	if not b then return end
+	local frame = b:GetParent():GetParent()
 
-	BagnonFrame_HighlightSlots(frame, this:GetID())
+	BagnonFrame_HighlightSlots(frame, b:GetID())
 
-	if this:GetLeft() < (UIParent:GetRight() / 2) then
-		GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+	if b:GetLeft() and (b:GetLeft() < (UIParent:GetRight() / 2)) then
+		GameTooltip:SetOwner(b, "ANCHOR_RIGHT")
 	else
-		GameTooltip:SetOwner(this, "ANCHOR_LEFT")
+		GameTooltip:SetOwner(b, "ANCHOR_LEFT")
 	end
 
 	--mainmenubag specific code
-	if this:GetID() == 0 then
+	if b:GetID() == 0 then
 		GameTooltip:SetText(TEXT(BACKPACK_TOOLTIP), 1, 1, 1)
 	--keyring specific code...again
-	elseif this:GetID() == KEYRING_CONTAINER then
+	elseif b:GetID() == KEYRING_CONTAINER then
 		GameTooltip:SetText(KEYRING, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b)
 	--cached bags
-	elseif Bagnon_IsCachedBag(frame.player, this:GetID()) then
-		local _, link = BagnonDB.GetBagData(frame.player, this:GetID())
+	elseif Bagnon_IsCachedBag(frame.player, b:GetID()) then
+		local _, link = BagnonDB.GetBagData(frame.player, b:GetID())
 
 		if link then
 			GameTooltip:SetHyperlink(link)
@@ -245,14 +260,14 @@ function BagnonBag_OnEnter()
 		else
 			GameTooltip:SetText(TEXT(EQUIP_CONTAINER), 1, 1, 1)
 		end
-	elseif not GameTooltip:SetInventoryItem("player", ContainerIDToInventoryID(this:GetID())) then
+	elseif not GameTooltip:SetInventoryItem("player", ContainerIDToInventoryID(b:GetID())) then
 		GameTooltip:SetText(TEXT(EQUIP_CONTAINER), 1, 1, 1)
 	end
 
-	if not Bagnon_IsCachedBag(frame.player, this:GetID()) then
+	if not Bagnon_IsCachedBag(frame.player, b:GetID()) then
 		--add the shift click to hide/show tooltip
 		if BagnonSets.showTooltips then
-			if Bagnon_FrameHasBag(frame:GetName(), this:GetID()) then
+			if Bagnon_FrameHasBag(frame:GetName(), b:GetID()) then
 				GameTooltip:AddLine(BAGNON_BAGS_HIDE)
 			else
 				GameTooltip:AddLine(BAGNON_BAGS_SHOW)
@@ -262,7 +277,10 @@ function BagnonBag_OnEnter()
 	GameTooltip:Show()
 end
 
-function BagnonBag_OnLeave()
-	BagnonFrame_UnhighlightAll(this:GetParent():GetParent())
+function BagnonBag_OnLeave(self)
+	local b = self or this
+	if b and b:GetParent() and b:GetParent():GetParent() then
+		BagnonFrame_UnhighlightAll(b:GetParent():GetParent())
+	end
 	GameTooltip:Hide()
 end

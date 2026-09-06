@@ -50,7 +50,7 @@ end
 --[[ Variable Loading ]]--
 
 local function LoadVariables()
-	local currentVersion = GetAddOnMetadata("Bagnon", "Version") or "1.2.0"
+	local currentVersion = GetAddOnMetadata("Bagnon", "Version") or "1.5.0"
 	if not BagnonSets then
 		BagnonSets = {
 			showBagsAtBank = 1,
@@ -69,14 +69,7 @@ local function LoadVariables()
 end
 
 local function HaveLocalizedInfo()
-	local locale = GetLocale()
-	return (locale == "enUS" or
-			locale == "deDE" or
-			locale == "frFR" or
-			locale == "zhCN" or
-			locale == "zhTW" or
-			locale == "esES" or
-			BagnonSets.noDebug)
+	return true
 end
 
 --try and get localized names, so that its possible to do special bag coloring
@@ -156,9 +149,13 @@ local function Load(eventFrame)
 	eventFrame:RegisterEvent("MERCHANT_CLOSED")
 end
 
-local function OnEvent()
+local function OnEvent(self, event, arg1, ...)
+	local f = self or this or eventFrame
+	local ev = event or event
+	local a1 = arg1 or arg1
+
 	--[[ Events For Updating Items ]]--
-	if event == "BAG_UPDATE_COOLDOWN" then
+	if ev == "BAG_UPDATE_COOLDOWN" then
 		if Bagnon and Bagnon:IsVisible() and not Bagnon_IsCachedFrame(Bagnon) then
 			for slot = 1, (Bagnon.size or 0) do
 				local item = getglobal("BagnonItem" .. slot)
@@ -175,18 +172,18 @@ local function OnEvent()
 				end
 			end
 		end
-	elseif event == "BAG_UPDATE" then
-		if ShouldUpdateBag(Bagnon, arg1) then
-			BagnonFrame_Update(Bagnon, arg1)
+	elseif ev == "BAG_UPDATE" then
+		if ShouldUpdateBag(Bagnon, a1) then
+			BagnonFrame_Update(Bagnon, a1)
 		end
-		if ShouldUpdateBag(Banknon, arg1) then
-			BagnonFrame_Update(Banknon, arg1)
+		if ShouldUpdateBag(Banknon, a1) then
+			BagnonFrame_Update(Banknon, a1)
 		end
-	elseif event == "PLAYERBANKSLOTS_CHANGED" then
+	elseif ev == "PLAYERBANKSLOTS_CHANGED" then
 		if ShouldUpdateBag(Banknon, -1) then
 			BagnonFrame_Update(Banknon, -1)
 		end
-	elseif event == "ITEM_LOCK_CHANGED" then
+	elseif ev == "ITEM_LOCK_CHANGED" then
 		if Bagnon and Bagnon:IsVisible() then
 			BagnonFrame_UpdateLock(Bagnon)
 		end
@@ -194,12 +191,12 @@ local function OnEvent()
 			BagnonFrame_UpdateLock(Banknon)
 		end
 	--the keyring's size changes based on the player's level
-	elseif event == "PLAYER_LEVEL_UP" then
+	elseif ev == "PLAYER_LEVEL_UP" then
 		if ShouldUpdateBag(Bagnon, KEYRING_CONTAINER) then
 			BagnonFrame_Generate(Bagnon)
 		end
 	--[[ Events for Automatically Opening and Closing Frames ]]--
-	elseif event == "BANKFRAME_OPENED" then
+	elseif ev == "BANKFRAME_OPENED" then
 		bgn_atBank = true
 		if Banknon then
 			Banknon.player = UnitName("player")
@@ -213,44 +210,44 @@ local function OnEvent()
 		if not OpenIF("Banknon", BagnonSets.showBankAtBank) then
 			ShowBlizBank()
 		end
-	elseif event == "BANKFRAME_CLOSED" then
+	elseif ev == "BANKFRAME_CLOSED" then
 		bgn_atBank = nil
 		if Banknon then
 			Banknon.manOpened = nil
 			BagnonFrame_Close("Banknon")
 		end
 		CloseIF("Bagnon", BagnonSets.showBagsAtBank)
-	elseif event == "TRADE_SHOW" then
+	elseif ev == "TRADE_SHOW" then
 		OpenIF("Bagnon", BagnonSets.showBagsAtTrade)
 		OpenIF("Banknon", BagnonSets.showBankAtTrade)
-	elseif event == "TRADE_CLOSED" then
+	elseif ev == "TRADE_CLOSED" then
 		CloseIF("Bagnon", BagnonSets.showBagsAtTrade)
 		CloseIF("Banknon", BagnonSets.showBankAtTrade)
-	elseif event == "TRADE_SKILL_SHOW" then
+	elseif ev == "TRADE_SKILL_SHOW" then
 		OpenIF("Bagnon", BagnonSets.showBagsAtCraft)
 		OpenIF("Banknon", BagnonSets.showBankAtCraft)
-	elseif event == "TRADE_SKILL_CLOSE" then
+	elseif ev == "TRADE_SKILL_CLOSE" then
 		CloseIF("Bagnon", BagnonSets.showBagsAtCraft)
 		CloseIF("Banknon", BagnonSets.showBankAtCraft)
-	elseif event == "AUCTION_HOUSE_SHOW" then
+	elseif ev == "AUCTION_HOUSE_SHOW" then
 		OpenIF("Bagnon", BagnonSets.showBagsAtAH)
 		OpenIF("Banknon", BagnonSets.showBankAtAH)
-	elseif event == "AUCTION_HOUSE_CLOSED" then
+	elseif ev == "AUCTION_HOUSE_CLOSED" then
 		CloseIF("Bagnon", BagnonSets.showBagsAtAH)
 		CloseIF("Banknon", BagnonSets.showBankAtAH)
-	elseif event == "MAIL_SHOW" then
+	elseif ev == "MAIL_SHOW" then
 		OpenIF("Banknon", BagnonSets.showBankAtMail)
-	elseif event == "MAIL_CLOSED" then
+	elseif ev == "MAIL_CLOSED" then
 		CloseIF("Bagnon", true)
 		CloseIF("Banknon", BagnonSets.showBankAtMail)
-	elseif event == "MERCHANT_SHOW" then
+	elseif ev == "MERCHANT_SHOW" then
 		OpenIF("Banknon", BagnonSets.showBankAtVendor)
-	elseif event == "MERCHANT_CLOSED" then
+	elseif ev == "MERCHANT_CLOSED" then
 		CloseIF("Banknon", BagnonSets.showBankAtVendor)
 	--Loading event
-	elseif event == "ADDON_LOADED" and arg1 == "Bagnon" then
-		this:UnregisterEvent("ADDON_LOADED")
-		Load(this)
+	elseif ev == "ADDON_LOADED" and a1 == "Bagnon" then
+		f:UnregisterEvent("ADDON_LOADED")
+		Load(f)
 	end
 end
 

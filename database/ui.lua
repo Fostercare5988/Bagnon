@@ -89,10 +89,11 @@ end
 
 --hide any menus attached to the frame, if they're visible and we're hiding the frame
 local oBagnonFrame_OnHide = BagnonFrame_OnHide
-BagnonFrame_OnHide = function()
-	oBagnonFrame_OnHide()
+BagnonFrame_OnHide = function(self)
+	oBagnonFrame_OnHide(self)
 
-	if BagnonDBUICharacterList.frame == this then
+	local f = self or this
+	if BagnonDBUICharacterList and BagnonDBUICharacterList.frame == f then
 		BagnonDBUICharacterList:Hide()
 	end
 end

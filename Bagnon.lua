@@ -21,14 +21,26 @@ local bBagSlotButton_OnClick, bKeyRingButton_OnClick, bMainBag_OnClick;
 
 --[[ Loading Functions ]]--
 
-function Bagnon_OnLoad()
-	this:RegisterEvent("ADDON_LOADED");
+function Bagnon_OnLoad(self)
+	local f = self or this
+	if f then
+		f:RegisterEvent("ADDON_LOADED")
+	end
 end
 
 --[[ Event Handler ]]--
 
-function Bagnon_OnEvent(event)
-	if ( event == "ADDON_LOADED" and arg1 == "Bagnon" ) then
+function Bagnon_OnEvent(self, event, arg1, ...)
+	local evt = event
+	local a1 = arg1
+	if type(self) == "string" then
+		evt = self
+		a1 = event
+	end
+	if not evt then evt = event end
+	if not a1 then a1 = arg1 end
+
+	if ( evt == "ADDON_LOADED" and a1 == "Bagnon" ) then
 		Bagnon:UnregisterEvent("ADDON_LOADED");
 		Bagnon_Load();
 	end
@@ -61,15 +73,16 @@ function Bagnon_OnHide()
 end
 
 --Show Bags
-function Bagnon_ToggleBags()
+function Bagnon_ToggleBags(self)
+	local btn = self or this
 	if( not BagnonBags:IsShown() ) then
 		BagnonBags:Show();
 		BagnonSets["Bagnon"].bagsShown = 1;
-		this:SetText(BAGNON_HIDEBAGS);
+		if btn and btn.SetText then btn:SetText(BAGNON_HIDEBAGS); end
 	else
 		BagnonBags:Hide();
 		BagnonSets["Bagnon"].bagsShown = nil;
-		this:SetText(BAGNON_SHOWBAGS);
+		if btn and btn.SetText then btn:SetText(BAGNON_SHOWBAGS); end
 	end
 	
 	BagnonFrame_TrimToSize(Bagnon);

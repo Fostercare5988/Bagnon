@@ -211,6 +211,41 @@ function BagnonDB.GetItemTotal(id, player, bagID)
 	return count
 end
 
+--[[
+	Returns (invCount, bankCount) of the specific item id across all bags of the given player in a single pass
+--]]
+function BagnonDB.GetPlayerItemTotals(id, player)
+	local targetID = tonumber(id)
+	if not targetID then return 0, 0 end
+
+	local playerData = BagnonForeverData[currentRealm] and BagnonForeverData[currentRealm][player]
+	if not playerData then return 0, 0 end
+
+	local invCount = 0
+	local bankCount = 0
+
+	for bagID, bagData in pairs(playerData) do
+		if type(bagID) == "number" and type(bagData) == "table" then
+			local isBank = (bagID == -1 or (bagID >= 5 and bagID <= 10))
+			for itemSlot, itemData in pairs(bagData) do
+				if tonumber(itemSlot) and type(itemData) == "string" then
+					local _, _, rawID, rawCount = string.find(itemData, "^(%d+)[^,]*,?(%d*)")
+					if rawID and tonumber(rawID) == targetID then
+						local qty = tonumber(rawCount) or 1
+						if isBank then
+							bankCount = bankCount + qty
+						else
+							invCount = invCount + qty
+						end
+					end
+				end
+			end
+		end
+	end
+
+	return invCount, bankCount
+end
+
 --[[ 
 	BagnonDB.GetItemHyperlink(player, bagID, itemSlot)
 		args:

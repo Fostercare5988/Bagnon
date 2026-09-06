@@ -15,17 +15,19 @@ local UPDATE_INTERVAL = 1
 
 --[[ Local Functions ]]--
 
+local function InfieldUpdater_OnEvent(self)
+	local f = self or this or InfieldUpdater
+	local uiScale = UIParent:GetScale()
+	if f and f.currentScale ~= uiScale then
+		for _, action in pairs(Infield.rescaleList) do
+			action()
+		end	
+		f.currentScale = uiScale
+	end
+end
+
 local function RegisterScaleEvents()
-	--set the onupdate function
-	InfieldUpdater:SetScript("OnEvent", function()
-		local uiScale = UIParent:GetScale()
-		if this.currentScale ~= uiScale then
-			for _, action in pairs(Infield.rescaleList) do
-				action()
-			end	
-			this.currentScale = uiScale
-		end
-	end)
+	InfieldUpdater:SetScript("OnEvent", InfieldUpdater_OnEvent)
 	InfieldUpdater:RegisterEvent("PLAYER_ENTERING_WORLD")
 	InfieldUpdater:RegisterEvent("CVAR_UPDATE")
 end

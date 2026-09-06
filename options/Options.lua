@@ -5,25 +5,29 @@
 		Built natively for ClassicAPI, SuperWoW 2.2+, NamPower 4.6.3+, UnitXP SP3, DXVK
 --]]
 
-function BagnonOptions_OnLoad()
+function BagnonOptions_OnLoad(self)
+	local f = self or this
+	if not f then return end
 	if not BagnonDB then
-		local frameName = this:GetName()
-		this:SetWidth(this:GetWidth() - 24)
+		local frameName = f:GetName()
+		f:SetWidth(f:GetWidth() - 24)
 
 		getglobal(frameName .. "ForeverTooltips"):Hide()
 		getglobal(frameName .. "Quality"):ClearAllPoints()
 		getglobal(frameName .. "Quality"):SetPoint("TOPLEFT", frameName .. "Tooltips", "BOTTOMLEFT")
 
 		getglobal(frameName .. "ShowWhen"):ClearAllPoints()
-		getglobal(frameName .. "ShowWhen"):SetPoint("TOPLEFT", this, "TOPLEFT", 16, 118)
+		getglobal(frameName .. "ShowWhen"):SetPoint("TOPLEFT", f, "TOPLEFT", 16, 118)
 
 		getglobal(frameName .. "ShowWhen"):ClearAllPoints()
-		getglobal(frameName .. "BanknonDiv"):SetPoint("TOPLEFT", this, "TOPLEFT", 16, 118)
+		getglobal(frameName .. "BanknonDiv"):SetPoint("TOPLEFT", f, "TOPLEFT", 16, 118)
 	end
 end
 
-function BagnonOptions_OnShow()
-	local frameName = this:GetName()
+function BagnonOptions_OnShow(self)
+	local f = self or this
+	if not f then return end
+	local frameName = f:GetName()
 
 	getglobal(frameName .. "Tooltips"):SetChecked(BagnonSets.showTooltips)
 	getglobal(frameName .. "ForeverTooltips"):SetChecked(BagnonSets.showForeverTooltips)

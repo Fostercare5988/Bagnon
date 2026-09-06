@@ -518,12 +518,13 @@ end
 --]]
 
 --tooltips for the title
-function BagnonFrame_OnEnter()
-	if BagnonSets.showTooltips then
+function BagnonFrame_OnEnter(self)
+	local f = self or this
+	if BagnonSets.showTooltips and f then
 		GameTooltip:ClearAllPoints()
-		GameTooltip:SetPoint("TOPLEFT", this, "BOTTOMLEFT", -2, 0)
-		GameTooltip:SetOwner(this, "ANCHOR_PRESERVE")
-		GameTooltip:SetText(this:GetText(), 1, 1, 1)
+		GameTooltip:SetPoint("TOPLEFT", f, "BOTTOMLEFT", -2, 0)
+		GameTooltip:SetOwner(f, "ANCHOR_PRESERVE")
+		GameTooltip:SetText(f:GetText(), 1, 1, 1)
 		GameTooltip:AddLine(BAGNON_TITLE_TOOLTIP)
 		GameTooltip:Show()
 	end
@@ -547,9 +548,12 @@ function BagnonFrameMoney_OnLeave()
 end
 
 -- This is a hack that enables tooltips but still allows clicking on the money frame
-function BagnonFrameMoney_OnClick()
-	local parentName = this:GetParent():GetName()
-	local parent = this:GetParent()
+function BagnonFrameMoney_OnClick(self)
+	local f = self or this
+	if not f then return end
+	local parent = f:GetParent()
+	if not parent then return end
+	local parentName = parent:GetName()
 
 	if MouseIsOver(getglobal(parentName .. "GoldButton")) then
 		OpenCoinPickupFrame(COPPER_PER_GOLD, MoneyTypeInfo[parent.moneyType].UpdateFunc(), parent)
@@ -568,8 +572,9 @@ end
 --]]
 
 --hide any menus attached to the frame, if they're visible and we're hiding the frame
-function BagnonFrame_OnHide()
-	if BagnonMenu:IsVisible() and BagnonMenu.frame == this then
+function BagnonFrame_OnHide(self)
+	local f = self or this
+	if BagnonMenu and BagnonMenu:IsVisible() and BagnonMenu.frame == f then
 		BagnonMenu:Hide()
 	end
 end

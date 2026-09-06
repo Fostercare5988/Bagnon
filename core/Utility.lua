@@ -35,8 +35,9 @@ function Bagnon_FrameHasBag(frameName, bagID)
 		return false;
 	end
 	
-	for i in BagnonSets[frameName].bags do
-		if(BagnonSets[frameName].bags[i] == bagID) then
+	local bags = BagnonSets[frameName].bags
+	for i = 1, #bags do
+		if(bags[i] == bagID) then
 			return true;
 		end
 	end

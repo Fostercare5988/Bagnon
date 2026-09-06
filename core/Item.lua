@@ -7,28 +7,29 @@
 
 --[[ OnX Handlers ]]--
 
-local function OnClick()
-	BagnonItem_OnClick(arg1)
+local function OnClick(self, button)
+	local b = button or arg1
+	BagnonItem_OnClick(self or this, b)
 end
 
-local function OnEnter()
-	BagnonItem_OnEnter(this)
+local function OnEnter(self)
+	BagnonItem_OnEnter(self or this)
 end
 
-local function OnLeave()
-	BagnonItem_OnLeave(this)
+local function OnLeave(self)
+	BagnonItem_OnLeave(self or this)
 end
 
-local function OnDragStart()
-	BagnonItem_OnClick("LeftButton", 1)
+local function OnDragStart(self)
+	BagnonItem_OnClick(self or this, "LeftButton", 1)
 end
 
-local function OnReceiveDrag()
-	BagnonItem_OnClick("LeftButton", 1)
+local function OnReceiveDrag(self)
+	BagnonItem_OnClick(self or this, "LeftButton", 1)
 end
 
-local function OnHide()
-	BagnonItem_OnHide(this)
+local function OnHide(self)
+	BagnonItem_OnHide(self or this)
 end
 
 function BagnonItem_Create(name, parent)
@@ -66,27 +67,39 @@ function BagnonItem_Create(name, parent)
 	return item
 end
 
-function BagnonItem_OnClick(mouseButton, ignoreModifiers)
-	if this.isLink then
-		if this.hasItem then
-			if mouseButton == "LeftButton" then
+function BagnonItem_OnClick(item, mouseButton, ignoreModifiers)
+	local btn, mb, ign
+	if type(item) == "string" or not item then
+		btn = this
+		mb = item
+		ign = mouseButton
+	else
+		btn = item or this
+		mb = mouseButton
+		ign = ignoreModifiers
+	end
+	if not btn then return end
+
+	if btn.isLink then
+		if btn.hasItem then
+			if mb == "LeftButton" then
 				if IsControlKeyDown() then
-					local itemSlot = this:GetID()
-					local bagID = this:GetParent():GetID()
-					local player = this:GetParent():GetParent().player
+					local itemSlot = btn:GetID()
+					local bagID = btn:GetParent():GetID()
+					local player = btn:GetParent():GetParent().player
 
 					DressUpItemLink((BagnonDB.GetItemData(player, bagID, itemSlot)))
 				elseif IsShiftKeyDown() then
-					local itemSlot = this:GetID()
-					local bagID = this:GetParent():GetID()
-					local player = this:GetParent():GetParent().player
+					local itemSlot = btn:GetID()
+					local bagID = btn:GetParent():GetID()
+					local player = btn:GetParent():GetParent().player
 
 					ChatFrameEditBox:Insert(BagnonDB.GetItemHyperlink(player, bagID, itemSlot))
 				end
 			end
 		end
 	else
-		ContainerFrameItemButton_OnClick(mouseButton, ignoreModifiers)
+		ContainerFrameItemButton_OnClick(mb, ign)
 	end
 end
 

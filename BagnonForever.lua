@@ -178,21 +178,24 @@ BagnonForever:RegisterEvent("BANKFRAME_OPENED");
 BagnonForever:RegisterEvent("PLAYERBANKSLOTS_CHANGED");
 BagnonForever:RegisterEvent("PLAYER_MONEY");
 
-BagnonForever:SetScript("OnEvent", function()
-	if(event == "BAG_UPDATE") then
-		SaveBagData(arg1);
-	elseif(event == "PLAYERBANKSLOTS_CHANGED") then
+local function BagnonForever_OnEvent(self, event, arg1, ...)
+	local ev = event or event
+	local a1 = arg1 or arg1
+	if(ev == "BAG_UPDATE") then
+		SaveBagData(a1);
+	elseif(ev == "PLAYERBANKSLOTS_CHANGED") then
 		SaveBagData(-1);
-	elseif(event == "BANKFRAME_CLOSED") then
+	elseif(ev == "BANKFRAME_CLOSED") then
 		atBank = nil;
 		SaveBankData();
-	elseif(event == "BANKFRAME_OPENED") then
+	elseif(ev == "BANKFRAME_OPENED") then
 		atBank = 1;
 		SaveBankData();
-	elseif(event == "PLAYER_MONEY") then
+	elseif(ev == "PLAYER_MONEY") then
 		SavePlayerMoney();
-	elseif(event == "PLAYER_LOGIN") then
+	elseif(ev == "PLAYER_LOGIN") then
 		LoadVariables();
 		SavePlayerMoney();
 	end
-end);
+end
+BagnonForever:SetScript("OnEvent", BagnonForever_OnEvent);

@@ -56,8 +56,9 @@ end
 
 --[[ Function Overrides ]]--
 
-BagnonFrame_OnDoubleClick = function(frame)
-	if arg1 == "LeftButton" then
+BagnonFrame_OnDoubleClick = function(frame, button)
+	local btn = button or arg1
+	if btn == "LeftButton" then
 		BagnonSpot:Hide()
 		BagnonSpot.frame = frame
 
@@ -104,17 +105,18 @@ BagnonItem_Update = function(item)
 end
 
 local oBagnonFrame_OnHide = BagnonFrame_OnHide
-BagnonFrame_OnHide = function()
-	oBagnonFrame_OnHide()
+BagnonFrame_OnHide = function(self)
+	oBagnonFrame_OnHide(self)
 
-	if BagnonSpot:IsVisible() and BagnonSpot.frame == this then
+	local f = self or this
+	if BagnonSpot:IsVisible() and BagnonSpot.frame == f then
 		BagnonSpot:Hide()
 	end
 end
 
 local oBagnonFrame_OnEnter = BagnonFrame_OnEnter
-BagnonFrame_OnEnter = function()
-	oBagnonFrame_OnEnter()
+BagnonFrame_OnEnter = function(self)
+	oBagnonFrame_OnEnter(self)
 
 	if BagnonSets.showTooltips then
 		GameTooltip:AddLine(BAGNON_SPOT_TOOLTIP)
