@@ -137,6 +137,14 @@ Bagnon is engineered around strict low-level system integration:
 
 ---
 
+## 🧩 Suite Compatibility
+
+Bagnon operates seamlessly alongside the enhanced client addon suite:
+- **[ItemRack](https://github.com/Fostercare5988/ItemRack)**: Fully compatible with ItemRack's bank detection and gear set transfers. ItemRack's blue-border bank indicators and automated bank-to-bag set transfers update Bagnon's unified grid in real time with zero frame hijacking or state desync.
+- **[TrinketMenu](https://github.com/Fostercare5988/TrinketMenu)**: Instant inventory grid updates during automated and combat-queued trinket swaps.
+
+---
+
 ## 📄 License & Community
 
 - **Authors**: **Tuller**, **McPewPew**, **[Fostercare5988](https://github.com/Fostercare5988)**
