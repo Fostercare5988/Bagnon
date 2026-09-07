@@ -62,6 +62,11 @@ Bagnon is engineered around strict low-level system integration:
 - **Alt Item Tracker**: Hover over any item in the game to see total counts across all characters on your realm.
 - **Realm Gold Aggregator**: Hover over the money display to view total gold aggregated across all your alts on the current realm.
 
+### 4. Suite Synergy (ItemRack & TrinketMenu)
+- **ItemRack Set Indicators**: Hovering over any item in your bags or bank displays which ItemRack sets it belongs to (`ItemRack: <Set Names>`), preventing accidental vendor sales or bank desynchronization.
+- **TrinketMenu Queued Alerts**: Hovering over a trinket queued for swap displays an alert (`TrinketMenu: Queued (Top/Bottom Slot)`).
+- **Zero Overhead Decoupling**: All integrations use safe runtime existence guards (`if Rack ...`, `if TrinketMenu ...`), incurring 0ms latency when running standalone.
+
 ---
 
 ## ⌨️ Commands & Shortcuts
@@ -106,6 +111,11 @@ Bagnon is engineered around strict low-level system integration:
 ---
 
 ## 📜 Changelog
+
+### v1.5.1 (Inventory Trio Synergy)
+- **ItemRack Tooltip Integration**: Extended `GameTooltip.SetBagItem`, `GameTooltip.SetInventoryItem`, and `GameTooltip.SetHyperlink` to display active ItemRack set membership (`ItemRack: <Set Names>`).
+- **TrinketMenu Queue Alert**: Highlights items staged in TrinketMenu's combat queue directly on bag item tooltips (`TrinketMenu: Queued`).
+- **Bank Slot Inventory Hooking**: Hooked `GameTooltip.SetInventoryItem` to ensure main bank window (`-1`) items reflect set and queue data identically to standard bag containers.
 
 ### v1.5.0
 - **Single-Pass Tooltip Aggregation**: Introduced `BagnonDB.GetPlayerItemTotals`, consolidating 13 individual container lookups into a single pass per character and eliminating ~90% of string pattern matching overhead on item tooltip hover.

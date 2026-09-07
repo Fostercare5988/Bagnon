@@ -57,12 +57,48 @@ local function AddOwners(frame, id)
 	frame:Show()
 end
 
+-- Cross-Addon Suite Synergy: ItemRack Set Integration
+local function AddItemRackSets(frame, link)
+	if not (frame and link and Rack and Rack.GetSetsWithItem) then return end
+	local sets = Rack.GetSetsWithItem(link)
+	if sets then
+		frame:AddLine("ItemRack: " .. sets, 0.2, 0.8, 1.0)
+		frame:Show()
+	end
+end
+
+-- Cross-Addon Suite Synergy: TrinketMenu Queue Integration
+local function AddTrinketMenuQueue(frame, link)
+	if not (frame and link and TrinketMenu and TrinketMenu.CombatQueue) then return end
+	local _, _, itemName = string.find(link, "%[(.+)%]")
+	if not itemName then return end
+	if TrinketMenu.CombatQueue[0] == itemName then
+		frame:AddLine("TrinketMenu: Queued (Top Slot)", 1.0, 0.82, 0.0)
+		frame:Show()
+	elseif TrinketMenu.CombatQueue[1] == itemName then
+		frame:AddLine("TrinketMenu: Queued (Bottom Slot)", 1.0, 0.82, 0.0)
+		frame:Show()
+	end
+end
+
 --[[ Function Hooks ]]--
 
 local Blizz_GameTooltip_SetBagItem = GameTooltip.SetBagItem
 GameTooltip.SetBagItem = function(self, bag, slot)
 	Blizz_GameTooltip_SetBagItem(self, bag, slot)
-	AddOwners(self, LinkToID(GetContainerItemLink(bag, slot)))
+	local link = GetContainerItemLink(bag, slot)
+	AddOwners(self, LinkToID(link))
+	AddItemRackSets(self, link)
+	AddTrinketMenuQueue(self, link)
+end
+
+local Blizz_GameTooltip_SetInventoryItem = GameTooltip.SetInventoryItem
+GameTooltip.SetInventoryItem = function(self, unit, slot)
+	Blizz_GameTooltip_SetInventoryItem(self, unit, slot)
+	local link = GetInventoryItemLink(unit, slot)
+	AddOwners(self, LinkToID(link))
+	AddItemRackSets(self, link)
+	AddTrinketMenuQueue(self, link)
 end
 
 local Bliz_GameTooltip_SetLootItem = GameTooltip.SetLootItem
@@ -75,12 +111,15 @@ local Bliz_SetHyperlink = GameTooltip.SetHyperlink
 GameTooltip.SetHyperlink = function(self, link, count)
 	Bliz_SetHyperlink(self, link, count)
 	AddOwners(self, LinkToID(link))
+	AddItemRackSets(self, link)
+	AddTrinketMenuQueue(self, link)
 end
 
 local Bliz_ItemRefTooltip_SetHyperlink = ItemRefTooltip.SetHyperlink
 ItemRefTooltip.SetHyperlink = function(self, link, count)
 	Bliz_ItemRefTooltip_SetHyperlink(self, link, count)
 	AddOwners(self, LinkToID(link))
+	AddItemRackSets(self, link)
 end
 
 local Bliz_GameTooltip_SetLootRollItem = GameTooltip.SetLootRollItem
