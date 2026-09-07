@@ -85,53 +85,70 @@ end
 
 local Blizz_GameTooltip_SetBagItem = GameTooltip.SetBagItem
 GameTooltip.SetBagItem = function(self, bag, slot)
-	Blizz_GameTooltip_SetBagItem(self, bag, slot)
+	local a1, a2 = Blizz_GameTooltip_SetBagItem(self, bag, slot)
 	local link = GetContainerItemLink(bag, slot)
-	AddOwners(self, LinkToID(link))
-	AddItemRackSets(self, link)
-	AddTrinketMenuQueue(self, link)
+	if link then
+		AddOwners(self, LinkToID(link))
+		AddItemRackSets(self, link)
+		AddTrinketMenuQueue(self, link)
+	end
+	return a1, a2
 end
 
 local Blizz_GameTooltip_SetInventoryItem = GameTooltip.SetInventoryItem
 GameTooltip.SetInventoryItem = function(self, unit, slot)
-	Blizz_GameTooltip_SetInventoryItem(self, unit, slot)
-	local link = GetInventoryItemLink(unit, slot)
-	AddOwners(self, LinkToID(link))
-	AddItemRackSets(self, link)
-	AddTrinketMenuQueue(self, link)
+	local hasItem, hasCooldown, repairCost = Blizz_GameTooltip_SetInventoryItem(self, unit, slot)
+	if hasItem then
+		local link = GetInventoryItemLink(unit, slot)
+		if link then
+			AddOwners(self, LinkToID(link))
+			AddItemRackSets(self, link)
+			AddTrinketMenuQueue(self, link)
+		end
+	end
+	return hasItem, hasCooldown, repairCost
 end
 
 local Bliz_GameTooltip_SetLootItem = GameTooltip.SetLootItem
 GameTooltip.SetLootItem = function(self, slot)
-	Bliz_GameTooltip_SetLootItem(self, slot)
+	local a1, a2, a3 = Bliz_GameTooltip_SetLootItem(self, slot)
 	AddOwners(self, LinkToID(GetLootSlotLink(slot)))
+	return a1, a2, a3
 end
 
 local Bliz_SetHyperlink = GameTooltip.SetHyperlink
 GameTooltip.SetHyperlink = function(self, link, count)
-	Bliz_SetHyperlink(self, link, count)
-	AddOwners(self, LinkToID(link))
-	AddItemRackSets(self, link)
-	AddTrinketMenuQueue(self, link)
+	local a1, a2, a3 = Bliz_SetHyperlink(self, link, count)
+	if link then
+		AddOwners(self, LinkToID(link))
+		AddItemRackSets(self, link)
+		AddTrinketMenuQueue(self, link)
+	end
+	return a1, a2, a3
 end
 
 local Bliz_ItemRefTooltip_SetHyperlink = ItemRefTooltip.SetHyperlink
 ItemRefTooltip.SetHyperlink = function(self, link, count)
-	Bliz_ItemRefTooltip_SetHyperlink(self, link, count)
-	AddOwners(self, LinkToID(link))
-	AddItemRackSets(self, link)
+	local a1, a2, a3 = Bliz_ItemRefTooltip_SetHyperlink(self, link, count)
+	if link then
+		AddOwners(self, LinkToID(link))
+		AddItemRackSets(self, link)
+	end
+	return a1, a2, a3
 end
 
 local Bliz_GameTooltip_SetLootRollItem = GameTooltip.SetLootRollItem
 GameTooltip.SetLootRollItem = function(self, rollID)
-	Bliz_GameTooltip_SetLootRollItem(self, rollID)
+	local a1, a2, a3 = Bliz_GameTooltip_SetLootRollItem(self, rollID)
 	AddOwners(self, LinkToID(GetLootRollItemLink(rollID)))
+	return a1, a2, a3
 end
 
 local Bliz_GameTooltip_SetAuctionItem = GameTooltip.SetAuctionItem
 GameTooltip.SetAuctionItem = function(self, type, index)
-	Bliz_GameTooltip_SetAuctionItem(self, type, index)
+	local a1, a2, a3 = Bliz_GameTooltip_SetAuctionItem(self, type, index)
 	AddOwners(self, LinkToID(GetAuctionItemLink(type, index)))
+	return a1, a2, a3
 end
 
 --[[ Money Frame Tooltip ]]--
