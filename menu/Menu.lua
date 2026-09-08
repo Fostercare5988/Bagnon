@@ -14,7 +14,7 @@ function BagnonMenu_Show(frame)
 	
 	--Set values
 	BagnonMenuLocked:SetChecked(BagnonSets[frame:GetName()].locked);
-	BagnonMenuStayOnScreen:SetChecked(BagnonSets[frame:GetName()].stayOnScreen);
+	BagnonMenuStayOnScreen:SetChecked(BagnonSets[frame:GetName()].stayOnScreen == 1);
 	local bgSets = BagnonSets[frame:GetName()].bg;
 	BagnonMenuBGSettingsNormalTexture:SetVertexColor(bgSets.r, bgSets.g, bgSets.b, bgSets.a);
 	
@@ -45,11 +45,7 @@ end
 
 --change <frame>'s transparency
 function BagnonMenu_SetAlpha(frame, alpha)
-	if(alpha ~= 1) then
-		BagnonSets[frame:GetName()].alpha = alpha;
-	else
-		BagnonSets[frame:GetName()].alpha = nil
-	end
+	BagnonSets[frame:GetName()].alpha = alpha;
 	frame:SetAlpha(alpha);
 end
 
@@ -152,7 +148,7 @@ function BagnonMenu_ToggleStayOnScreen(frame, checked)
 		BagnonSets[frameName].stayOnScreen = 1;
 		frame:SetClampedToScreen(true);
 	else
-		BagnonSets[frameName].stayOnScreen = nil;
+		BagnonSets[frameName].stayOnScreen = 0;
 		frame:SetClampedToScreen(false);
 	end
 end

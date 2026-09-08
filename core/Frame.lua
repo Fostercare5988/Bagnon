@@ -99,7 +99,7 @@ function BagnonFrame_Load(frame, bags, title)
 		end
 	end
 
-	frame:SetClampedToScreen(BagnonSets[frameName].stayOnScreen)
+	frame:SetClampedToScreen(BagnonSets[frameName].stayOnScreen == 1)
 
 	frame.defaultBags = bags
 
