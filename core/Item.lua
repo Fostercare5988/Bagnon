@@ -36,9 +36,26 @@ local QUALITY_BORDER_BACKDROP = {
 	edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
 	tile = true,
 	tileSize = 8,
-	edgeSize = 12,
-	insets = { left = 2, right = 2, top = 2, bottom = 2 }
+	edgeSize = 16,
+	insets = { left = 0, right = 0, top = 0, bottom = 0 }
 }
+
+-- High-luminance, high-contrast palette for clear distinction (Green vs Blue vs Purple)
+local ENHANCED_QUALITY_COLORS = {
+	[2] = { r = 0.05, g = 1.00, b = 0.15 }, -- Vibrant Emerald Green
+	[3] = { r = 0.00, g = 0.70, b = 1.00 }, -- Radiant Electric Sky Blue
+	[4] = { r = 0.85, g = 0.20, b = 1.00 }, -- Vivid Neon Purple / Magenta
+	[5] = { r = 1.00, g = 0.55, b = 0.00 }, -- Flaming Orange
+	[6] = { r = 0.95, g = 0.85, b = 0.40 }, -- Radiant Gold
+}
+
+local function GetBorderQualityColor(quality)
+	local color = ENHANCED_QUALITY_COLORS[quality]
+	if color then
+		return color.r, color.g, color.b
+	end
+	return GetItemQualityColor(quality)
+end
 
 function BagnonItem_Create(name, parent)
 	--create the button
@@ -260,7 +277,7 @@ function BagnonItem_UpdateBorder(button, quality, player)
 		end
 
 		if quality and quality > 1 then
-			local red, green, blue = GetItemQualityColor(quality)
+			local red, green, blue = GetBorderQualityColor(quality)
 			if qBorder then
 				qBorder:SetBackdropBorderColor(red, green, blue, 1.0)
 				qBorder:Show()
