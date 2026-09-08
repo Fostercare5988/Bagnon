@@ -32,6 +32,14 @@ local function OnHide(self)
 	BagnonItem_OnHide(self or this)
 end
 
+local QUALITY_BORDER_BACKDROP = {
+	edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+	tile = true,
+	tileSize = 8,
+	edgeSize = 12,
+	insets = { left = 2, right = 2, top = 2, bottom = 2 }
+}
+
 function BagnonItem_Create(name, parent)
 	--create the button
 	local item = CreateFrame("Button", name, parent, "BagnonItemTemplate")
@@ -46,6 +54,15 @@ function BagnonItem_Create(name, parent)
 	item.normalTexture = getglobal(name .. "NormalTexture")
 	item.iconTexture = getglobal(name .. "IconTexture")
 	item.countText = getglobal(name .. "Count")
+
+	-- Native modern rarity border frame
+	local qBorder = CreateFrame("Frame", name .. "QualityBorder", item)
+	qBorder:SetPoint("TOPLEFT", item, "TOPLEFT", -2, 2)
+	qBorder:SetPoint("BOTTOMRIGHT", item, "BOTTOMRIGHT", 2, -2)
+	qBorder:SetBackdrop(QUALITY_BORDER_BACKDROP)
+	qBorder:EnableMouse(false)
+	qBorder:Hide()
+	item.qualityBorder = qBorder
 
 	item:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 	item:RegisterForDrag("LeftButton")
@@ -203,28 +220,56 @@ end
 
 function BagnonItem_UpdateBorder(button, quality, player)
 	local bagID = button:GetParent():GetID()
+	local slotID = button:GetID()
 	local border = button.border or getglobal(button:GetName() .. "Border")
+	local qBorder = button.qualityBorder or getglobal(button:GetName() .. "QualityBorder")
 	local normalTexture = button.normalTexture or getglobal(button:GetName() .. "NormalTexture")
 
-	if BagnonSets.qualityBorders then
+	-- Legacy blurry circular ActionButton border is retired in favor of native qualityBorder
+	if border then
+		border:Hide()
+	end
+
+	local enabled = BagnonSets and BagnonSets.qualityBorders and BagnonSets.qualityBorders ~= 0
+
+	if enabled then
 		if not quality then
-			local link = player and BagnonDB and BagnonDB.GetItemData(player, bagID, button:GetID()) or GetContainerItemLink(bagID, button:GetID())
-			if link then
-				_, _, quality = GetItemInfo(link)
+			-- Tier 0: ClassicAPI direct CGItem resolution (zero string allocations, 0 GC churn)
+			local itemID
+			if C_Container and C_Container.GetContainerItemID then
+				itemID = C_Container.GetContainerItemID(bagID, slotID)
+			end
+
+			if itemID then
+				local _, _, q = GetItemInfo(itemID)
+				quality = q
+			else
+				-- Tier 1 fallback: Link extraction / BagnonDB cached data
+				local link = player and BagnonDB and BagnonDB.GetItemData(player, bagID, slotID) or GetContainerItemLink(bagID, slotID)
+				if link then
+					local _, _, rawID = string.find(link, "item:(%d+)")
+					if rawID then
+						local _, _, q = GetItemInfo(tonumber(rawID))
+						quality = q
+					else
+						local _, _, q = GetItemInfo(link)
+						quality = q
+					end
+				end
 			end
 		end
 
 		if quality and quality > 1 then
 			local red, green, blue = GetItemQualityColor(quality)
-			if border then
-				border:SetVertexColor(red, green, blue, 0.5)
-				border:Show()
+			if qBorder then
+				qBorder:SetBackdropBorderColor(red, green, blue, 1.0)
+				qBorder:Show()
 			end
-		elseif border then
-			border:Hide()
+		elseif qBorder then
+			qBorder:Hide()
 		end
-	elseif border then
-		border:Hide()
+	elseif qBorder then
+		qBorder:Hide()
 	end
 
 	--ammo and special bag slot coloring

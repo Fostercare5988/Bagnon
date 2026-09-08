@@ -50,7 +50,7 @@ end
 --[[ Variable Loading ]]--
 
 local function LoadVariables()
-	local currentVersion = GetAddOnMetadata("Bagnon", "Version") or "1.5.0"
+	local currentVersion = GetAddOnMetadata("Bagnon", "Version") or "1.5.2"
 	if not BagnonSets then
 		BagnonSets = {
 			showBagsAtBank = 1,

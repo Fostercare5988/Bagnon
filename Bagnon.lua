@@ -81,7 +81,7 @@ function Bagnon_ToggleBags(self)
 		if btn and btn.SetText then btn:SetText(BAGNON_HIDEBAGS); end
 	else
 		BagnonBags:Hide();
-		BagnonSets["Bagnon"].bagsShown = nil;
+		BagnonSets["Bagnon"].bagsShown = 0;
 		if btn and btn.SetText then btn:SetText(BAGNON_SHOWBAGS); end
 	end
 	

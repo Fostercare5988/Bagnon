@@ -84,11 +84,18 @@ function BagnonFrame_Load(frame, bags, title)
 	BagnonFrame_SetStrata(frame, BagnonSets[frameName].strata or 3)
 
 	local bagFrame = getglobal(frameName .. "Bags")
-	if bagFrame and (BagnonSets[frameName].bagsShown or BagnonSets[frameName].bagsShown == nil) then
-		bagFrame:Show()
-		local showBagsBtn = getglobal(frameName .. "ShowBags")
-		if showBagsBtn then
-			showBagsBtn:SetText(BAGNON_HIDEBAGS)
+	local showBagsBtn = getglobal(frameName .. "ShowBags")
+	if bagFrame then
+		if BagnonSets[frameName].bagsShown == 1 then
+			bagFrame:Show()
+			if showBagsBtn then
+				showBagsBtn:SetText(BAGNON_HIDEBAGS)
+			end
+		else
+			bagFrame:Hide()
+			if showBagsBtn then
+				showBagsBtn:SetText(BAGNON_SHOWBAGS)
+			end
 		end
 	end
 

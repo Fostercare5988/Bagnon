@@ -1,7 +1,7 @@
 # Bagnon
 
 [![Interface: 1.12.1](https://img.shields.io/badge/Interface-1.12.1%20(5875)-orange.svg)](https://github.com/Fostercare5988/Bagnon)
-[![Version: 1.5.0](https://img.shields.io/badge/Version-1.5.0-blue.svg)](https://github.com/Fostercare5988/Bagnon/releases)
+[![Version: 1.5.2](https://img.shields.io/badge/Version-1.5.2-blue.svg)](https://github.com/Fostercare5988/Bagnon/releases)
 [![ClassicAPI: v1.14.0+](https://img.shields.io/badge/ClassicAPI-v1.14.0+-green.svg)](https://github.com/brues-code/ClassicAPI)
 [![SuperWoW: v2.2+](https://img.shields.io/badge/SuperWoW-v2.2+-brightgreen.svg)](https://github.com/balakethelock/SuperWoW)
 [![NamPower: v4.6.3+](https://img.shields.io/badge/NamPower-v4.6.3+-blueviolet.svg)](https://github.com/Emyrk/nampower)
@@ -9,7 +9,7 @@
 [![DXVK: Vulkan](https://img.shields.io/badge/DXVK-Vulkan-red.svg)](https://github.com/doitsujin/dxvk)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Bagnon v1.5.0** is an enterprise-grade, single-window inventory and bank engine engineered natively for **World of Warcraft 1.12.1 (Build 5875)** running on the **Enhanced Client Extension Stack** (**ClassicAPI v1.14.0+**, **SuperWoW v2.2+**, **NamPower 4.6.3+**, **UnitXP SP3**, and **DXVK**).
+**Bagnon v1.5.2** is an enterprise-grade, single-window inventory and bank engine engineered natively for **World of Warcraft 1.12.1 (Build 5875)** running on the **Enhanced Client Extension Stack** (**ClassicAPI v1.14.0+**, **SuperWoW v2.2+**, **NamPower 4.6.3+**, **UnitXP SP3**, and **DXVK**).
 
 Bagnon merges all fragmented inventory and bank bags into a unified, resizable grid. It enables remote bank viewing from anywhere in the world, memoized instant substring search, cross-character alt item aggregation on tooltips, and total realm gold tracking.
 
@@ -51,7 +51,7 @@ Bagnon is engineered around strict low-level system integration:
 - **Quick Bank Button**: 1-click bank viewer icon integrated directly into the inventory window.
 
 ### 2. Item Rarity & Specialized Bag Highlighting
-- **Quality Borders**: Automatically tints item borders based on item rarity (Poor, Common, Uncommon, Rare, Epic, Legendary).
+- **Native Quality Borders**: Crisp, engine-accelerated rarity borders (Uncommon, Rare, Epic, Legendary, Artifact) rendered natively using `Interface\Tooltips\UI-Tooltip-Border` and ClassicAPI `C_Container` direct memory lookups, eliminating any need for external UI tweak addons.
 - **Color-Coded Special Bag Slots**:
   - **Yellow**: Ammo pouches and Soul shard bags.
   - **Green**: Profession bags (Herbalism, Mining, Enchanting, Engineering).
@@ -111,6 +111,10 @@ Bagnon is engineered around strict low-level system integration:
 ---
 
 ## 📜 Changelog
+
+### v1.5.2
+- **Native Modern Item Rarity Borders**: Replaced legacy blurry circular action borders with crisp, square backdrop frames (`Interface\Tooltips\UI-Tooltip-Border`) anchored directly to item slots. Powered by ClassicAPI `C_Container.GetContainerItemID` for zero-allocation, instant resolution directly from client memory without relying on external tweak addons.
+- **Hide Bags Session Persistence**: Resolved a bug where toggling "Hide Bags" was deleted from `SavedVariables` across sessions due to `nil` assignment, causing bag slots to default back to visible on login/reload.
 
 ### v1.5.1 (Inventory Trio Synergy)
 - **ItemRack Tooltip Integration**: Extended `GameTooltip.SetBagItem`, `GameTooltip.SetInventoryItem`, and `GameTooltip.SetHyperlink` to display active ItemRack set membership (`ItemRack: <Set Names>`).

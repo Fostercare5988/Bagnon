@@ -118,11 +118,11 @@ function Banknon_ToggleSlots(self)
 		if btn and btn.SetText then btn:SetText(BAGNON_HIDEBAGS) end
 	else
 		BanknonBags:Hide()
-		BagnonSets["Banknon"].bagsShown = nil
+		BagnonSets["Banknon"].bagsShown = 0
 		if btn and btn.SetText then btn:SetText(BAGNON_SHOWBAGS) end
 	end
 
-	Banknon_UpdatePurchaseButtonVis(not BagnonSets["Banknon"].bagsShown)
+	Banknon_UpdatePurchaseButtonVis(BagnonSets["Banknon"].bagsShown ~= 1)
 end
 
 function Banknon_UpdateSlotCost()

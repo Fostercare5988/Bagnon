@@ -31,7 +31,7 @@ function BagnonOptions_OnShow(self)
 
 	getglobal(frameName .. "Tooltips"):SetChecked(BagnonSets.showTooltips)
 	getglobal(frameName .. "ForeverTooltips"):SetChecked(BagnonSets.showForeverTooltips)
-	getglobal(frameName .. "Quality"):SetChecked(BagnonSets.qualityBorders)
+	getglobal(frameName .. "Quality"):SetChecked(BagnonSets.qualityBorders and BagnonSets.qualityBorders ~= 0)
 
 	getglobal(frameName .. "ShowBagnon1"):SetChecked(BagnonSets.showBagsAtBank)
 	--getglobal(frameName .. "ShowBagnon2"):SetChecked(BagnonSets.showBagsAtVendor)
@@ -80,7 +80,7 @@ function BagnonOptions_ShowQualityBorders(enable)
 	if enable then
 		BagnonSets.qualityBorders = 1
 	else
-		BagnonSets.qualityBorders = nil
+		BagnonSets.qualityBorders = 0
 	end
 
 	if Bagnon and Bagnon:IsShown() then
