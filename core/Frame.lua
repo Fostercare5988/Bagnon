@@ -157,6 +157,15 @@ function BagnonFrame_Generate(frame)
 		BagnonFrame_AddBag(frame, bagID)
 	end
 
+	local sortBtn = getglobal(frameName .. "SortButton")
+	if sortBtn then
+		if Bagnon_IsCachedFrame and Bagnon_IsCachedFrame(frame) then
+			sortBtn:SetAlpha(0.4)
+		else
+			sortBtn:SetAlpha(1.0)
+		end
+	end
+
 	BagnonFrame_Layout(frame, frameSets.cols, frameSets.space)
 	--frame:Show()
 end
@@ -640,3 +649,81 @@ function BagnonFrame_OrderBags(frame, reverse)
 		end
 	end
 end
+
+--[[
+	Modern Bag/Bank Sorting (ClassicAPI v1.15.0+)
+--]]
+
+function BagnonFrameSort_OnClick(frame, button)
+	local btn = button or arg1
+	if not frame then return end
+
+	-- Right-Click: toggle sort direction (Left-to-Right vs Right-to-Left)
+	if btn == "RightButton" then
+		if C_Container and C_Container.SetSortBagsRightToLeft and C_Container.GetSortBagsRightToLeft then
+			local current = C_Container.GetSortBagsRightToLeft()
+			local newOrder = not current
+			C_Container.SetSortBagsRightToLeft(newOrder)
+			PlaySound("igMainMenuOption")
+			local orderStr = newOrder and BAGNON_SORT_RIGHT_TO_LEFT or BAGNON_SORT_LEFT_TO_RIGHT
+			BagnonMsg(format(BAGNON_SORT_DIRECTION_CHANGED, orderStr))
+			local sortBtn = getglobal(frame:GetName() .. "SortButton")
+			if sortBtn and sortBtn:IsShown() and GameTooltip:IsOwned(sortBtn) then
+				BagnonFrameSort_OnEnter(sortBtn)
+			end
+		end
+		return
+	end
+
+	-- Left-Click: execute sort
+	if Bagnon_IsCachedFrame and Bagnon_IsCachedFrame(frame) then
+		BagnonMsg(BAGNON_CANNOT_SORT_OFFLINE)
+		return
+	end
+
+	if frame:GetName() == "Banknon" then
+		if not bgn_atBank then
+			BagnonMsg(BAGNON_CANNOT_SORT_BANK_AWAY)
+			return
+		end
+		if C_Container and C_Container.SortBankBags then
+			PlaySound("igMainMenuOption")
+			BagnonMsg(BAGNON_SORTING_BANK)
+			C_Container.SortBankBags()
+		end
+	else
+		if C_Container and C_Container.SortBags then
+			PlaySound("igMainMenuOption")
+			BagnonMsg(BAGNON_SORTING_BAGS)
+			C_Container.SortBags()
+		end
+	end
+end
+
+function BagnonFrameSort_OnEnter(button)
+	local f = button or this
+	if not f then return end
+	local frame = f:GetParent()
+	local isBank = (frame and frame:GetName() == "Banknon")
+
+	GameTooltip:SetOwner(f, "ANCHOR_TOPRIGHT")
+	GameTooltip:SetText(isBank and BAGNON_SORT_BANK or BAGNON_SORT_BAGS, 1, 1, 1)
+
+	if Bagnon_IsCachedFrame and Bagnon_IsCachedFrame(frame) then
+		GameTooltip:AddLine(BAGNON_CANNOT_SORT_OFFLINE, 1, 0.2, 0.2)
+	elseif isBank and not bgn_atBank then
+		GameTooltip:AddLine(BAGNON_CANNOT_SORT_BANK_AWAY, 1, 0.2, 0.2)
+	else
+		GameTooltip:AddLine(BAGNON_SORT_TOOLTIP_LEFT, 0.8, 0.8, 0.8)
+		if C_Container and C_Container.GetSortBagsRightToLeft then
+			local r2l = C_Container.GetSortBagsRightToLeft()
+			local orderStr = r2l and BAGNON_SORT_RIGHT_TO_LEFT or BAGNON_SORT_LEFT_TO_RIGHT
+			GameTooltip:AddLine(format(BAGNON_SORT_TOOLTIP_RIGHT, orderStr), 0.6, 0.8, 1)
+		end
+	end
+	GameTooltip:Show()
+end
+
+function BagnonFrameSort_OnLeave()
+	GameTooltip:Hide()
+end

@@ -13,12 +13,14 @@
 BINDING_HEADER_BAGNON = "Bagnon"
 BINDING_NAME_BAGNON_TOGGLE = "Toggle Bagnon"
 BINDING_NAME_BANKNON_TOGGLE = "Toggle Banknon"
+BINDING_NAME_BAGNON_SORT = "Sort Bags"
 
 --[[ Slash Commands ]]--
 
 BAGNON_COMMAND_HELP = "help"
 BAGNON_COMMAND_SHOWBAGS = "bags"
 BAGNON_COMMAND_SHOWBANK = "bank"
+BAGNON_COMMAND_SORT = "sort"
 BAGNON_COMMAND_REVERSE = "reverse"
 BAGNON_COMMAND_OVERRIDE_BANK = "overridebank"
 BAGNON_COMMAND_TOGGLE_TOOLTIPS = "tooltips"
@@ -31,6 +33,7 @@ BAGNON_COMMAND_DEBUG_OFF = "nodebug"
 BAGNON_HELP_TITLE = "Bagnon commands:"
 BAGNON_HELP_SHOWBAGS = "/bgn " .. BAGNON_COMMAND_SHOWBAGS .. " - Show/Hide Bagnon."
 BAGNON_HELP_SHOWBANK = "/bgn " .. BAGNON_COMMAND_SHOWBANK .. " - Show/Hide Banknon."
+BAGNON_HELP_SORT = "/bgn " .. BAGNON_COMMAND_SORT .. " - Clean up and sort bags."
 BAGNON_HELP_HELP = "/bgn " .. BAGNON_COMMAND_HELP .. " - Display slash commands."
 
 --/bgn debug
@@ -55,6 +58,19 @@ BAGNON_BANK_TITLE = "%s's Bank"
 --Bag Button
 BAGNON_SHOWBAGS = "Show Bags"
 BAGNON_HIDEBAGS = "Hide Bags"
+
+--Sort Button
+BAGNON_SORT_BAGS = "Sort Bags"
+BAGNON_SORT_BANK = "Sort Bank"
+BAGNON_SORT_TOOLTIP_LEFT = "<Left-Click> to clean up and sort items."
+BAGNON_SORT_TOOLTIP_RIGHT = "<Right-Click> to toggle sort direction (Currently: %s)."
+BAGNON_SORT_LEFT_TO_RIGHT = "Top-Left to Bottom-Right"
+BAGNON_SORT_RIGHT_TO_LEFT = "Bottom-Right to Top-Left"
+BAGNON_SORT_DIRECTION_CHANGED = "Bag sorting direction changed to: %s."
+BAGNON_CANNOT_SORT_OFFLINE = "Cannot sort bags of an offline character."
+BAGNON_CANNOT_SORT_BANK_AWAY = "You must be at a bank to sort bank bags."
+BAGNON_SORTING_BAGS = "Sorting bags..."
+BAGNON_SORTING_BANK = "Sorting bank..."
 
 --General Options Menu
 BAGNON_MAINOPTIONS_TITLE = "Bagnon Options"

@@ -2,11 +2,11 @@
 	Banknon
 		Combines the player's bank into a single frame
 		Author: Tuller, McPewPew, Fostercare5988
-		Built natively for ClassicAPI, SuperWoW 2.2+, NamPower 4.6.3+, UnitXP SP3, DXVK
+		Built natively for ClassicAPI v1.15.0+, SuperWoW 2.2+, NamPower 4.6.3+, UnitXP SP3, DXVK
 --]]
 
--- Strict Engine Dependency Guard (Mandatory ClassicAPI v1.14.0+ & SuperWoW v2.2+)
-local MIN_CLASSIC_API = 11400
+-- Strict Engine Dependency Guard (Mandatory ClassicAPI v1.15.0+ & SuperWoW v2.2+)
+local MIN_CLASSIC_API = 11500
 
 if not (CLASSIC_API_VERSION and SUPERWOW_VERSION) or 
    (type(CLASSIC_API_VERSION) == "number" and CLASSIC_API_VERSION < MIN_CLASSIC_API) then
@@ -77,6 +77,13 @@ function Banknon_OnEvent(arg1_param, arg2_param, arg3_param)
 end
 
 function Banknon_Load(frame)
+	local sortTex = "Interface\\AddOns\\Bagnon\\assets\\sort.blp"
+	local sortBtn = getglobal(frame:GetName() .. "SortButton")
+	if sortBtn then
+		sortBtn:SetNormalTexture(sortTex)
+		sortBtn:SetPushedTexture(sortTex)
+	end
+
 	BagnonFrame_Load(frame, {-1, 5, 6, 7, 8, 9, 10}, BAGNON_BANK_TITLE)
 
 	if CT_BankFrame_AcceptFrame then

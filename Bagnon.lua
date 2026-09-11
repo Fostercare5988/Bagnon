@@ -2,16 +2,16 @@
 	Bagnon
 		Displays the player's inventory in a single frame
 		Author: Tuller, McPewPew, Fostercare5988
-		Built natively for ClassicAPI v1.14.0+, SuperWoW 2.2+, NamPower 4.6.3+, UnitXP SP3, DXVK
+		Built natively for ClassicAPI v1.15.0+, SuperWoW 2.2+, NamPower 4.6.3+, UnitXP SP3, DXVK
 --]]
 
--- Strict Engine Dependency Guard (Mandatory ClassicAPI v1.14.0+ & SuperWoW v2.2+)
-local MIN_CLASSIC_API = 11400
+-- Strict Engine Dependency Guard (Mandatory ClassicAPI v1.15.0+ & SuperWoW v2.2+)
+local MIN_CLASSIC_API = 11500
 
 if not (CLASSIC_API_VERSION and SUPERWOW_VERSION) or 
    (type(CLASSIC_API_VERSION) == "number" and CLASSIC_API_VERSION < MIN_CLASSIC_API) then
 	if DEFAULT_CHAT_FRAME then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffff2020[Bagnon Fatal Error]|r Bagnon requires ClassicAPI (v1.14.0+) & SuperWoW (v2.2+)! Please ensure both DLLs are loaded.", 1, 0.2, 0.2)
+		DEFAULT_CHAT_FRAME:AddMessage("|cffff2020[Bagnon Fatal Error]|r Bagnon requires ClassicAPI (v1.15.0+) & SuperWoW (v2.2+)! Please ensure both DLLs are loaded.", 1, 0.2, 0.2)
 	end
 	return
 end
@@ -47,11 +47,18 @@ function Bagnon_OnEvent(arg1_param, arg2_param, arg3_param)
 end
 
 function Bagnon_Load()
-	local texPath = "Interface\\AddOns\\Bagnon\\assets\\bank.blp"
+	local bankTex = "Interface\\AddOns\\Bagnon\\assets\\bank.blp"
 	local bankBtn = getglobal("BagnonOpenBank")
 	if bankBtn then
-		bankBtn:SetNormalTexture(texPath)
-		bankBtn:SetPushedTexture(texPath)
+		bankBtn:SetNormalTexture(bankTex)
+		bankBtn:SetPushedTexture(bankTex)
+	end
+
+	local sortTex = "Interface\\AddOns\\Bagnon\\assets\\sort.blp"
+	local sortBtn = getglobal("BagnonSortButton")
+	if sortBtn then
+		sortBtn:SetNormalTexture(sortTex)
+		sortBtn:SetPushedTexture(sortTex)
 	end
 
 	BagnonFrame_Load(Bagnon, {-2, 0, 1, 2, 3, 4}, BAGNON_INVENTORY_TITLE);

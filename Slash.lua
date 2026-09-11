@@ -10,6 +10,7 @@ function BagnonSlash_DisplayHelp()
 	BagnonMsg(BAGNON_HELP_HELP);
 	BagnonMsg(BAGNON_HELP_SHOWBAGS);
 	BagnonMsg(BAGNON_HELP_SHOWBANK);
+	BagnonMsg(BAGNON_HELP_SORT);
 	
 	if BagnonDB then
 		BagnonMsg(BAGNON_FOREVER_HELP_DELETE_CHARACTER)
@@ -39,6 +40,22 @@ SlashCmdList["BagnonCOMMAND"] = function(msg)
 			BagnonFrame_Toggle("Banknon");
 		elseif(cmd == BAGNON_COMMAND_SHOWBAGS) then
 			BagnonFrame_Toggle("Bagnon");
+		elseif(cmd == BAGNON_COMMAND_SORT) then
+			if Banknon and Banknon:IsShown() and not (Bagnon_IsCachedFrame and Bagnon_IsCachedFrame(Banknon)) and bgn_atBank then
+				if C_Container and C_Container.SortBankBags then
+					PlaySound("igMainMenuOption")
+					BagnonMsg(BAGNON_SORTING_BANK)
+					C_Container.SortBankBags()
+				end
+			else
+				if Bagnon and Bagnon_IsCachedFrame and Bagnon_IsCachedFrame(Bagnon) then
+					BagnonMsg(BAGNON_CANNOT_SORT_OFFLINE)
+				elseif C_Container and C_Container.SortBags then
+					PlaySound("igMainMenuOption")
+					BagnonMsg(BAGNON_SORTING_BAGS)
+					C_Container.SortBags()
+				end
+			end
 		elseif(cmd == BAGNON_COMMAND_DEBUG_ON) then
 			BagnonSets.noDebug = nil;
 			BagnonMsg(BAGNON_DEBUG_ENABLED);

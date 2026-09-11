@@ -5,4 +5,7 @@
 	<Binding name="BANKNON_TOGGLE" description="Toggle Bank">
 		BagnonFrame_Toggle("Banknon");
 	</Binding>
+	<Binding name="BAGNON_SORT" description="Sort Bags">
+		if C_Container and C_Container.SortBags then PlaySound("igMainMenuOption"); BagnonMsg(BAGNON_SORTING_BAGS); C_Container.SortBags(); end
+	</Binding>
 </Bindings>
