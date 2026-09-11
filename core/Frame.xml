@@ -74,17 +74,17 @@
 			</Button>
 
 			<Button name="$parentSortButton">
-				<Size x="16" y="16"/>
+				<Size x="18" y="18"/>
 				<Anchors>
-					<Anchor point="TOPRIGHT">
+					<Anchor point="CENTER" relativeTo="$parentCloseButton" relativePoint="CENTER">
 						<Offset>
-							<AbsDimension x="-26" y="-7"/>
+							<AbsDimension x="-23" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
 				<NormalTexture file="Interface\AddOns\Bagnon\assets\sort.blp" setAllPoints="true"/>
-				<PushedTexture file="Interface\AddOns\Bagnon\assets\sort.blp" setAllPoints="true"/>
-				<HighlightTexture file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD" setAllPoints="true"/>
+				<PushedTexture file="Interface\AddOns\Bagnon\assets\sort-pushed.blp" setAllPoints="true"/>
+				<HighlightTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD" setAllPoints="true"/>
 				<Scripts>
 					<OnLoad>
 						this:RegisterForClicks("LeftButtonUp", "RightButtonUp");
