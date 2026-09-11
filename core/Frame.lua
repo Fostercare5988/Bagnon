@@ -720,7 +720,6 @@ function BagnonFrameSort_OnEnter(button)
 			local orderStr = r2l and BAGNON_SORT_RIGHT_TO_LEFT or BAGNON_SORT_LEFT_TO_RIGHT
 			GameTooltip:AddLine(format(BAGNON_SORT_TOOLTIP_RIGHT, orderStr), 0.6, 0.8, 1)
 		end
-		GameTooltip:AddLine("Powered by ClassicAPI C++ engine", 0, 0.7, 1)
 	end
 	GameTooltip:Show()
 end
