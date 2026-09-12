@@ -278,46 +278,74 @@ function BagnonItem_Update(item)
 	SetItemButtonCount(item, itemCount)
 end
 
-local function get_temp_enchant_texture(enchantID, itemName)
-	if enchantID and type(C_Item) == "table" and type(C_Item.GetEnchantInfo) == "function" then
-		local ok, info = pcall(C_Item.GetEnchantInfo, enchantID)
-		if ok and type(info) == "table" and info.spellID and type(C_Spell) == "table" and type(C_Spell.GetSpellTexture) == "function" then
-			local tex = C_Spell.GetSpellTexture(info.spellID)
-			if tex then return tex end
-		end
-	end
-	local lower = itemName and string.lower(itemName) or ""
-	if string.find(lower, "oil") then
+local bagnonEnchantTooltip = CreateFrame("GameTooltip", "BagnonEnchantTooltip", UIParent, "GameTooltipTemplate")
+bagnonEnchantTooltip:SetOwner(UIParent, "ANCHOR_NONE")
+
+local function get_enchant_texture_by_name(enchantName)
+	if not enchantName then return "Interface\\Icons\\Ability_Poisons" end
+	local lower = string.lower(enchantName)
+
+	-- Dissolvent Poison: purple icon for custom 60m poison
+	if string.find(lower, "dissolvent") then
+		return "Interface\\Icons\\Spell_Nature_SlowPoison"
+	-- Instant Poison: green icon
+	elseif string.find(lower, "instant") then
+		return "Interface\\Icons\\Ability_Poisons"
+	-- Deadly Poison: dual wield skull icon
+	elseif string.find(lower, "deadly") then
+		return "Interface\\Icons\\Ability_Rogue_DualWeild"
+	-- Crippling Poison: yellow vial
+	elseif string.find(lower, "crippling") then
 		return "Interface\\Icons\\INV_Potion_19"
-	elseif string.find(lower, "stone") or string.find(lower, "weight") then
+	-- Mind-numbing Poison: blue skull
+	elseif string.find(lower, "mind") then
+		return "Interface\\Icons\\Spell_Nature_NullifyDisease"
+	-- Corrosive Poison: corrosive poison vial
+	elseif string.find(lower, "corrosive") then
+		return "Interface\\Icons\\INV_Corrosive_01"
+	-- Wound Poison
+	elseif string.find(lower, "wound") then
+		return "Interface\\Icons\\INV_Misc_Herb_16"
+	-- Oils
+	elseif string.find(lower, "shadow oil") then
+		return "Interface\\Icons\\Spell_Shadow_BloodBoil"
+	elseif string.find(lower, "frost oil") then
+		return "Interface\\Icons\\Spell_Ice_Lament"
+	elseif string.find(lower, "mana oil") or string.find(lower, "wizard oil") or string.find(lower, "oil") then
+		return "Interface\\Icons\\INV_Potion_19"
+	-- Stones
+	elseif string.find(lower, "weight") then
+		return "Interface\\Icons\\INV_Stone_WeightStone_04"
+	elseif string.find(lower, "stone") then
 		return "Interface\\Icons\\INV_Stone_SharpeningStone_04"
+	-- Shaman Weapon Imbues
+	elseif string.find(lower, "windfury") then
+		return "Interface\\Icons\\Spell_Nature_Cyclone"
+	elseif string.find(lower, "flametongue") then
+		return "Interface\\Icons\\Spell_Fire_FlameTongue"
+	elseif string.find(lower, "frostbrand") then
+		return "Interface\\Icons\\Spell_Frost_FrostBrand"
+	elseif string.find(lower, "rockbiter") then
+		return "Interface\\Icons\\Spell_Nature_RockBiter"
 	end
+
 	return "Interface\\Icons\\Ability_Poisons"
 end
 
-local function format_enchant_duration(expirationMs, charges)
-	local s = (expirationMs and expirationMs > 0) and math.floor(expirationMs / 1000) or 0
-	local timeStr = ""
-	if s >= 3600 then
-		timeStr = string.format("%dh", math.floor(s / 3600))
-	elseif s >= 60 then
-		timeStr = string.format("%dm", math.floor(s / 60))
-	elseif s > 0 then
-		timeStr = string.format("%ds", s)
-	end
-
-	local text = timeStr
+local function format_bag_enchant_duration(timeStr, durVal, unitChar, charges)
+	local text = timeStr or ""
 	local r, g, b = 1.0, 1.0, 1.0
 	if charges and charges > 0 and charges <= 5 then
 		text = charges .. "c"
 		r, g, b = 1.0, 0.4, 0.1
 	elseif charges and charges > 0 and charges <= 10 then
-		text = (timeStr ~= "") and (timeStr .. "·" .. charges) or (charges .. "c")
+		text = (text ~= "") and (text .. "·" .. charges) or (charges .. "c")
 		r, g, b = 1.0, 0.7, 0.2
-	elseif s > 0 and s < 120 then
+	elseif unitChar == "m" and durVal and durVal < 2 then
+		r, g, b = 1.0, 0.2, 0.2
+	elseif unitChar == "s" then
 		r, g, b = 1.0, 0.2, 0.2
 	end
-
 	return text, r, g, b
 end
 
@@ -345,34 +373,40 @@ function BagnonItem_UpdateEnchant(item)
 		return
 	end
 
-	local itemLink = GetContainerItemLink(bagID, slotID)
-	if not itemLink then
-		overlay:Hide()
-		return
-	end
-
-	local itemName, _, _, _, _, _, _, itemEquipLoc = GetItemInfo(itemLink)
-	local isWeapon = (itemEquipLoc == "INVTYPE_WEAPON" or itemEquipLoc == "INVTYPE_2HWEAPON" or
-		itemEquipLoc == "INVTYPE_WEAPONMAINHAND" or itemEquipLoc == "INVTYPE_WEAPONOFFHAND")
-
-	if not isWeapon then
-		overlay:Hide()
-		return
-	end
-
-	if type(C_Item) == "table" and type(C_Item.GetItemTempEnchantInfo) == "function" then
-		local ok, hasEnchant, expirationMs, charges, enchantID = pcall(C_Item.GetItemTempEnchantInfo, { bagID = bagID, slotIndex = slotID })
-		if ok and hasEnchant then
-			local tex = get_temp_enchant_texture(enchantID, itemName)
-			overlay.icon:SetTexture(tex)
-			overlay.iconFrame:Show()
-
-			local text, r, g, b = format_enchant_duration(expirationMs, charges)
-			overlay.duration:SetText(text)
-			overlay.duration:SetTextColor(r, g, b)
-			overlay.duration:Show()
-			overlay:Show()
+	-- Fast empty check via C_Container
+	if C_Container and C_Container.GetContainerItemID then
+		local cid = C_Container.GetContainerItemID(bagID, slotID)
+		if not cid then
+			overlay:Hide()
 			return
+		end
+	end
+
+	bagnonEnchantTooltip:ClearLines()
+	bagnonEnchantTooltip:SetBagItem(bagID, slotID)
+	local n = bagnonEnchantTooltip:NumLines()
+	for i = 2, n do
+		local line = getglobal("BagnonEnchantTooltipTextLeft" .. i)
+		if line then
+			local text = line:GetText()
+			if text then
+				local _, _, name, durVal, durUnit = string.find(text, "^(.-)%s*%(%s*(%d+)%s*(%a+)%s*%)")
+				if name and name ~= "" then
+					local _, _, charges = string.find(text, "%(%s*(%d+)%s*charges?%s*%)")
+					local tex = get_enchant_texture_by_name(name)
+					overlay.icon:SetTexture(tex)
+					overlay.iconFrame:Show()
+
+					local unitChar = string.lower(string.sub(durUnit or "m", 1, 1))
+					local timeStr = (durVal or "") .. unitChar
+					local badgeText, r, g, b = format_bag_enchant_duration(timeStr, tonumber(durVal), unitChar, tonumber(charges))
+					overlay.duration:SetText(badgeText)
+					overlay.duration:SetTextColor(r, g, b)
+					overlay.duration:Show()
+					overlay:Show()
+					return
+				end
+			end
 		end
 	end
 
