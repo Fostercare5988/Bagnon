@@ -374,9 +374,33 @@ function BagnonItem_UpdateEnchant(item)
 	end
 
 	-- Fast empty check via C_Container
+	local cid
 	if C_Container and C_Container.GetContainerItemID then
-		local cid = C_Container.GetContainerItemID(bagID, slotID)
+		cid = C_Container.GetContainerItemID(bagID, slotID)
 		if not cid then
+			overlay:Hide()
+			return
+		end
+	end
+
+	-- Fast C++ weapon check via itemEquipLoc (INVTYPE_WEAPON, 2HWEAPON, WEAPONMAINHAND, WEAPONOFFHAND)
+	-- Skip 98%+ of bag slots (armor, potions, reagents, quest items) in nanoseconds without tooltip scanning
+	if cid then
+		local _, _, _, _, _, _, _, itemEquipLoc = GetItemInfo(cid)
+		if itemEquipLoc ~= "INVTYPE_WEAPON" and itemEquipLoc ~= "INVTYPE_2HWEAPON" and
+		   itemEquipLoc ~= "INVTYPE_WEAPONMAINHAND" and itemEquipLoc ~= "INVTYPE_WEAPONOFFHAND" then
+			overlay:Hide()
+			return
+		end
+	else
+		local link = GetContainerItemLink(bagID, slotID)
+		if not link then
+			overlay:Hide()
+			return
+		end
+		local _, _, _, _, _, _, _, itemEquipLoc = GetItemInfo(link)
+		if itemEquipLoc ~= "INVTYPE_WEAPON" and itemEquipLoc ~= "INVTYPE_2HWEAPON" and
+		   itemEquipLoc ~= "INVTYPE_WEAPONMAINHAND" and itemEquipLoc ~= "INVTYPE_WEAPONOFFHAND" then
 			overlay:Hide()
 			return
 		end
