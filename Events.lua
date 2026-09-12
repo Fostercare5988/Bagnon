@@ -58,13 +58,19 @@ local function LoadVariables()
 			showBankAtBank = 1,
 			showTooltips = 1,
 			qualityBorders = 1,
+			enchantBadges = 1,
 			showForeverTooltips = 1,
 			version = currentVersion,
 		}
 		BagnonMsg(BAGNON_INITIALIZED)
-	elseif BagnonSets.version ~= currentVersion then
-		BagnonSets.version = currentVersion
-		BagnonMsg(format(BAGNON_UPDATED, currentVersion))
+	else
+		if BagnonSets.enchantBadges == nil then
+			BagnonSets.enchantBadges = 1
+		end
+		if BagnonSets.version ~= currentVersion then
+			BagnonSets.version = currentVersion
+			BagnonMsg(format(BAGNON_UPDATED, currentVersion))
+		end
 	end
 end
 

@@ -81,6 +81,42 @@ function BagnonItem_Create(name, parent)
 	qBorder:Hide()
 	item.qualityBorder = qBorder
 
+	-- Native modern weapon enchant overlay frame
+	local overlay = CreateFrame("Frame", name .. "EnchantOverlay", item)
+	overlay:SetAllPoints(item)
+	overlay:EnableMouse(false)
+	if item.GetFrameLevel then
+		overlay:SetFrameLevel(item:GetFrameLevel() + 3)
+	end
+
+	local iconFrame = CreateFrame("Frame", nil, overlay)
+	iconFrame:SetWidth(14)
+	iconFrame:SetHeight(14)
+	iconFrame:SetPoint("TOPRIGHT", overlay, "TOPRIGHT", -1, -1)
+
+	local iconBg = iconFrame:CreateTexture(nil, "BACKGROUND")
+	iconBg:SetPoint("TOPLEFT", iconFrame, "TOPLEFT", 0, 0)
+	iconBg:SetPoint("BOTTOMRIGHT", iconFrame, "BOTTOMRIGHT", 0, 0)
+	iconBg:SetTexture(0, 0, 0, 0.85)
+
+	local icon = iconFrame:CreateTexture(nil, "ARTWORK")
+	icon:SetPoint("TOPLEFT", iconFrame, "TOPLEFT", 1, -1)
+	icon:SetPoint("BOTTOMRIGHT", iconFrame, "BOTTOMRIGHT", -1, 1)
+	icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+	overlay.icon = icon
+	overlay.iconFrame = iconFrame
+
+	local duration = overlay:CreateFontString(nil, "OVERLAY")
+	duration:SetFont("Fonts\\FRIZQT__.TTF", 9, "OUTLINE")
+	duration:SetPoint("TOPRIGHT", iconFrame, "BOTTOMRIGHT", 0, -1)
+	duration:SetShadowOffset(1, -1)
+	duration:SetShadowColor(0, 0, 0, 1)
+	duration:SetTextColor(1.0, 1.0, 1.0)
+	overlay.duration = duration
+
+	overlay:Hide()
+	item.enchantOverlay = overlay
+
 	item:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 	item:RegisterForDrag("LeftButton")
 
@@ -211,6 +247,9 @@ function BagnonItem_Update(item)
 
 		--hide cooldown since there isn't one for linked items
 		BagnonItem_UpdateCooldown(bagID, item)
+		if item.enchantOverlay then
+			item.enchantOverlay:Hide()
+		end
 	else
 		item.isLink = nil
 
@@ -220,10 +259,14 @@ function BagnonItem_Update(item)
 		if texture then
 			BagnonItem_UpdateCooldown(item:GetParent():GetID(), item)
 			item.hasItem = 1
+			BagnonItem_UpdateEnchant(item)
 		else
 			local cd = item.cooldown or getglobal(item:GetName() .. "Cooldown")
 			if cd then cd:Hide() end
 			item.hasItem = nil
+			if item.enchantOverlay then
+				item.enchantOverlay:Hide()
+			end
 		end
 
 		SetItemButtonDesaturated(item, locked, 0.5, 0.5, 0.5)
@@ -233,6 +276,107 @@ function BagnonItem_Update(item)
 	--update texture and count
 	SetItemButtonTexture(item, texture)
 	SetItemButtonCount(item, itemCount)
+end
+
+local function get_temp_enchant_texture(enchantID, itemName)
+	if enchantID and type(C_Item) == "table" and type(C_Item.GetEnchantInfo) == "function" then
+		local ok, info = pcall(C_Item.GetEnchantInfo, enchantID)
+		if ok and type(info) == "table" and info.spellID and type(C_Spell) == "table" and type(C_Spell.GetSpellTexture) == "function" then
+			local tex = C_Spell.GetSpellTexture(info.spellID)
+			if tex then return tex end
+		end
+	end
+	local lower = itemName and string.lower(itemName) or ""
+	if string.find(lower, "oil") then
+		return "Interface\\Icons\\INV_Potion_19"
+	elseif string.find(lower, "stone") or string.find(lower, "weight") then
+		return "Interface\\Icons\\INV_Stone_SharpeningStone_04"
+	end
+	return "Interface\\Icons\\Ability_Poisons"
+end
+
+local function format_enchant_duration(expirationMs, charges)
+	local s = (expirationMs and expirationMs > 0) and math.floor(expirationMs / 1000) or 0
+	local timeStr = ""
+	if s >= 3600 then
+		timeStr = string.format("%dh", math.floor(s / 3600))
+	elseif s >= 60 then
+		timeStr = string.format("%dm", math.floor(s / 60))
+	elseif s > 0 then
+		timeStr = string.format("%ds", s)
+	end
+
+	local text = timeStr
+	local r, g, b = 1.0, 1.0, 1.0
+	if charges and charges > 0 and charges <= 5 then
+		text = charges .. "c"
+		r, g, b = 1.0, 0.4, 0.1
+	elseif charges and charges > 0 and charges <= 10 then
+		text = (timeStr ~= "") and (timeStr .. "·" .. charges) or (charges .. "c")
+		r, g, b = 1.0, 0.7, 0.2
+	elseif s > 0 and s < 120 then
+		r, g, b = 1.0, 0.2, 0.2
+	end
+
+	return text, r, g, b
+end
+
+function BagnonItem_UpdateEnchant(item)
+	local overlay = item.enchantOverlay
+	if not overlay then return end
+
+	local enabled = not BagnonSets or BagnonSets.enchantBadges ~= 0
+	if not enabled then
+		overlay:Hide()
+		return
+	end
+
+	local bagID = item:GetParent():GetID()
+	local slotID = item:GetID()
+
+	-- Only inspect real player bag slots (0..4), not bank slots (-1, 5..10)
+	if not bagID or bagID < 0 or bagID > 4 or not slotID then
+		overlay:Hide()
+		return
+	end
+
+	if not item.hasItem then
+		overlay:Hide()
+		return
+	end
+
+	local itemLink = GetContainerItemLink(bagID, slotID)
+	if not itemLink then
+		overlay:Hide()
+		return
+	end
+
+	local itemName, _, _, _, _, _, _, itemEquipLoc = GetItemInfo(itemLink)
+	local isWeapon = (itemEquipLoc == "INVTYPE_WEAPON" or itemEquipLoc == "INVTYPE_2HWEAPON" or
+		itemEquipLoc == "INVTYPE_WEAPONMAINHAND" or itemEquipLoc == "INVTYPE_WEAPONOFFHAND")
+
+	if not isWeapon then
+		overlay:Hide()
+		return
+	end
+
+	if type(C_Item) == "table" and type(C_Item.GetItemTempEnchantInfo) == "function" then
+		local ok, hasEnchant, expirationMs, charges, enchantID = pcall(C_Item.GetItemTempEnchantInfo, { bagID = bagID, slotIndex = slotID })
+		if ok and hasEnchant then
+			local tex = get_temp_enchant_texture(enchantID, itemName)
+			overlay.icon:SetTexture(tex)
+			overlay.iconFrame:Show()
+
+			local text, r, g, b = format_enchant_duration(expirationMs, charges)
+			overlay.duration:SetText(text)
+			overlay.duration:SetTextColor(r, g, b)
+			overlay.duration:Show()
+			overlay:Show()
+			return
+		end
+	end
+
+	overlay:Hide()
 end
 
 function BagnonItem_UpdateBorder(button, quality, player)
