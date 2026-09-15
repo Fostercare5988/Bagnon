@@ -2,14 +2,10 @@
 	Banknon
 		Combines the player's bank into a single frame
 		Author: Tuller, McPewPew, Fostercare5988
-		Built natively for ClassicAPI v1.15.0+, SuperWoW 2.2+, NamPower 4.6.3+, UnitXP SP3, DXVK
+		Built for the Enhanced WoW 1.12.1 Client (ClassicAPI v1.15.8+)
 --]]
 
--- Strict Engine Dependency Guard (Mandatory ClassicAPI v1.15.0+ & SuperWoW v2.2+)
-local MIN_CLASSIC_API = 11500
-
-if not (CLASSIC_API_VERSION and SUPERWOW_VERSION) or 
-   (type(CLASSIC_API_VERSION) == "number" and CLASSIC_API_VERSION < MIN_CLASSIC_API) then
+if not Bagnon_EngineReady then
 	return
 end
 

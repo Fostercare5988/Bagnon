@@ -2,7 +2,7 @@
 	BagnonForever.lua
 		Records inventory data about the current player
 		Author: Tuller, McPewPew, Fostercare5988
-		Built natively for ClassicAPI, SuperWoW 2.2+, NamPower 4.6.3+, UnitXP SP3, DXVK
+		Built for the Enhanced WoW 1.12.1 Client (ClassicAPI v1.15.8+)
 		
 	BagnonForeverData has the following format, which was adapted from KC_Items
 	BagnonForeverData = {
@@ -14,10 +14,24 @@
 	}
 --]]
 
+if not Bagnon_EngineReady then
+	return
+end
+
 --local globals
 local currentPlayer = UnitName("player"); --the name of the current player that's logged on
 local currentRealm = GetRealmName(); --what currentRealm we're on
 local atBank; --is the current player at the bank or not
+
+local function EnsurePlayerAndRealm()
+	if not currentPlayer or currentPlayer == "" then
+		currentPlayer = UnitName("player")
+	end
+	if not currentRealm or currentRealm == "" then
+		currentRealm = GetRealmName()
+	end
+	return currentPlayer and currentPlayer ~= "" and currentRealm and currentRealm ~= ""
+end
 
 --[[ Utility Functions ]]--
 
@@ -38,6 +52,11 @@ end
 
 --saves data about a specific item the current player has
 local function SaveItemData(bagID, itemSlot)
+	if not EnsurePlayerAndRealm() then return end
+	if not (BagnonForeverData[currentRealm] and BagnonForeverData[currentRealm][currentPlayer] and BagnonForeverData[currentRealm][currentPlayer][bagID]) then
+		return
+	end
+
 	local texture, count = GetContainerItemInfo(bagID, itemSlot);
 	local data;
 	
@@ -53,6 +72,7 @@ end
 
 --saves all the data about the current player's bag
 local function SaveBagData(bagID)
+	if not EnsurePlayerAndRealm() then return end
 	--don't save bank data unless you're at the bank
 	if Bagnon_IsBankBag(bagID) and not atBank then
 		return;
@@ -92,9 +112,20 @@ local function SaveBagData(bagID)
 	else
 		BagnonForeverData[currentRealm][currentPlayer][bagID] = nil;
 	end
+
+	if BagnonDB and BagnonDB.InvalidatePlayerCache then
+		BagnonDB.InvalidatePlayerCache(currentPlayer, currentRealm)
+	end
 end
 
 local function SavePlayerMoney()
+	if not EnsurePlayerAndRealm() then return end
+	if not BagnonForeverData[currentRealm] then
+		BagnonForeverData[currentRealm] = {}
+	end
+	if not BagnonForeverData[currentRealm][currentPlayer] then
+		BagnonForeverData[currentRealm][currentPlayer] = {}
+	end
 	BagnonForeverData[currentRealm][currentPlayer].g = GetMoney();
 end
 
@@ -124,6 +155,9 @@ function BagnonForever_RemovePlayer(player, realm)
 	if(BagnonForeverData[realm]) then
 		BagnonForeverData[realm][player] = nil;
 	end
+	if BagnonDB and BagnonDB.InvalidatePlayerCache then
+		BagnonDB.InvalidatePlayerCache(player, realm)
+	end
 end
 
 --[[ Startup Functions ]]--
@@ -137,7 +171,9 @@ end
 --[[
 	BagnonForever settings loader
 --]]
-local function LoadVariables()	
+local function LoadVariables()
+	if not EnsurePlayerAndRealm() then return end
+
 	if not BagnonForeverData then
 		BagnonForeverData = {
 			version = BAGNON_FOREVER_VERSION,
@@ -146,6 +182,10 @@ local function LoadVariables()
 	else
 		BagnonForeverData.version = BAGNON_FOREVER_VERSION;
 		BagnonForeverData.wowVersion = GetBuildInfo();
+	end
+
+	if BagnonDB and BagnonDB.InvalidatePlayerCache then
+		BagnonDB.InvalidatePlayerCache()
 	end
 	
 	--this handles upgrading from 6.7.19 or earlier
@@ -158,8 +198,8 @@ local function LoadVariables()
 		BagnonForeverData[currentRealm] = {};
 	end
 	
-	if(not BagnonForeverData[currentRealm][UnitName("player")]) then
-		BagnonForeverData[currentRealm][UnitName("player")] = {};
+	if(not BagnonForeverData[currentRealm][currentPlayer]) then
+		BagnonForeverData[currentRealm][currentPlayer] = {};
 		SaveAllData();
 	end
 	

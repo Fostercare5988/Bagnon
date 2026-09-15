@@ -2,7 +2,7 @@
 	Overrides.lua
 		Function Overrides for Bagnon
 		Author: Tuller, McPewPew, Fostercare5988
-		Built natively for ClassicAPI, SuperWoW 2.2+, NamPower 4.6.3+, UnitXP SP3, DXVK
+		Built for ClassicAPI v1.15.8+
 		
 	OpenBackpack, and CloseBackPack are called automatically
 --]]
@@ -75,11 +75,15 @@ CloseBackpack = function()
 	end
 end
 
---OpenAllBags is actually a toggle
+--OpenAllBags is actually a toggle unless forceOpen is requested
 local bOpenAllBags = OpenAllBags
 OpenAllBags = function(forceOpen)
 	if Bagnon_IsAddOnEnabled("Bagnon") then
-		BagnonFrame_Toggle("Bagnon")
+		if forceOpen then
+			BagnonFrame_Open("Bagnon", 1)
+		else
+			BagnonFrame_Toggle("Bagnon")
+		end
 	else
 		bOpenAllBags(forceOpen)
 	end

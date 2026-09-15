@@ -1,6 +1,6 @@
 --[[
 	Bagnon Localization file
-	Built natively for ClassicAPI, SuperWoW 2.2+, NamPower 4.6.3+, UnitXP SP3, DXVK
+	Built for the Enhanced WoW 1.12.1 Client (ClassicAPI v1.15.8+)
 --]]
 
 --[[
@@ -24,6 +24,7 @@ BAGNON_COMMAND_SORT = "sort"
 BAGNON_COMMAND_REVERSE = "reverse"
 BAGNON_COMMAND_OVERRIDE_BANK = "overridebank"
 BAGNON_COMMAND_TOGGLE_TOOLTIPS = "tooltips"
+BAGNON_COMMAND_ENCHANTS = "enchants"
 BAGNON_COMMAND_DEBUG_ON = "debug"
 BAGNON_COMMAND_DEBUG_OFF = "nodebug"
 
@@ -34,7 +35,12 @@ BAGNON_HELP_TITLE = "Bagnon commands:"
 BAGNON_HELP_SHOWBAGS = "/bgn " .. BAGNON_COMMAND_SHOWBAGS .. " - Show/Hide Bagnon."
 BAGNON_HELP_SHOWBANK = "/bgn " .. BAGNON_COMMAND_SHOWBANK .. " - Show/Hide Banknon."
 BAGNON_HELP_SORT = "/bgn " .. BAGNON_COMMAND_SORT .. " - Clean up and sort bags."
+BAGNON_HELP_ENCHANTS = "/bgn " .. BAGNON_COMMAND_ENCHANTS .. " - Toggle weapon enchant badges."
 BAGNON_HELP_HELP = "/bgn " .. BAGNON_COMMAND_HELP .. " - Display slash commands."
+
+--/bgn enchants
+BAGNON_ENCHANTS_ENABLED = "Weapon enchant badges enabled."
+BAGNON_ENCHANTS_DISABLED = "Weapon enchant badges disabled."
 
 --/bgn debug
 BAGNON_DEBUG_ENABLED = "Debugging mode enabled."

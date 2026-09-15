@@ -2,7 +2,7 @@
 	spot.lua
 		Scripts for Bagnon_Spot, which provides filtering functionality for Bagnon
 		Author: Tuller, McPewPew, Fostercare5988
-		Built natively for ClassicAPI, SuperWoW 2.2+, NamPower 4.6.3+, UnitXP SP3, DXVK
+		Built for ClassicAPI v1.15.8+
 --]]
 
 local nameFilter
@@ -22,6 +22,72 @@ local function GetLowerItemName(link)
 	return nil
 end
 
+local function ToItemID(hyperLink)
+	if hyperLink then
+		local _, _, w = string.find(hyperLink, "item:(%d+)")
+		return w or hyperLink
+	end
+end
+
+local function UpdateItemFilter(item)
+	if not item then return end
+
+	local parent = item:GetParent()
+	local parentFrame = parent and parent:GetParent()
+	local baseAlpha = (parentFrame and parentFrame:GetAlpha()) or 1
+
+	if nameFilter then
+		local link
+		if item.isLink then
+			if BagnonDB and parentFrame then
+				link = BagnonDB.GetItemData(parentFrame.player, parent:GetID(), item:GetID())
+			end
+		else
+			if C_Container and C_Container.GetContainerItemID then
+				link = C_Container.GetContainerItemID(parent:GetID(), item:GetID())
+			end
+			if not link then
+				link = ToItemID(GetContainerItemLink(parent:GetID(), item:GetID()))
+			end
+		end
+
+		if link then
+			local lowerName = GetLowerItemName(link)
+			if lowerName and not string.find(lowerName, nameFilter, 1, true) then
+				item:SetAlpha(baseAlpha / 3)
+			else
+				item:SetAlpha(baseAlpha)
+			end
+		else
+			item:SetAlpha(baseAlpha)
+		end
+	else
+		item:SetAlpha(baseAlpha)
+	end
+end
+
+local function UpdateFrameSearch(frame)
+	if not frame or not frame:IsShown() then return end
+	local items = frame.items
+	local size = frame.size or 0
+	if items then
+		for slot = 1, size do
+			local item = items[slot]
+			if item and item:IsShown() then
+				UpdateItemFilter(item)
+			end
+		end
+	else
+		local frameName = frame:GetName()
+		for slot = 1, size do
+			local item = getglobal(frameName .. "Item" .. slot)
+			if item and item:IsShown() then
+				UpdateItemFilter(item)
+			end
+		end
+	end
+end
+
 --[[ Search Functions ]]--
 
 function BagnonSpot_Search(text)
@@ -31,12 +97,8 @@ function BagnonSpot_Search(text)
 		nameFilter = nil
 	end
 
-	if Bagnon and Bagnon:IsShown() then
-		BagnonFrame_Generate(Bagnon)
-	end
-	if Banknon and Banknon:IsShown() then
-		BagnonFrame_Generate(Banknon)
-	end
+	UpdateFrameSearch(Bagnon)
+	UpdateFrameSearch(Banknon)
 end
 
 function BagnonSpot_ClearSearch()
@@ -46,12 +108,8 @@ function BagnonSpot_ClearSearch()
 		BagnonSpot:ClearHighlightText()
 	end
 
-	if Bagnon and Bagnon:IsShown() then
-		BagnonFrame_Generate(Bagnon)
-	end
-	if Banknon and Banknon:IsShown() then
-		BagnonFrame_Generate(Banknon)
-	end
+	UpdateFrameSearch(Bagnon)
+	UpdateFrameSearch(Banknon)
 end
 
 --[[ Function Overrides ]]--
@@ -69,39 +127,11 @@ BagnonFrame_OnDoubleClick = function(frame, button)
 	end
 end
 
-local function ToItemID(hyperLink)
-	if hyperLink then
-		local _, _, w = string.find(hyperLink, "item:(%d+)")
-		return w or hyperLink
-	end
-end
-
 -- Darkens items we're not searching for
 local oBagnonItem_Update = BagnonItem_Update
 BagnonItem_Update = function(item)
 	oBagnonItem_Update(item)
-
-	if nameFilter then
-		local link
-		if item.isLink then
-			if BagnonDB then
-				link = BagnonDB.GetItemData(item:GetParent():GetParent().player, item:GetParent():GetID(), item:GetID())
-			end
-		else
-			link = ToItemID(GetContainerItemLink(item:GetParent():GetID(), item:GetID()))
-		end
-
-		if link then
-			local lowerName = GetLowerItemName(link)
-			if lowerName and not string.find(lowerName, nameFilter, 1, true) then
-				item:SetAlpha(item:GetParent():GetParent():GetAlpha() / 3)
-			else
-				item:SetAlpha(item:GetParent():GetParent():GetAlpha())
-			end
-		end
-	else
-		item:SetAlpha(item:GetParent():GetParent():GetAlpha())
-	end
+	UpdateItemFilter(item)
 end
 
 local oBagnonFrame_OnHide = BagnonFrame_OnHide

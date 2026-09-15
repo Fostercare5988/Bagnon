@@ -2,7 +2,7 @@
 	Menu.lua
 		Functions for the Bagnon right click options menu
 		Author: Tuller, McPewPew, Fostercare5988
-		Built natively for ClassicAPI, SuperWoW 2.2+, NamPower 4.6.3+, UnitXP SP3, DXVK
+		Built for ClassicAPI v1.15.8+
 --]]
 
 --show the menu
@@ -51,10 +51,22 @@ end
 
 --Set and scale <frame>
 function BagnonMenu_SetScale(frame, scale)
-	BagnonSets[frame:GetName()].scale = scale;
-	
-	Infield.Scale(frame, scale);
-	BagnonFrame_SavePosition(frame);
+	if not (frame and scale and scale > 0) then return end
+	local frameName = frame:GetName()
+	BagnonSets[frameName].scale = scale
+
+	local left = frame:GetLeft()
+	local top = frame:GetTop()
+	local oldScale = frame:GetScale() or 1
+
+	frame:SetScale(scale)
+	if left and top then
+		local parent = frame:GetParent() or UIParent
+		frame:ClearAllPoints()
+		frame:SetPoint("TOPLEFT", parent, "BOTTOMLEFT", left * oldScale / scale, top * oldScale / scale)
+	end
+
+	BagnonFrame_SavePosition(frame)
 end
 
 --set the background of the frame between opaque/transparent

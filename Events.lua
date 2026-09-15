@@ -50,7 +50,7 @@ end
 --[[ Variable Loading ]]--
 
 local function LoadVariables()
-	local currentVersion = GetAddOnMetadata("Bagnon", "Version") or "1.6.0"
+	local currentVersion = GetAddOnMetadata("Bagnon", "Version") or "2.0.0"
 	if not BagnonSets then
 		BagnonSets = {
 			showBagsAtBank = 1,
@@ -74,68 +74,12 @@ local function LoadVariables()
 	end
 end
 
-local function HaveLocalizedInfo()
-	return true
-end
-
---try and get localized names, so that its possible to do special bag coloring
-local function ObtainLocalizedNames()
-	local haveInfo = HaveLocalizedInfo()
-	if not haveInfo then
-		BagnonMsg("Obtaining localized data.  Please report the following to where you downloaded Bagnon from.")
-		BagnonMsg(GetLocale())
-	end
-
-	--backpack
-	local name, _, _, _, iType, subType = GetItemInfo(4500)
-	if name then
-		if not haveInfo then
-			BagnonMsg("Backpack:  " .. (iType or "null") .. ", " .. (subType or "null"))
-		end
-		if iType then
-			BAGNON_ITEMTYPE_CONTAINER = iType
-			BAGNON_SUBTYPE_BAG = subType
-		end
-	end
-
-	--ammo
-	name, _, _, _, iType, subType = GetItemInfo(8218)
-	if name then
-		if not haveInfo then
-			BagnonMsg("Ammo:  " .. (iType or "null") .. ", " .. (subType or "null"))
-		end
-		if iType then
-			BAGNON_ITEMTYPE_QUIVER = iType
-		end
-	end
-
-	--soul pouch
-	name, _, _, _, iType, subType = GetItemInfo(21340)
-	if name then
-		if not haveInfo then
-			BagnonMsg("Soul Bag:  " .. (iType or "null") .. ", " .. (subType or "null"))
-		end
-		if subType then
-			BAGNON_SUBTYPE_SOULBAG = subType
-		end
-	end
-end
-
 local function Load(eventFrame)
 	BankFrame:UnregisterEvent("BANKFRAME_OPENED")
 
 	LoadVariables()
-	ObtainLocalizedNames()
 
-	Infield.AddRescaleAction(function()
-		if Bagnon then
-			BagnonFrame_Reposition(Bagnon)
-		end
-		if Banknon then
-			BagnonFrame_Reposition(Banknon)
-		end
-	end)
-
+	eventFrame:RegisterEvent("CVAR_UPDATE")
 	eventFrame:RegisterEvent("BAG_UPDATE")
 	eventFrame:RegisterEvent("PLAYERBANKSLOTS_CHANGED")
 	eventFrame:RegisterEvent("ITEM_LOCK_CHANGED")
@@ -163,16 +107,18 @@ local function OnEvent(arg1_param, arg2_param, arg3_param)
 	--[[ Events For Updating Items ]]--
 	if ev == "BAG_UPDATE_COOLDOWN" then
 		if Bagnon and Bagnon:IsVisible() and not Bagnon_IsCachedFrame(Bagnon) then
+			local items = Bagnon.items
 			for slot = 1, (Bagnon.size or 0) do
-				local item = getglobal("BagnonItem" .. slot)
+				local item = (items and items[slot]) or getglobal("BagnonItem" .. slot)
 				if item and item:IsShown() then
 					BagnonItem_UpdateCooldown(item:GetParent():GetID(), item)
 				end
 			end
 		end
 		if Banknon and Banknon:IsVisible() and not Bagnon_IsCachedFrame(Banknon) then
+			local items = Banknon.items
 			for slot = 1, (Banknon.size or 0) do
-				local item = getglobal("BanknonItem" .. slot)
+				local item = (items and items[slot]) or getglobal("BanknonItem" .. slot)
 				if item and item:IsShown() then
 					BagnonItem_UpdateCooldown(item:GetParent():GetID(), item)
 				end
@@ -200,6 +146,13 @@ local function OnEvent(arg1_param, arg2_param, arg3_param)
 	elseif ev == "PLAYER_LEVEL_UP" then
 		if ShouldUpdateBag(Bagnon, KEYRING_CONTAINER) then
 			BagnonFrame_Generate(Bagnon)
+		end
+	elseif ev == "CVAR_UPDATE" then
+		if Bagnon then
+			BagnonFrame_Reposition(Bagnon)
+		end
+		if Banknon then
+			BagnonFrame_Reposition(Banknon)
 		end
 	--[[ Events for Automatically Opening and Closing Frames ]]--
 	elseif ev == "BANKFRAME_OPENED" then

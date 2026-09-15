@@ -2,18 +2,20 @@
 	Utility.lua
 		Functions that don't belong anywhere else
 		Author: Tuller, McPewPew, Fostercare5988
-		Built natively for ClassicAPI, SuperWoW 2.2+, NamPower 4.6.3+, UnitXP SP3, DXVK
+		Built for the Enhanced WoW 1.12.1 Client (ClassicAPI v1.15.8+)
 --]]
 
--- Strict Engine Dependency Guard (Mandatory ClassicAPI v1.14.0+ & SuperWoW v2.2+)
-local MIN_CLASSIC_API = 11400
-
-if not (CLASSIC_API_VERSION and SUPERWOW_VERSION) or 
-   (type(CLASSIC_API_VERSION) == "number" and CLASSIC_API_VERSION < MIN_CLASSIC_API) then
+if not Bagnon_EngineReady then
 	return
 end
 
 local currentPlayer = UnitName("player");
+local function GetCurrentPlayer()
+	if not currentPlayer or currentPlayer == "" then
+		currentPlayer = UnitName("player")
+	end
+	return currentPlayer
+end
 
 --[[ Boolean functions ]]--
 
@@ -102,7 +104,7 @@ function Bagnon_IsCachedFrame(frame)
 		return false;
 	end
 	
-	return ( currentPlayer ~= frame.player or (not bgn_atBank and frame:GetName() == "Banknon") );
+	return ( GetCurrentPlayer() ~= frame.player or (not bgn_atBank and frame:GetName() == "Banknon") );
 end
 
 function Bagnon_IsCachedBag(player, bagID) 
@@ -110,7 +112,7 @@ function Bagnon_IsCachedBag(player, bagID)
 		return false;
 	end
 	
-	return ( currentPlayer ~= player or (not bgn_atBank and Bagnon_IsBankBag(bagID) ) );
+	return ( GetCurrentPlayer() ~= player or (not bgn_atBank and Bagnon_IsBankBag(bagID) ) );
 end
 
 --returns true if the item is being viewed from a cache 
@@ -119,7 +121,7 @@ function Bagnon_IsCachedItem(item)
 		return false;
 	end
 	--we're not looking at the current player's items
-	if( currentPlayer ~= item:GetParent():GetParent().player ) then
+	if( GetCurrentPlayer() ~= item:GetParent():GetParent().player ) then
 		return true;
 	end
 	

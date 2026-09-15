@@ -2,10 +2,16 @@
 	tooltips.lua
 		Tooltip integration for Bagnon
 		Author: Tuller, McPewPew, Fostercare5988
-		Built natively for ClassicAPI, SuperWoW 2.2+, NamPower 4.6.3+, UnitXP SP3, DXVK
+		Built for the Enhanced WoW 1.12.1 Client (ClassicAPI v1.15.8+)
 --]]
 
 local currentPlayer = UnitName("player")
+local function GetCurrentPlayer()
+	if not currentPlayer or currentPlayer == "" then
+		currentPlayer = UnitName("player")
+	end
+	return currentPlayer
+end
 
 --[[ Local Functions ]]--
 
@@ -25,8 +31,10 @@ local function AddOwners(frame, id)
 	if not (frame and id and BagnonSets and BagnonSets.showForeverTooltips) then return end
 	if not (BagnonDB and BagnonDB.GetPlayers) then return end
 
+	local me = GetCurrentPlayer()
+	local added = false
 	for player in BagnonDB.GetPlayers() do
-		if player ~= currentPlayer then
+		if not me or player ~= me then
 			local invCount, bankCount
 			if BagnonDB.GetPlayerItemTotals then
 				invCount, bankCount = BagnonDB.GetPlayerItemTotals(id, player)
@@ -51,10 +59,13 @@ local function AddOwners(frame, id)
 					tooltipString = tooltipString .. " " .. bankCount .. " " .. BAGNON_FOREVER_BANK
 				end
 				frame:AddLine(tooltipString, 1, 1, 0)
+				added = true
 			end
 		end
 	end
-	frame:Show()
+	if added then
+		frame:Show()
+	end
 end
 
 -- Cross-Addon Suite Synergy: ItemRack Set Integration
@@ -83,73 +94,73 @@ end
 
 --[[ Function Hooks ]]--
 
-local Blizz_GameTooltip_SetBagItem = GameTooltip.SetBagItem
-GameTooltip.SetBagItem = function(self, bag, slot)
-	local a1, a2 = Blizz_GameTooltip_SetBagItem(self, bag, slot)
+local function SafeHookTooltip(tbl, method, hookFunc)
+	if not (tbl and tbl[method]) then return end
+	if hooksecurefunc then
+		hooksecurefunc(tbl, method, hookFunc)
+	else
+		local orig = tbl[method]
+		tbl[method] = function(self, a1, a2, a3, a4)
+			local r1, r2, r3, r4 = orig(self, a1, a2, a3, a4)
+			hookFunc(self, a1, a2, a3, a4)
+			return r1, r2, r3, r4
+		end
+	end
+end
+
+SafeHookTooltip(GameTooltip, "SetBagItem", function(self, bag, slot)
 	local link = GetContainerItemLink(bag, slot)
 	if link then
 		AddOwners(self, LinkToID(link))
 		AddItemRackSets(self, link)
 		AddTrinketMenuQueue(self, link)
 	end
-	return a1, a2
-end
+end)
 
-local Blizz_GameTooltip_SetInventoryItem = GameTooltip.SetInventoryItem
-GameTooltip.SetInventoryItem = function(self, unit, slot)
-	local hasItem, hasCooldown, repairCost = Blizz_GameTooltip_SetInventoryItem(self, unit, slot)
-	if hasItem then
-		local link = GetInventoryItemLink(unit, slot)
-		if link then
-			AddOwners(self, LinkToID(link))
-			AddItemRackSets(self, link)
-			AddTrinketMenuQueue(self, link)
-		end
-	end
-	return hasItem, hasCooldown, repairCost
-end
-
-local Bliz_GameTooltip_SetLootItem = GameTooltip.SetLootItem
-GameTooltip.SetLootItem = function(self, slot)
-	local a1, a2, a3 = Bliz_GameTooltip_SetLootItem(self, slot)
-	AddOwners(self, LinkToID(GetLootSlotLink(slot)))
-	return a1, a2, a3
-end
-
-local Bliz_SetHyperlink = GameTooltip.SetHyperlink
-GameTooltip.SetHyperlink = function(self, link, count)
-	local a1, a2, a3 = Bliz_SetHyperlink(self, link, count)
+SafeHookTooltip(GameTooltip, "SetInventoryItem", function(self, unit, slot)
+	local link = GetInventoryItemLink(unit, slot)
 	if link then
 		AddOwners(self, LinkToID(link))
 		AddItemRackSets(self, link)
 		AddTrinketMenuQueue(self, link)
 	end
-	return a1, a2, a3
-end
+end)
 
-local Bliz_ItemRefTooltip_SetHyperlink = ItemRefTooltip.SetHyperlink
-ItemRefTooltip.SetHyperlink = function(self, link, count)
-	local a1, a2, a3 = Bliz_ItemRefTooltip_SetHyperlink(self, link, count)
+SafeHookTooltip(GameTooltip, "SetLootItem", function(self, slot)
+	local link = GetLootSlotLink(slot)
+	if link then
+		AddOwners(self, LinkToID(link))
+	end
+end)
+
+SafeHookTooltip(GameTooltip, "SetHyperlink", function(self, link, count)
+	if link then
+		AddOwners(self, LinkToID(link))
+		AddItemRackSets(self, link)
+		AddTrinketMenuQueue(self, link)
+	end
+end)
+
+SafeHookTooltip(ItemRefTooltip, "SetHyperlink", function(self, link, count)
 	if link then
 		AddOwners(self, LinkToID(link))
 		AddItemRackSets(self, link)
 	end
-	return a1, a2, a3
-end
+end)
 
-local Bliz_GameTooltip_SetLootRollItem = GameTooltip.SetLootRollItem
-GameTooltip.SetLootRollItem = function(self, rollID)
-	local a1, a2, a3 = Bliz_GameTooltip_SetLootRollItem(self, rollID)
-	AddOwners(self, LinkToID(GetLootRollItemLink(rollID)))
-	return a1, a2, a3
-end
+SafeHookTooltip(GameTooltip, "SetLootRollItem", function(self, rollID)
+	local link = GetLootRollItemLink(rollID)
+	if link then
+		AddOwners(self, LinkToID(link))
+	end
+end)
 
-local Bliz_GameTooltip_SetAuctionItem = GameTooltip.SetAuctionItem
-GameTooltip.SetAuctionItem = function(self, type, index)
-	local a1, a2, a3 = Bliz_GameTooltip_SetAuctionItem(self, type, index)
-	AddOwners(self, LinkToID(GetAuctionItemLink(type, index)))
-	return a1, a2, a3
-end
+SafeHookTooltip(GameTooltip, "SetAuctionItem", function(self, type, index)
+	local link = GetAuctionItemLink(type, index)
+	if link then
+		AddOwners(self, LinkToID(link))
+	end
+end)
 
 --[[ Money Frame Tooltip ]]--
 
@@ -166,7 +177,9 @@ function BagnonFrameMoney_OnEnter(self)
 	GameTooltip:SetText(string.format(BAGNON_FOREVER_MONEY_ON_REALM, GetRealmName()))
 
 	local money = 0
-	if BagnonDB and BagnonDB.GetPlayers then
+	if BagnonDB and BagnonDB.GetTotalMoney then
+		money = BagnonDB.GetTotalMoney()
+	elseif BagnonDB and BagnonDB.GetPlayers then
 		for player in BagnonDB.GetPlayers() do
 			money = money + BagnonDB.GetMoney(player)
 		end

@@ -2,7 +2,7 @@
 	Item.lua
 		Functions used by the item slots in Bagnon
 		Author: Tuller, McPewPew, Fostercare5988
-		Built natively for ClassicAPI, SuperWoW 2.2+, NamPower 4.6.3+, UnitXP SP3, DXVK
+		Built for ClassicAPI v1.15.8+
 --]]
 
 --[[ OnX Handlers ]]--
@@ -80,42 +80,6 @@ function BagnonItem_Create(name, parent)
 	qBorder:EnableMouse(false)
 	qBorder:Hide()
 	item.qualityBorder = qBorder
-
-	-- Native modern weapon enchant overlay frame
-	local overlay = CreateFrame("Frame", name .. "EnchantOverlay", item)
-	overlay:SetAllPoints(item)
-	overlay:EnableMouse(false)
-	if item.GetFrameLevel then
-		overlay:SetFrameLevel(item:GetFrameLevel() + 3)
-	end
-
-	local iconFrame = CreateFrame("Frame", nil, overlay)
-	iconFrame:SetWidth(14)
-	iconFrame:SetHeight(14)
-	iconFrame:SetPoint("TOPRIGHT", overlay, "TOPRIGHT", -1, -1)
-
-	local iconBg = iconFrame:CreateTexture(nil, "BACKGROUND")
-	iconBg:SetPoint("TOPLEFT", iconFrame, "TOPLEFT", 0, 0)
-	iconBg:SetPoint("BOTTOMRIGHT", iconFrame, "BOTTOMRIGHT", 0, 0)
-	iconBg:SetTexture(0, 0, 0, 0.85)
-
-	local icon = iconFrame:CreateTexture(nil, "ARTWORK")
-	icon:SetPoint("TOPLEFT", iconFrame, "TOPLEFT", 1, -1)
-	icon:SetPoint("BOTTOMRIGHT", iconFrame, "BOTTOMRIGHT", -1, 1)
-	icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-	overlay.icon = icon
-	overlay.iconFrame = iconFrame
-
-	local duration = overlay:CreateFontString(nil, "OVERLAY")
-	duration:SetFont("Fonts\\FRIZQT__.TTF", 9, "OUTLINE")
-	duration:SetPoint("TOPRIGHT", iconFrame, "BOTTOMRIGHT", 0, -1)
-	duration:SetShadowOffset(1, -1)
-	duration:SetShadowColor(0, 0, 0, 1)
-	duration:SetTextColor(1.0, 1.0, 1.0)
-	overlay.duration = duration
-
-	overlay:Hide()
-	item.enchantOverlay = overlay
 
 	item:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 	item:RegisterForDrag("LeftButton")
@@ -281,6 +245,62 @@ end
 local bagnonEnchantTooltip = CreateFrame("GameTooltip", "BagnonEnchantTooltip", UIParent, "GameTooltipTemplate")
 bagnonEnchantTooltip:SetOwner(UIParent, "ANCHOR_NONE")
 
+-- Cache tooltip line fontstrings to eliminate string concatenations and global table lookups on scan
+local enchantTooltipLines = {}
+local function GetEnchantTooltipLine(i)
+	local line = enchantTooltipLines[i]
+	if not line then
+		line = getglobal("BagnonEnchantTooltipTextLeft" .. i)
+		enchantTooltipLines[i] = line
+	end
+	return line
+end
+
+-- Lazy on-demand overlay allocation: instantiated only when a weapon is present in bag slots 0..4
+local function GetOrCreateEnchantOverlay(item)
+	local overlay = item.enchantOverlay
+	if overlay then
+		return overlay
+	end
+
+	local name = item:GetName()
+	overlay = CreateFrame("Frame", name and (name .. "EnchantOverlay") or nil, item)
+	overlay:SetAllPoints(item)
+	overlay:EnableMouse(false)
+	if item.GetFrameLevel then
+		overlay:SetFrameLevel(item:GetFrameLevel() + 3)
+	end
+
+	local iconFrame = CreateFrame("Frame", nil, overlay)
+	iconFrame:SetWidth(14)
+	iconFrame:SetHeight(14)
+	iconFrame:SetPoint("TOPRIGHT", overlay, "TOPRIGHT", -1, -1)
+
+	local iconBg = iconFrame:CreateTexture(nil, "BACKGROUND")
+	iconBg:SetPoint("TOPLEFT", iconFrame, "TOPLEFT", 0, 0)
+	iconBg:SetPoint("BOTTOMRIGHT", iconFrame, "BOTTOMRIGHT", 0, 0)
+	iconBg:SetTexture(0, 0, 0, 0.85)
+
+	local icon = iconFrame:CreateTexture(nil, "ARTWORK")
+	icon:SetPoint("TOPLEFT", iconFrame, "TOPLEFT", 1, -1)
+	icon:SetPoint("BOTTOMRIGHT", iconFrame, "BOTTOMRIGHT", -1, 1)
+	icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+	overlay.icon = icon
+	overlay.iconFrame = iconFrame
+
+	local duration = overlay:CreateFontString(nil, "OVERLAY")
+	duration:SetFont("Fonts\\FRIZQT__.TTF", 9, "OUTLINE")
+	duration:SetPoint("TOPRIGHT", iconFrame, "BOTTOMRIGHT", 0, -1)
+	duration:SetShadowOffset(1, -1)
+	duration:SetShadowColor(0, 0, 0, 1)
+	duration:SetTextColor(1.0, 1.0, 1.0)
+	overlay.duration = duration
+
+	overlay:Hide()
+	item.enchantOverlay = overlay
+	return overlay
+end
+
 local function get_enchant_texture_by_name(enchantName)
 	if not enchantName then return "Interface\\Icons\\Ability_Poisons" end
 	local lower = string.lower(enchantName)
@@ -350,12 +370,11 @@ local function format_bag_enchant_duration(timeStr, durVal, unitChar, charges)
 end
 
 function BagnonItem_UpdateEnchant(item)
-	local overlay = item.enchantOverlay
-	if not overlay then return end
-
 	local enabled = not BagnonSets or BagnonSets.enchantBadges ~= 0
 	if not enabled then
-		overlay:Hide()
+		if item.enchantOverlay then
+			item.enchantOverlay:Hide()
+		end
 		return
 	end
 
@@ -364,12 +383,16 @@ function BagnonItem_UpdateEnchant(item)
 
 	-- Only inspect real player bag slots (0..4), not bank slots (-1, 5..10)
 	if not bagID or bagID < 0 or bagID > 4 or not slotID then
-		overlay:Hide()
+		if item.enchantOverlay then
+			item.enchantOverlay:Hide()
+		end
 		return
 	end
 
 	if not item.hasItem then
-		overlay:Hide()
+		if item.enchantOverlay then
+			item.enchantOverlay:Hide()
+		end
 		return
 	end
 
@@ -378,39 +401,46 @@ function BagnonItem_UpdateEnchant(item)
 	if C_Container and C_Container.GetContainerItemID then
 		cid = C_Container.GetContainerItemID(bagID, slotID)
 		if not cid then
-			overlay:Hide()
+			if item.enchantOverlay then
+				item.enchantOverlay:Hide()
+			end
 			return
 		end
 	end
 
 	-- Fast C++ weapon check via itemEquipLoc (INVTYPE_WEAPON, 2HWEAPON, WEAPONMAINHAND, WEAPONOFFHAND)
 	-- Skip 98%+ of bag slots (armor, potions, reagents, quest items) in nanoseconds without tooltip scanning
+	local itemEquipLoc
 	if cid then
-		local _, _, _, _, _, _, _, itemEquipLoc = GetItemInfo(cid)
-		if itemEquipLoc ~= "INVTYPE_WEAPON" and itemEquipLoc ~= "INVTYPE_2HWEAPON" and
-		   itemEquipLoc ~= "INVTYPE_WEAPONMAINHAND" and itemEquipLoc ~= "INVTYPE_WEAPONOFFHAND" then
-			overlay:Hide()
-			return
-		end
+		local _, _, _, _, _, _, _, eqLoc = GetItemInfo(cid)
+		itemEquipLoc = eqLoc
 	else
 		local link = GetContainerItemLink(bagID, slotID)
 		if not link then
-			overlay:Hide()
+			if item.enchantOverlay then
+				item.enchantOverlay:Hide()
+			end
 			return
 		end
-		local _, _, _, _, _, _, _, itemEquipLoc = GetItemInfo(link)
-		if itemEquipLoc ~= "INVTYPE_WEAPON" and itemEquipLoc ~= "INVTYPE_2HWEAPON" and
-		   itemEquipLoc ~= "INVTYPE_WEAPONMAINHAND" and itemEquipLoc ~= "INVTYPE_WEAPONOFFHAND" then
-			overlay:Hide()
-			return
-		end
+		local _, _, _, _, _, _, _, eqLoc = GetItemInfo(link)
+		itemEquipLoc = eqLoc
 	end
+
+	if itemEquipLoc ~= "INVTYPE_WEAPON" and itemEquipLoc ~= "INVTYPE_2HWEAPON" and
+	   itemEquipLoc ~= "INVTYPE_WEAPONMAINHAND" and itemEquipLoc ~= "INVTYPE_WEAPONOFFHAND" then
+		if item.enchantOverlay then
+			item.enchantOverlay:Hide()
+		end
+		return
+	end
+
+	local overlay = GetOrCreateEnchantOverlay(item)
 
 	bagnonEnchantTooltip:ClearLines()
 	bagnonEnchantTooltip:SetBagItem(bagID, slotID)
 	local n = bagnonEnchantTooltip:NumLines()
 	for i = 2, n do
-		local line = getglobal("BagnonEnchantTooltipTextLeft" .. i)
+		local line = GetEnchantTooltipLine(i)
 		if line then
 			local text = line:GetText()
 			if text then

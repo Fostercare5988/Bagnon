@@ -2,7 +2,7 @@
 	Options.lua
 		Main configuration dialog for Bagnon (/bgn)
 		Author: Tuller, McPewPew, Fostercare5988
-		Built natively for ClassicAPI, SuperWoW 2.2+, NamPower 4.6.3+, UnitXP SP3, DXVK
+		Built for ClassicAPI v1.15.8+
 --]]
 
 function BagnonOptions_OnLoad(self)

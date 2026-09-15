@@ -2,15 +2,32 @@
 	Bag.lua
 		Functions used by Bagnon Bags
 		Author: Tuller, McPewPew, Fostercare5988
-		Built natively for ClassicAPI, SuperWoW 2.2+, NamPower 4.6.3+, UnitXP SP3, DXVK
+		Built for ClassicAPI v1.15.8+
 --]]
 
 --[[ Bag Frame Functions ]]--
 
+local function GetBagSlot(bagFrame, index)
+	if not bagFrame then return nil end
+	local bags = bagFrame.bagSlots
+	if not bags then
+		bags = {}
+		bagFrame.bagSlots = bags
+	end
+	local bag = bags[index]
+	if not bag then
+		bag = getglobal(bagFrame:GetName() .. index)
+		if bag then
+			bags[index] = bag
+		end
+	end
+	return bag
+end
+
 local function ForAllBagSlots(bagFrame, action, arg1)
-	local frameName = bagFrame:GetName()
+	if not bagFrame then return end
 	for i = 1, 10 do
-		local bag = getglobal(frameName .. i)
+		local bag = GetBagSlot(bagFrame, i)
 		if bag then
 			action(bag, arg1)
 		end
@@ -21,7 +38,7 @@ end
 local function UpdateFrameSize(bagFrame)
 	local size = 0
 	for i = 1, 10 do
-		local bag = getglobal(bagFrame:GetName() .. i)
+		local bag = GetBagSlot(bagFrame, i)
 		if bag and GetInventoryItemTexture("player", ContainerIDToInventoryID(bag:GetID())) then
 			size = size + GetContainerNumSlots(bag:GetID())
 		end
@@ -47,7 +64,7 @@ function BagnonBagFrame_OnEvent(arg1_param, arg2_param, arg3_param)
 		if not a1 or f:GetParent() == Banknon then
 			ForAllBagSlots(f, BagnonBag_Update)
 		elseif tonumber(a1) and a1 > 0 then
-			local bag = getglobal(f:GetName() .. a1)
+			local bag = GetBagSlot(f, a1)
 			if bag then
 				BagnonBag_Update(bag)
 			end
@@ -106,18 +123,6 @@ function BagnonBag_Update(bag)
 		end
 	end
 	BagnonBag_UpdateLock(bag)
-
-	-- Update repair all button status
-	if MerchantRepairAllIcon then
-		local repairAllCost, canRepair = GetRepairAllCost()
-		if canRepair then
-			SetDesaturation(MerchantRepairAllIcon, nil)
-			MerchantRepairAllButton:Enable()
-		else
-			SetDesaturation(MerchantRepairAllIcon, 1)
-			MerchantRepairAllButton:Disable()
-		end
-	end
 end
 
 function BagnonBag_UpdateLock(bag)
@@ -142,7 +147,9 @@ end
 		Used mainly for cached bags
 --]]
 function BagnonBag_UpdateTexture(frame, bagID)
-	local bag = getglobal(frame:GetName() .. "Bags" .. bagID)
+	if not frame then return end
+	local bagFrame = getglobal(frame:GetName() .. "Bags")
+	local bag = GetBagSlot(bagFrame, bagID)
 	if not bag or bag:GetID() <= 0 then return end
 
 	if Bagnon_IsCachedBag(frame.player, bagID) then
@@ -172,19 +179,27 @@ function BagnonBag_SetCount(button, count)
 	if not count then count = 0 end
 
 	button.count = count
+	local countText = button.countText or getglobal(button:GetName() .. "Count")
+	if not button.countText then
+		button.countText = countText
+	end
+
 	if count > 1 or (button.isBag and count > 0) then
-		local countText = getglobal(button:GetName().."Count")
-		if count > 9999 then
-			countText:SetFont(NumberFontNormal:GetFont(), 10, "OUTLINE")
-		elseif count > 999 then
-			countText:SetFont(NumberFontNormal:GetFont(), 11, "OUTLINE")
-		else
-			countText:SetFont(NumberFontNormal:GetFont(), 12, "OUTLINE")
+		if countText then
+			if count > 9999 then
+				countText:SetFont(NumberFontNormal:GetFont(), 10, "OUTLINE")
+			elseif count > 999 then
+				countText:SetFont(NumberFontNormal:GetFont(), 11, "OUTLINE")
+			else
+				countText:SetFont(NumberFontNormal:GetFont(), 12, "OUTLINE")
+			end
+			countText:SetText(count)
+			countText:Show()
 		end
-		countText:SetText(count)
-		countText:Show()
 	else
-		getglobal(button:GetName().."Count"):Hide()
+		if countText then
+			countText:Hide()
+		end
 	end
 end
 

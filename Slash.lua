@@ -2,7 +2,7 @@
 	Slash.lua
 		This is the slash command handler for Bagnon
 		Author: Tuller, McPewPew, Fostercare5988
-		Built natively for ClassicAPI, SuperWoW 2.2+, NamPower 4.6.3+, UnitXP SP3, DXVK
+		Built for ClassicAPI v1.15.8+
 --]]
 
 function BagnonSlash_DisplayHelp()
@@ -11,6 +11,7 @@ function BagnonSlash_DisplayHelp()
 	BagnonMsg(BAGNON_HELP_SHOWBAGS);
 	BagnonMsg(BAGNON_HELP_SHOWBANK);
 	BagnonMsg(BAGNON_HELP_SORT);
+	BagnonMsg(BAGNON_HELP_ENCHANTS);
 	
 	if BagnonDB then
 		BagnonMsg(BAGNON_FOREVER_HELP_DELETE_CHARACTER)
@@ -55,6 +56,18 @@ SlashCmdList["BagnonCOMMAND"] = function(msg)
 					BagnonMsg(BAGNON_SORTING_BAGS)
 					C_Container.SortBags()
 				end
+			end
+		elseif(cmd == BAGNON_COMMAND_ENCHANTS) then
+			if not BagnonSets then BagnonSets = {} end
+			if BagnonSets.enchantBadges == 0 then
+				BagnonSets.enchantBadges = 1
+				BagnonMsg(BAGNON_ENCHANTS_ENABLED)
+			else
+				BagnonSets.enchantBadges = 0
+				BagnonMsg(BAGNON_ENCHANTS_DISABLED)
+			end
+			if Bagnon and Bagnon:IsShown() then
+				BagnonFrame_Update(Bagnon)
 			end
 		elseif(cmd == BAGNON_COMMAND_DEBUG_ON) then
 			BagnonSets.noDebug = nil;

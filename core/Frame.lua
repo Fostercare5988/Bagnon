@@ -2,7 +2,7 @@
 	Frame.lua
 		Functionality for Bagnon Inventory/Bank frames
 		Author: Tuller, McPewPew, Fostercare5988
-		Built natively for ClassicAPI, SuperWoW 2.2+, NamPower 4.6.3+, UnitXP SP3, DXVK
+		Built for the Enhanced WoW 1.12.1 Client (ClassicAPI v1.15.8+)
 
 	BagSlots:
 		-2: Key (1.11)
@@ -28,6 +28,7 @@ local DEFAULT_BG = {r = 0, g = 0, b = 0, a = 1}
 
 function BagnonFrame_Load(frame, bags, title)
 	local frameName = frame:GetName()
+	frame.items = frame.items or {}
 
 	--make frame close on escape
 	tinsert(UISpecialFrames, frameName)
@@ -202,9 +203,11 @@ function BagnonFrame_AddBag(frame, bagID)
 
 	--update used slots
 	local dummyBag = getglobal(frameName .. "DummyBag" .. bagID) or CreateDummyBag(frame, bagID)
+	frame.items = frame.items or {}
 	for index = 1, bagSize, 1 do
 		slot = slot + 1
-		local item = getglobal(frameName .. "Item".. slot) or BagnonItem_Create(frameName .. "Item".. slot, dummyBag)
+		local item = frame.items[slot] or getglobal(frameName .. "Item".. slot) or BagnonItem_Create(frameName .. "Item".. slot, dummyBag)
+		frame.items[slot] = item
 		item:SetID(index)
 		item:SetParent(dummyBag)
 		item:Show()
@@ -228,13 +231,22 @@ function BagnonFrame_TrimToSize(frame)
 
 	--hide unused slots
 	if frame.size then
-		local slot = frame.size + 1
-		local button = getglobal(frameName .. "Item".. slot)
+		if frame.items then
+			for slot = frame.size + 1, #frame.items do
+				local button = frame.items[slot]
+				if button then
+					button:Hide()
+				end
+			end
+		else
+			local slot = frame.size + 1
+			local button = getglobal(frameName .. "Item".. slot)
 
-		while button do
-			button:Hide()
-			slot = slot + 1
-			button = getglobal(frameName .. "Item".. slot)
+			while button do
+				button:Hide()
+				slot = slot + 1
+				button = getglobal(frameName .. "Item".. slot)
+			end
 		end
 	end
 
@@ -307,7 +319,7 @@ function BagnonFrame_Update(frame, bagID)
 
 	--update the necessary slots
 	for slot = startSlot, endSlot do
-		local item = getglobal(frameName .. "Item" .. slot)
+		local item = (frame.items and frame.items[slot]) or getglobal(frameName .. "Item" .. slot)
 		if item then
 			BagnonItem_Update(item)
 		end
@@ -320,9 +332,11 @@ function BagnonFrame_UpdateLock(frame)
 	local frameName = frame:GetName()
 
 	for slot = 1, frame.size do
-		local item = getglobal(frameName .. "Item" .. slot)
-		local _, _, locked = GetContainerItemInfo(item:GetParent():GetID(), item:GetID())
-		SetItemButtonDesaturated(item, locked, 0.5, 0.5, 0.5)
+		local item = (frame.items and frame.items[slot]) or getglobal(frameName .. "Item" .. slot)
+		if item then
+			local _, _, locked = GetContainerItemInfo(item:GetParent():GetID(), item:GetID())
+			SetItemButtonDesaturated(item, locked, 0.5, 0.5, 0.5)
+		end
 	end
 end
 
@@ -346,16 +360,18 @@ function BagnonFrame_Layout(frame, cols, space)
 	frame.space = space
 
 	for slot = 1, frame.size do
-		local button = getglobal(frameName .. "Item" .. slot)
+		local button = (frame.items and frame.items[slot]) or getglobal(frameName .. "Item" .. slot)
 		if button then
 			button:ClearAllPoints()
 			local col = (slot - 1) % cols
 			if slot == 1 then
 				button:SetPoint("TOPLEFT", frame, "TOPLEFT", 8, -31)
 			elseif col == 0 then
-				button:SetPoint("TOP", getglobal(frameName .. "Item" .. (slot - cols)), "BOTTOM", 0, -space)
+				local prevColButton = (frame.items and frame.items[slot - cols]) or getglobal(frameName .. "Item" .. (slot - cols))
+				button:SetPoint("TOP", prevColButton, "BOTTOM", 0, -space)
 			else
-				button:SetPoint("LEFT", getglobal(frameName .. "Item" .. (slot - 1)), "RIGHT", space, 0)
+				local prevButton = (frame.items and frame.items[slot - 1]) or getglobal(frameName .. "Item" .. (slot - 1))
+				button:SetPoint("LEFT", prevButton, "RIGHT", space, 0)
 			end
 		end
 	end
@@ -412,13 +428,11 @@ function BagnonFrame_HighlightSlots(frame, bagID)
 	if not frame.size then return end
 
 	local frameName = frame:GetName()
-	local slot
 
 	--update only the slots the player can use
-	for slot = 1, frame.size, 1 do
-		local item = getglobal(frameName .. "Item" .. slot)
-
-		if item:GetParent():GetID() == bagID then
+	for slot = 1, frame.size do
+		local item = (frame.items and frame.items[slot]) or getglobal(frameName .. "Item" .. slot)
+		if item and item:GetParent():GetID() == bagID then
 			item:LockHighlight()
 		end
 	end
@@ -428,11 +442,13 @@ function BagnonFrame_UnhighlightAll(frame)
 	if not frame.size then return end
 
 	local frameName = frame:GetName()
-	local slot
 
 	--update only the slots the player can use
-	for slot = 1, frame.size, 1 do
-		getglobal(frameName .. "Item" .. slot):UnlockHighlight()
+	for slot = 1, frame.size do
+		local item = (frame.items and frame.items[slot]) or getglobal(frameName .. "Item" .. slot)
+		if item then
+			item:UnlockHighlight()
+		end
 	end
 end
 
