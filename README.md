@@ -33,6 +33,7 @@ Bagnon is engineered around direct engine integration:
 - **Direct Cooldown Loop Traversals**: Refactored `BAG_UPDATE_COOLDOWN` to iterate directly across pre-cached item arrays, eliminating string allocations during cooldown ticks.
 - **In-Place Search Highlighting**: Optimized `spot/spot.lua` to update slot alphas directly in-place without triggering layout recalculations or rebuilding container geometry.
 - **O(1) Alt Inventory Tooltip Cache**: Introduced memoized `playerTotalsCache` in `database/database.lua`, replacing $O(\text{alts} \times \text{slots})$ regex scans with $O(1)$ lookups on tooltip hover.
+- **Tooltip Composition**: Adds historical holdings and optional ItemRack/TrinketMenu lines after item tooltip calls, using their read-only queries and clearing line guards when the tooltip resets.
 - **Lazy Weapon Enchant Overlays**: Eliminated >600 eagerly allocated overlay UI elements across 120+ bag and bank slots, instantiating overlays on-demand only for weapons in bag slots `0..4`.
 - **Library Modernization & Dead Code Elimination**: Removed obsolete wrapper libraries (`lib/Infield.lua`, `lib/TLib.lua`) in favor of native ClassicAPI frame methods and clean event dispatching; purged unused startup item queries and legacy `MerchantRepairAllIcon` tampering.
 - **Strict Mouse Passthrough (Rule C8)**: Cooldown model frames (`item.cooldown`) have mouse capture explicitly disabled (`EnableMouse(false)`), guaranteeing 100% of the item slot square captures clicks, drag operations, and item splits without dead zones.

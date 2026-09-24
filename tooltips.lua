@@ -30,6 +30,7 @@ end
 local function AddOwners(frame, id)
 	if not (frame and id and BagnonSets and BagnonSets.showForeverTooltips) then return end
 	if not (BagnonDB and BagnonDB.GetPlayers) then return end
+	if frame.bagnonOwnersID == id then return end
 
 	local me = GetCurrentPlayer()
 	local added = false
@@ -64,6 +65,7 @@ local function AddOwners(frame, id)
 		end
 	end
 	if added then
+		frame.bagnonOwnersID = id
 		frame:Show()
 	end
 end
@@ -71,8 +73,10 @@ end
 -- Cross-Addon Suite Synergy: ItemRack Set Integration
 local function AddItemRackSets(frame, link)
 	if not (frame and link and Rack and Rack.GetSetsWithItem) then return end
+	if frame.bagnonItemRackLink == link then return end
 	local sets = Rack.GetSetsWithItem(link)
 	if sets then
+		frame.bagnonItemRackLink = link
 		frame:AddLine("ItemRack: " .. sets, 0.2, 0.8, 1.0)
 		frame:Show()
 	end
@@ -80,13 +84,15 @@ end
 
 -- Cross-Addon Suite Synergy: TrinketMenu Queue Integration
 local function AddTrinketMenuQueue(frame, link)
-	if not (frame and link and TrinketMenu and TrinketMenu.CombatQueue) then return end
-	local _, _, itemName = string.find(link, "%[(.+)%]")
-	if not itemName then return end
-	if TrinketMenu.CombatQueue[0] == itemName then
+	if not (frame and link and TrinketMenu and TrinketMenu.GetQueuedSlotForItem) then return end
+	if frame.bagnonTrinketLink == link then return end
+	local slot = TrinketMenu.GetQueuedSlotForItem(link)
+	if slot == 13 then
+		frame.bagnonTrinketLink = link
 		frame:AddLine("TrinketMenu: Queued (Top Slot)", 1.0, 0.82, 0.0)
 		frame:Show()
-	elseif TrinketMenu.CombatQueue[1] == itemName then
+	elseif slot == 14 then
+		frame.bagnonTrinketLink = link
 		frame:AddLine("TrinketMenu: Queued (Bottom Slot)", 1.0, 0.82, 0.0)
 		frame:Show()
 	end
@@ -96,17 +102,30 @@ end
 
 local function SafeHookTooltip(tbl, method, hookFunc)
 	if not (tbl and tbl[method]) then return end
-	if hooksecurefunc then
-		hooksecurefunc(tbl, method, hookFunc)
+	hooksecurefunc(tbl, method, hookFunc)
+end
+
+local function ResetDecorations(frame)
+	frame = frame or this
+	frame.bagnonOwnersID = nil
+	frame.bagnonItemRackLink = nil
+	frame.bagnonTrinketLink = nil
+end
+local function HookReset(frame, script)
+	if frame.HookScript then
+		frame:HookScript(script, function() ResetDecorations(frame) end)
 	else
-		local orig = tbl[method]
-		tbl[method] = function(self, a1, a2, a3, a4)
-			local r1, r2, r3, r4 = orig(self, a1, a2, a3, a4)
-			hookFunc(self, a1, a2, a3, a4)
-			return r1, r2, r3, r4
-		end
+		local previous = frame:GetScript(script)
+		frame:SetScript(script, function(...)
+			if previous then previous(...) end
+			ResetDecorations(frame)
+		end)
 	end
 end
+HookReset(GameTooltip, "OnTooltipCleared")
+HookReset(GameTooltip, "OnHide")
+HookReset(ItemRefTooltip, "OnTooltipCleared")
+HookReset(ItemRefTooltip, "OnHide")
 
 SafeHookTooltip(GameTooltip, "SetBagItem", function(self, bag, slot)
 	local link = GetContainerItemLink(bag, slot)
