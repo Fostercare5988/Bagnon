@@ -2,10 +2,10 @@
 
 [![Interface: 1.12.1](https://img.shields.io/badge/Interface-1.12.1%20(5875)-orange.svg)](https://github.com/Fostercare5988/Bagnon)
 [![Version: 2.0.1](https://img.shields.io/badge/Version-2.0.1-blue.svg)](https://github.com/Fostercare5988/Bagnon/releases)
-[![ClassicAPI: v1.15.8+](https://img.shields.io/badge/ClassicAPI-v1.15.8+-green.svg)](https://github.com/brues-code/ClassicAPI)
+[![ClassicAPI: v1.15.13+](https://img.shields.io/badge/ClassicAPI-v1.15.13+-green.svg)](https://github.com/brues-code/ClassicAPI)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Bagnon v2.0.1** is an inventory and bank engine engineered natively for **World of Warcraft 1.12.1 (Build 5875)** running on the **Enhanced Client Extension Stack** (**ClassicAPI v1.15.8+**, supporting **v1.15.13+**).
+**Bagnon v2.0.1** is an inventory and bank engine engineered natively for **World of Warcraft 1.12.1 (Build 5875)** running on the **Enhanced Client Extension Stack** (**ClassicAPI v1.15.13+**).
 
 Bagnon merges all fragmented inventory and bank bags into a unified, resizable grid. It enables remote bank viewing from anywhere in the world, memoized instant substring search, cross-character alt item aggregation on tooltips, total realm gold tracking, and modern one-click bag and bank sorting.
 
@@ -25,7 +25,7 @@ Bagnon is engineered around direct engine integration:
 
 | Engine Component | Minimum Version | Architectural Role & Implementation |
 | :--- | :--- | :--- |
-| **ClassicAPI** | `v1.15.8+` (supports `v1.15.13+`) | C++ hardware timers (`C_Timer.After`), modern EditBox text manipulation, native `table.wipe` memory recycling, native container sorting with Baganator-style equipment slot grouping (`C_Container.SortBags`, `C_Container.SortBankBags`), and source-rewritten Lua 5.1 syntax. |
+| **ClassicAPI** | `v1.15.13+` | C++ hardware timers (`C_Timer.After`), modern EditBox text manipulation, native `table.wipe` memory recycling, native container sorting with Baganator-style equipment slot grouping (`C_Container.SortBags`, `C_Container.SortBankBags`), and source-rewritten Lua 5.1 syntax. |
 
 ### Elimination of 2006 Legacy Techniques
 - **Zero OnUpdate Polling**: Eradicated legacy per-button `OnUpdate` polling loops across all 120+ bag/bank item slots; item slot states update exclusively on native events (`BAG_UPDATE`, `BAG_UPDATE_COOLDOWN`, `ITEM_LOCK_CHANGED`).
@@ -106,7 +106,7 @@ Bagnon is engineered around direct engine integration:
 
 ### Prerequisites
 1. **World of Warcraft 1.12.1** (Build 5875).
-2. [**ClassicAPI v1.15.8+**](https://github.com/brues-code/ClassicAPI) (`ClassicAPI.dll`).
+2. [**ClassicAPI v1.15.13+**](https://github.com/brues-code/ClassicAPI) (`ClassicAPI.dll`).
 
 ### Step-by-Step Installation
 1. Clone or download the repository into your WoW AddOns directory:

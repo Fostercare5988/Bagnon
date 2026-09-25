@@ -2,7 +2,7 @@
 	Menu.lua
 		Functions for the Bagnon right click options menu
 		Author: Tuller, McPewPew, Fostercare5988
-		Built for ClassicAPI v1.15.8+
+		Built for ClassicAPI v1.15.13+
 --]]
 
 --show the menu

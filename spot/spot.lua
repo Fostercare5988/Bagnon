@@ -2,7 +2,7 @@
 	spot.lua
 		Scripts for Bagnon_Spot, which provides filtering functionality for Bagnon
 		Author: Tuller, McPewPew, Fostercare5988
-		Built for ClassicAPI v1.15.8+
+		Built for ClassicAPI v1.15.13+
 --]]
 
 local nameFilter

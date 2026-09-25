@@ -2,7 +2,7 @@
 	Item.lua
 		Functions used by the item slots in Bagnon
 		Author: Tuller, McPewPew, Fostercare5988
-		Built for ClassicAPI v1.15.8+
+		Built for ClassicAPI v1.15.13+
 --]]
 
 --[[ OnX Handlers ]]--

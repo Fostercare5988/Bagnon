@@ -2,7 +2,7 @@
 	ui.lua
 		Functions for the dropdown menu for showing cached data
 		Author: Tuller, McPewPew, Fostercare5988
-		Built for ClassicAPI v1.15.8+
+		Built for ClassicAPI v1.15.13+
 
 	Essentially the dropdown is used to switch between the inventory of other characters
 	Why not use a normal dropdown?  It takes a lot of memory

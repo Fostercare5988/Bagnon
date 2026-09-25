@@ -2,7 +2,7 @@
 	tooltips.lua
 		Tooltip integration for Bagnon
 		Author: Tuller, McPewPew, Fostercare5988
-		Built for the Enhanced WoW 1.12.1 Client (ClassicAPI v1.15.8+)
+		Built for the Enhanced WoW 1.12.1 Client (ClassicAPI v1.15.13+)
 --]]
 
 local currentPlayer = UnitName("player")

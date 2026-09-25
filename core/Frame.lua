@@ -2,7 +2,7 @@
 	Frame.lua
 		Functionality for Bagnon Inventory/Bank frames
 		Author: Tuller, McPewPew, Fostercare5988
-		Built for the Enhanced WoW 1.12.1 Client (ClassicAPI v1.15.8+)
+		Built for the Enhanced WoW 1.12.1 Client (ClassicAPI v1.15.13+)
 
 	BagSlots:
 		-2: Key (1.11)
@@ -742,4 +742,4 @@ end
 
 function BagnonFrameSort_OnLeave()
 	GameTooltip:Hide()
-end
+end
