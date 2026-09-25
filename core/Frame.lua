@@ -667,7 +667,7 @@ function BagnonFrame_OrderBags(frame, reverse)
 end
 
 --[[
-	Modern Bag/Bank Sorting (ClassicAPI v1.15.0+)
+	Modern Bag/Bank Sorting (ClassicAPI v1.15.0+, v1.15.13+ equipment slot grouping)
 --]]
 
 function BagnonFrameSort_OnClick(frame, button)

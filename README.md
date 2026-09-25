@@ -1,11 +1,11 @@
 # Bagnon
 
 [![Interface: 1.12.1](https://img.shields.io/badge/Interface-1.12.1%20(5875)-orange.svg)](https://github.com/Fostercare5988/Bagnon)
-[![Version: 2.0.0](https://img.shields.io/badge/Version-2.0.0-blue.svg)](https://github.com/Fostercare5988/Bagnon/releases)
+[![Version: 2.0.1](https://img.shields.io/badge/Version-2.0.1-blue.svg)](https://github.com/Fostercare5988/Bagnon/releases)
 [![ClassicAPI: v1.15.8+](https://img.shields.io/badge/ClassicAPI-v1.15.8+-green.svg)](https://github.com/brues-code/ClassicAPI)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Bagnon v2.0.0** is an inventory and bank engine engineered natively for **World of Warcraft 1.12.1 (Build 5875)** running on the **Enhanced Client Extension Stack** (**ClassicAPI v1.15.8+**).
+**Bagnon v2.0.1** is an inventory and bank engine engineered natively for **World of Warcraft 1.12.1 (Build 5875)** running on the **Enhanced Client Extension Stack** (**ClassicAPI v1.15.8+**, supporting **v1.15.13+**).
 
 Bagnon merges all fragmented inventory and bank bags into a unified, resizable grid. It enables remote bank viewing from anywhere in the world, memoized instant substring search, cross-character alt item aggregation on tooltips, total realm gold tracking, and modern one-click bag and bank sorting.
 
@@ -25,7 +25,7 @@ Bagnon is engineered around direct engine integration:
 
 | Engine Component | Minimum Version | Architectural Role & Implementation |
 | :--- | :--- | :--- |
-| **ClassicAPI** | `v1.15.8+` | C++ hardware timers (`C_Timer.After`), modern EditBox text manipulation, native `table.wipe` memory recycling, native container sorting (`C_Container.SortBags`, `C_Container.SortBankBags`), and source-rewritten Lua 5.1 syntax. |
+| **ClassicAPI** | `v1.15.8+` (supports `v1.15.13+`) | C++ hardware timers (`C_Timer.After`), modern EditBox text manipulation, native `table.wipe` memory recycling, native container sorting with Baganator-style equipment slot grouping (`C_Container.SortBags`, `C_Container.SortBankBags`), and source-rewritten Lua 5.1 syntax. |
 
 ### Elimination of 2006 Legacy Techniques
 - **Zero OnUpdate Polling**: Eradicated legacy per-button `OnUpdate` polling loops across all 120+ bag/bank item slots; item slot states update exclusively on native events (`BAG_UPDATE`, `BAG_UPDATE_COOLDOWN`, `ITEM_LOCK_CHANGED`).
@@ -72,9 +72,10 @@ Bagnon is engineered around direct engine integration:
 - **TrinketMenu Queued Alerts**: Hovering over a trinket queued for swap displays an alert (`TrinketMenu: Queued (Top/Bottom Slot)`).
 - **Zero Overhead Decoupling**: All integrations use safe runtime existence guards (`if Rack ...`, `if TrinketMenu ...`), incurring 0ms latency when running standalone.
 
-### 6. Modern Bag & Bank Sorting (ClassicAPI v1.15.0+)
+### 6. Modern Bag & Bank Sorting (ClassicAPI v1.15.0+ / v1.15.13+)
 - **One-Click Container Sorting**: Clean, modern broom/cleanup icon anchored in the top-right header next to the close button for both inventory and bank frames.
-- **Engine-Native Performance**: Driven by ClassicAPI v1.15.0's C++ coroutine sorting engine (`C_Container.SortBags` and `C_Container.SortBankBags`) with built-in reentrancy safety locks.
+- **Engine-Native Performance**: Driven by ClassicAPI's C++ coroutine sorting engine (`C_Container.SortBags` and `C_Container.SortBankBags`) with built-in reentrancy safety locks.
+- **Equipment Slot Grouping (ClassicAPI v1.15.13+)**: On ClassicAPI v1.15.13+, gear automatically groups by slot category (weapons -> shields/offhands -> head -> shoulder -> back -> chest -> wrist -> hands -> waist -> legs -> feet -> neck -> rings -> trinkets -> shirt/tabard) instead of quality tiers.
 - **Bidirectional Sorting**: Right-click the sort icon at any time to toggle sort filling order between Top-Left to Bottom-Right and Bottom-Right to Top-Left (`C_Container.SetSortBagsRightToLeft`).
 - **Safety Interlocks**: Dynamically dims and guards against sorting offline cached alts or sorting bank bags while away from the bank NPC.
 
@@ -122,6 +123,10 @@ Bagnon is engineered around direct engine integration:
 ---
 
 ## 📜 Changelog
+
+### v2.0.1
+- **ClassicAPI v1.15.13 Sorting Integration**: Fully aligned with ClassicAPI v1.15.13's native equipment-slot sorting engine. Non-poor gear now groups logically by item class and equipment slot rank (weapons, shields/offhands, armor slots, jewelry, and trinkets) rather than scattered quality tiers.
+- **Documentation & Engine Guidance**: Updated engine architecture references and sorting documentation for the v1.15.13 C++ coroutine sorting semantics.
 
 ### v2.0.0
 - **Enhanced Engine Modernization Milestone**: Complete architectural overhaul aligning the addon strictly with the Enhanced WoW 1.12.1 runtime and ClassicAPI v1.15.8+.
