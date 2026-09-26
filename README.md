@@ -73,6 +73,7 @@ Bagnon is engineered around direct engine integration:
 - **Zero Overhead Decoupling**: All integrations use safe runtime existence guards (`if Rack ...`, `if TrinketMenu ...`), incurring 0ms latency when running standalone.
 
 ### 6. Modern Bag & Bank Sorting (ClassicAPI v1.15.0+ / v1.15.13+)
+- Sorting can span multiple server updates. The button, command and keybinding request sorting without announcing completion; click sounds do not confirm success.
 - **One-Click Container Sorting**: Clean, modern broom/cleanup icon anchored in the top-right header next to the close button for both inventory and bank frames.
 - **Engine-Native Performance**: Driven by ClassicAPI's C++ coroutine sorting engine (`C_Container.SortBags` and `C_Container.SortBankBags`) with built-in reentrancy safety locks.
 - **Equipment Slot Grouping (ClassicAPI v1.15.13+)**: On ClassicAPI v1.15.13+, gear automatically groups by slot category (weapons -> shields/offhands -> head -> shoulder -> back -> chest -> wrist -> hands -> waist -> legs -> feet -> neck -> rings -> trinkets -> shirt/tabard) instead of quality tiers.

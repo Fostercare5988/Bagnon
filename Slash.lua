@@ -45,7 +45,6 @@ SlashCmdList["BagnonCOMMAND"] = function(msg)
 			if Banknon and Banknon:IsShown() and not (Bagnon_IsCachedFrame and Bagnon_IsCachedFrame(Banknon)) and bgn_atBank then
 				if C_Container and C_Container.SortBankBags then
 					PlaySound("igMainMenuOption")
-					BagnonMsg(BAGNON_SORTING_BANK)
 					C_Container.SortBankBags()
 				end
 			else
@@ -53,7 +52,6 @@ SlashCmdList["BagnonCOMMAND"] = function(msg)
 					BagnonMsg(BAGNON_CANNOT_SORT_OFFLINE)
 				elseif C_Container and C_Container.SortBags then
 					PlaySound("igMainMenuOption")
-					BagnonMsg(BAGNON_SORTING_BAGS)
 					C_Container.SortBags()
 				end
 			end

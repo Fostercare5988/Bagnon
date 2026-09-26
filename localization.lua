@@ -75,8 +75,6 @@ BAGNON_SORT_RIGHT_TO_LEFT = "Bottom-Right to Top-Left"
 BAGNON_SORT_DIRECTION_CHANGED = "Bagnon: Sort direction set to: %s."
 BAGNON_CANNOT_SORT_OFFLINE = "Cannot sort bags of an offline character."
 BAGNON_CANNOT_SORT_BANK_AWAY = "You must be at a bank to sort bank bags."
-BAGNON_SORTING_BAGS = "Bagnon: Bags sorted."
-BAGNON_SORTING_BANK = "Bagnon: Bank bags sorted."
 
 --General Options Menu
 BAGNON_MAINOPTIONS_TITLE = "Bagnon Options"

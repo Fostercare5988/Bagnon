@@ -704,13 +704,11 @@ function BagnonFrameSort_OnClick(frame, button)
 		end
 		if C_Container and C_Container.SortBankBags then
 			PlaySound("igMainMenuOption")
-			BagnonMsg(BAGNON_SORTING_BANK)
 			C_Container.SortBankBags()
 		end
 	else
 		if C_Container and C_Container.SortBags then
 			PlaySound("igMainMenuOption")
-			BagnonMsg(BAGNON_SORTING_BAGS)
 			C_Container.SortBags()
 		end
 	end
