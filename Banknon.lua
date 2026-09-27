@@ -2,7 +2,7 @@
 	Banknon
 		Combines the player's bank into a single frame
 		Author: Tuller, McPewPew, Fostercare5988
-		Built for the Enhanced WoW 1.12.1 Client (ClassicAPI v1.15.13+)
+		Built for the Enhanced WoW 1.12.1 Client (ClassicAPI v1.15.15+)
 --]]
 
 if not Bagnon_EngineReady then
