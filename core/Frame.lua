@@ -190,7 +190,8 @@ function BagnonFrame_AddBag(frame, bagID)
 
 	local bagSize
 	if Bagnon_IsCachedBag(frame.player, bagID) then
-		bagSize = tonumber(BagnonDB.GetBagData(frame.player, bagID)) or 0
+		local size = BagnonDB and BagnonDB.GetBagData(frame.player, bagID)
+		bagSize = tonumber(size) or 0
 	else
 		if bagID == KEYRING_CONTAINER then
 			bagSize = GetKeyRingSize()
@@ -763,7 +764,8 @@ function BagnonFrame_UpdateFreeSlots(frame)
 		if bags then
 			for _, bagID in pairs(bags) do
 				if tonumber(bagID) ~= KEYRING_CONTAINER then
-					local bagSize = tonumber(BagnonDB and BagnonDB.GetBagData(frame.player, bagID)) or 0
+					local size = BagnonDB and BagnonDB.GetBagData(frame.player, bagID)
+					local bagSize = tonumber(size) or 0
 					if bagSize > 0 then
 						totalSlots = totalSlots + bagSize
 						for slot = 1, bagSize do
@@ -858,7 +860,8 @@ function BagnonFrameFreeSlots_OnEnter(button)
 			if numBagID and numBagID ~= KEYRING_CONTAINER then
 				local bagName, numFree, numTotal
 				if Bagnon_IsCachedFrame and Bagnon_IsCachedFrame(frame) then
-					numTotal = tonumber(BagnonDB and BagnonDB.GetBagData(frame.player, bagID)) or 0
+					local size = BagnonDB and BagnonDB.GetBagData(frame.player, bagID)
+					numTotal = tonumber(size) or 0
 					if numTotal > 0 then
 						numFree = 0
 						for slot = 1, numTotal do
