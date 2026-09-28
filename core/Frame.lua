@@ -615,11 +615,6 @@ function BagnonFrame_OnHide(self)
 	end
 end
 
---this function is here so that it can be overriden
-function BagnonFrame_OnDoubleClick(frame)
-	return
-end
-
 function BagnonFrame_OnClick(frame, mouseButton)
 	if mouseButton == "RightButton" then
 		BagnonMenu_Show(frame)
@@ -755,7 +750,7 @@ function BagnonFrame_UpdateFreeSlots(frame)
 	local frameName = frame:GetName()
 	local freeSlotsBtn = getglobal(frameName .. "FreeSlots")
 	local titleBtn = getglobal(frameName .. "Title")
-	local searchBtn = getglobal(frameName .. "SearchButton")
+	local sortBtn = getglobal(frameName .. "SortButton")
 	if not freeSlotsBtn then return end
 
 	local dropdownBtn = getglobal(frameName .. "DropDown")
@@ -769,8 +764,8 @@ function BagnonFrame_UpdateFreeSlots(frame)
 
 		if BagnonSets and BagnonSets.showFreeSlots == 0 then
 			freeSlotsBtn:Hide()
-			if searchBtn then
-				titleBtn:SetPoint("BOTTOMRIGHT", searchBtn, "BOTTOMLEFT", -6, 0)
+			if sortBtn then
+				titleBtn:SetPoint("BOTTOMRIGHT", sortBtn, "BOTTOMLEFT", -6, 0)
 			end
 			return
 		else
@@ -945,28 +940,5 @@ function BagnonFrameFreeSlots_OnEnter(button)
 end
 
 function BagnonFrameFreeSlots_OnLeave()
-	GameTooltip:Hide()
-end
-
---[[
-	Search Button Handlers
---]]
-
-function BagnonFrameSearch_OnClick(frame)
-	if BagnonSpot_Toggle then
-		BagnonSpot_Toggle(frame)
-	end
-end
-
-function BagnonFrameSearch_OnEnter(button)
-	if not BagnonSets or BagnonSets.showTooltips then
-		GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
-		GameTooltip:SetText(BAGNON_SEARCH_TOOLTIP_TITLE or "Search", 1, 1, 1)
-		GameTooltip:AddLine(BAGNON_SEARCH_TOOLTIP_DESC or "Click to toggle search bar.\nSupports #quality, t:type, s:slot, boe/bop.", 0.8, 0.8, 0.8, 1)
-		GameTooltip:Show()
-	end
-end
-
-function BagnonFrameSearch_OnLeave()
 	GameTooltip:Hide()
 end

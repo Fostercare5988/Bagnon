@@ -3,13 +3,13 @@
 Required ClassicAPI version: **v1.15.15+**. This is the maintainer's published support baseline for this addon suite; it is not a claim that every API used here was introduced in v1.15.15. After replacing ClassicAPI.dll, fully restart WoW; `/reload` cannot reload a DLL.
 
 [![Interface: 1.12.1](https://img.shields.io/badge/Interface-1.12.1%20(5875)-orange.svg)](https://github.com/Fostercare5988/Bagnon)
-[![Version: 2.1.1](https://img.shields.io/badge/Version-2.1.1-blue.svg)](https://github.com/Fostercare5988/Bagnon/releases)
+[![Version: 2.2.0](https://img.shields.io/badge/Version-2.2.0-blue.svg)](https://github.com/Fostercare5988/Bagnon/releases)
 [![ClassicAPI: v1.15.15+](https://img.shields.io/badge/ClassicAPI-v1.15.15+-green.svg)](https://github.com/brues-code/ClassicAPI)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Bagnon v2.1.1** is an inventory and bank engine engineered natively for **World of Warcraft 1.12.1 (Build 5875)** running on the **Enhanced Client Extension Stack** (**ClassicAPI v1.15.15+**).
+**Bagnon v2.2.0** is an inventory and bank engine engineered natively for **World of Warcraft 1.12.1 (Build 5875)** running on the **Enhanced Client Extension Stack** (**ClassicAPI v1.15.15+**).
 
-Bagnon merges all fragmented inventory and bank bags into a unified, resizable grid. It enables remote bank viewing from anywhere in the world, live free slot tracking, container autosort exclusion, an advanced zero-GC search syntax engine, cross-character alt item aggregation on tooltips, total realm gold tracking, and modern one-click bag and bank sorting.
+Bagnon merges all fragmented inventory and bank bags into a unified, resizable grid. It enables remote bank viewing from anywhere in the world, live free slot tracking, container autosort exclusion, cross-character alt item aggregation on tooltips, total realm gold tracking, and modern one-click bag and bank sorting.
 
 Created and actively maintained by **[Fostercare5988](https://github.com/Fostercare5988)**.
 
@@ -33,14 +33,13 @@ Bagnon is engineered around direct engine integration:
 - **Zero OnUpdate Polling**: Eradicated legacy per-button `OnUpdate` polling loops across all 120+ bag/bank item slots; item slot states update exclusively on native events (`BAG_UPDATE`, `BAG_UPDATE_COOLDOWN`, `ITEM_LOCK_CHANGED`).
 - **Pre-Cached Item Slot Arrays**: Replaced per-frame string concatenations and `getglobal` lookups with direct `frame.items[slot]` array caching across `Bagnon` and `Banknon`.
 - **Direct Cooldown Loop Traversals**: Refactored `BAG_UPDATE_COOLDOWN` to iterate directly across pre-cached item arrays, eliminating string allocations during cooldown ticks.
-- **In-Place Search Highlighting**: Optimized `spot/spot.lua` to update slot alphas directly in-place without triggering layout recalculations or rebuilding container geometry.
 - **O(1) Alt Inventory Tooltip Cache**: Introduced memoized `playerTotalsCache` in `database/database.lua`, replacing $O(\text{alts} \times \text{slots})$ regex scans with $O(1)$ lookups on tooltip hover.
 - **Tooltip Composition**: Adds historical holdings and optional ItemRack/TrinketMenu lines after item tooltip calls, using their read-only queries and clearing line guards when the tooltip resets.
 - **Lazy Weapon Enchant Overlays**: Eliminated >600 eagerly allocated overlay UI elements across 120+ bag and bank slots, instantiating overlays on-demand only for weapons in bag slots `0..4`.
 - **Library Modernization & Dead Code Elimination**: Removed obsolete wrapper libraries (`lib/Infield.lua`, `lib/TLib.lua`) in favor of native ClassicAPI frame methods and clean event dispatching; purged unused startup item queries and legacy `MerchantRepairAllIcon` tampering.
 - **Strict Mouse Passthrough (Rule C8)**: Cooldown model frames (`item.cooldown`) have mouse capture explicitly disabled (`EnableMouse(false)`), guaranteeing 100% of the item slot square captures clicks, drag operations, and item splits without dead zones.
-- **Native Memory Recycling**: Integrated native C++ `table.wipe` across search string caches and character list iterators, eliminating heap allocation churn during rapid search typing and dropdown navigation.
-- **Consolidated DRY Architecture**: Merged legacy multi-folder dependencies (`Bagnon_Core`, `Bagnon_Forever`, `Bagnon_Spot`, `Bagnon_Options`) into a single, self-contained, high-performance module.
+- **Native Memory Recycling**: Integrated native C++ `table.wipe` across character list iterators and internal buffers, eliminating heap allocation churn.
+- **Consolidated DRY Architecture**: Merged legacy multi-folder dependencies (`Bagnon_Core`, `Bagnon_Forever`, `Bagnon_Options`) into a single, self-contained, high-performance module.
 
 ---
 
@@ -64,42 +63,29 @@ Bagnon is engineered around direct engine integration:
 - **Intuitive Toggling**: `<Alt-Click>` or `<Right-Click>` directly on the Backpack slot or Bank slot in Bagnon's bag bar or the standard Blizzard menu bar to toggle sort ignore on or off.
 - **Visual Status Badges**: Ignored containers display a distinct status badge overlay directly on the bag button, alongside real-time chat notices and informative GameTooltip lines.
 
-### 4. Advanced Search Engine & Syntax (`spot/spot.lua`)
-- **Dedicated Header Search Button**: Circular metallic magnifying glass button placed directly alongside Sort and Close buttons in the header toolbar. Clicking it toggles the interactive search bar over the title area.
-- **Contextual Syntax Placeholder**: Displays clear syntax examples (`Search... (#epic, t:armor, s:ring, boe)`) when empty, disappearing immediately upon typing.
-- **Quick Dismissal**: Press `<Escape>` to instantly clear the search query and restore the title header, or click the search button again to toggle it closed.
-- **Zero-GC Hot Path**: Reusable pre-allocated token buffer, immutable item metadata caching, and tooltip scanner binding resolution eliminate memory churn during rapid typing.
-- **Comprehensive Syntax Operators**:
-  - **Quality**: `#epic`, `#rare`, `#uncommon`, `#common`, `#poor`, `#legendary`, `q:4`, `q:rare`, `q:3`, `q:epic`, etc.
-  - **Item Type / Category**: `t:weapon`, `t:armor`, `t:consumable`, `t:trade`, `t:quest`, `t:reagent`, `t:recipe`, etc.
-  - **Equipment Slot**: `s:head`, `s:trinket`, `s:ring`, `s:chest`, `s:boots`, `s:neck`, `s:weapon`, `s:shield`, `s:2h`, `s:wand`, etc.
-  - **Binding**: `boe` (Bind on Equip / Bind on Use), `bop` (Bind on Pickup / Soulbound).
-  - **Multi-Token Querying**: Combine multiple filters separated by space (e.g. `t:armor #rare`, `boe s:trinket`, `s:ring #epic`).
-  - **Fuzzy Name Search**: Unprefixed text matches item names directly (e.g. `iron`, `linen`, `potion`).
-
-### 5. Item Rarity & Specialized Bag Highlighting
+### 4. Item Rarity & Specialized Bag Highlighting
 - **Native Quality Borders**: Crisp, engine-accelerated rarity borders (Uncommon, Rare, Epic, Legendary, Artifact) rendered natively using `Interface\Tooltips\UI-Tooltip-Border` and ClassicAPI `C_Container` direct memory lookups.
 - **Color-Coded Special Bag Slots**:
   - **Yellow**: Ammo pouches and Soul shard bags.
   - **Green**: Profession bags (Herbalism, Mining, Enchanting, Engineering).
   - **Orange**: Keyring container.
 
-### 6. Cross-Character Alt Tracker & Tooltip Holdings
+### 5. Cross-Character Alt Tracker & Tooltip Holdings
 - **O(1) Alt Item Tracker**: Hover over any item in the game to see total counts across all characters on your realm, powered by memoized item total caching.
 - **Realm Gold Aggregator**: Hover over the money display to view total gold aggregated across all your alts on the current realm.
 
-### 7. Lazy Weapon Enchant Badges
+### 6. Lazy Weapon Enchant Badges
 - **Real-Time Enchant Overlays**: Automatically displays active temporary weapon enchants (Rogue poisons, wizard/mana oils, sharpening/weight stones, and Shaman weapon imbues) directly on weapon icons in your bags.
 - **Duration & Charge Indicators**: Color-coded remaining duration and charges badge with warning tints when enchants are near expiration.
 - **Lazy On-Demand Lifecycle**: Overlays and textures are only instantiated when a weapon is detected in bag slots `0..4`, saving hundreds of UI objects at startup.
 - **Configurable**: Toggle in the `/bgn` Options dialog ("Show Weapon Enchant Badges") or via `/bgn enchants`.
 
-### 8. Suite Synergy (ItemRack & TrinketMenu)
+### 7. Suite Synergy (ItemRack & TrinketMenu)
 - **ItemRack Set Indicators**: Hovering over any item in your bags or bank displays which ItemRack sets it belongs to (`ItemRack: <Set Names>`), preventing accidental vendor sales or bank desynchronization.
 - **TrinketMenu Queued Alerts**: Hovering over a trinket queued for swap displays an alert (`TrinketMenu: Queued (Top/Bottom Slot)`).
 - **Zero Overhead Decoupling**: All integrations use safe runtime existence guards (`if Rack ...`, `if TrinketMenu ...`), incurring 0ms latency when running standalone.
 
-### 9. Modern Bag & Bank Sorting (ClassicAPI v1.15.0+ / v1.15.13+)
+### 8. Modern Bag & Bank Sorting (ClassicAPI v1.15.0+ / v1.15.13+)
 - Sorting can span multiple server updates. The button, command and keybinding request sorting without announcing completion; click sounds do not confirm success.
 - **One-Click Container Sorting**: Clean, modern broom/cleanup icon anchored in the top-right header next to the close button for both inventory and bank frames.
 - **Engine-Native Performance**: Driven by ClassicAPI's C++ coroutine sorting engine (`C_Container.SortBags` and `C_Container.SortBankBags`) with built-in reentrancy safety locks.
@@ -117,6 +103,7 @@ Bagnon is engineered around direct engine integration:
 | `/bgn bags` | Toggles the unified inventory window |
 | `/bgn bank` | Toggles the unified bank window |
 | `/bgn sort` | Cleans up and sorts bags (or bank if bank is open) |
+| `/bgn freespace` | Toggles the live free bag space counter |
 | `/bgn enchants` | Toggles weapon enchant badge overlays on bagged weapons |
 | `/bgn delete <character> [realm]` | Deletes saved offline inventory data for a character |
 | `/bgn help` | Displays available slash commands |
@@ -125,7 +112,6 @@ Bagnon is engineered around direct engine integration:
 | `Hover` on Free Slots Badge | Displays detailed per-bag free space breakdown tooltip |
 | `Alt-Click` or `Right-Click` on Bag Slot | Toggles sort ignore exclusion on Backpack or Bank |
 | `Right-Click` on Title Bar | Opens frame settings (columns, spacing, opacity, background color, scale) |
-| `Double-Click` on Title Bar | Opens the instant search bar |
 | `Shift-Click` on Bag Icon | Toggles visibility of that individual bag's slots |
 | `Left-Click` on Bank Icon | Opens the remote offline bank view |
 | `Left-Click Drag` on Title / Free Slots | Repositions the window and saves position across sessions |
@@ -153,6 +139,12 @@ Bagnon is engineered around direct engine integration:
 ---
 
 ## 📜 Changelog
+
+### v2.2.0
+- **Complete Search Subsystem Removal**: Thoroughly eradicated all search mechanisms, including the legacy `spot/` module (`spot.lua`, `spot.xml`), the header search button, and query parser.
+- **Streamlined Header Architecture**: Restored clean, focused header with only the Sort button, Close button, and Live Free Slot Counter badge.
+- **Title Dropdown Alignment**: Resolved character dropdown arrow and title bar text positioning so the title is strictly anchored to the right of the dropdown arrow with 4px breathing margin.
+- **Free Space Dynamic Anchoring**: Title dynamically anchors to the Free Space badge when enabled or directly to the Sort button when disabled.
 
 ### v2.1.1
 - **Dedicated Header Search Button**: Added a circular metallic magnifying glass button alongside Sort and Close buttons in the header toolbar, matching the sort button design and lighting.

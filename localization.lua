@@ -117,12 +117,6 @@ BAGNON_TITLE_TOOLTIP = "<Right-Click> to open up the settings menu."
 BAGNON_BAGS_HIDE = "<Shift-Click> to hide."
 BAGNON_BAGS_SHOW = "<Shift-Click> to show."
 
---Search Tooltip & Placeholder
-BAGNON_SPOT_TOOLTIP = "<Double-Click> to search."
-BAGNON_SEARCH_TOOLTIP_TITLE = "Search"
-BAGNON_SEARCH_TOOLTIP_DESC = "<Click> to toggle search bar.\nSupports #quality, t:type, s:slot, boe/bop."
-BAGNON_SEARCH_PLACEHOLDER = "Search... (#epic, t:armor, s:ring, boe)"
-
 --[[ Other ]]--
 
 --fifth return for GetItemInfo(id)

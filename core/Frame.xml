@@ -59,11 +59,7 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						if BagnonSpot and BagnonSpot:IsShown() and BagnonSpot.frame == this:GetParent() then
-							BagnonSpot:Hide();
-						else
-							HideUIPanel(this:GetParent());
-						end
+						HideUIPanel(this:GetParent());
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -96,35 +92,10 @@
 				</Scripts>
 			</Button>
 
-			<Button name="$parentSearchButton">
-				<Size x="18" y="18"/>
-				<Anchors>
-					<Anchor point="CENTER" relativeTo="$parentSortButton" relativePoint="CENTER">
-						<Offset>
-							<AbsDimension x="-21" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<NormalTexture file="Interface\AddOns\Bagnon\assets\search.blp" setAllPoints="true"/>
-				<PushedTexture file="Interface\AddOns\Bagnon\assets\search-pushed.blp" setAllPoints="true"/>
-				<HighlightTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD" setAllPoints="true"/>
-				<Scripts>
-					<OnClick>
-						BagnonFrameSearch_OnClick(this:GetParent());
-					</OnClick>
-					<OnEnter>
-						BagnonFrameSearch_OnEnter(this);
-					</OnEnter>
-					<OnLeave>
-						BagnonFrameSearch_OnLeave();
-					</OnLeave>
-				</Scripts>
-			</Button>
-
 			<Button name="$parentFreeSlots">
 				<Size x="80" y="18"/>
 				<Anchors>
-					<Anchor point="RIGHT" relativeTo="$parentSearchButton" relativePoint="LEFT">
+					<Anchor point="RIGHT" relativeTo="$parentSortButton" relativePoint="LEFT">
 						<Offset>
 							<AbsDimension x="-12" y="0"/>
 						</Offset>
@@ -174,9 +145,6 @@
 					<OnLoad>
 						this:RegisterForClicks("LeftButtonDown", "LeftButtonUp", "RightButtonUp");
 					</OnLoad>
-					<OnDoubleClick>
-						BagnonFrame_OnDoubleClick(this:GetParent());
-					</OnDoubleClick>
 					<OnDragStart>
 						BagnonFrame_StartMoving(this:GetParent());
 					</OnDragStart>
