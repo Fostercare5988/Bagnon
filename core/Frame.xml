@@ -96,12 +96,37 @@
 				</Scripts>
 			</Button>
 
-			<Button name="$parentFreeSlots">
-				<Size x="74" y="18"/>
+			<Button name="$parentSearchButton">
+				<Size x="18" y="18"/>
 				<Anchors>
-					<Anchor point="RIGHT" relativeTo="$parentSortButton" relativePoint="LEFT">
+					<Anchor point="CENTER" relativeTo="$parentSortButton" relativePoint="CENTER">
 						<Offset>
-							<AbsDimension x="-4" y="0"/>
+							<AbsDimension x="-21" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<NormalTexture file="Interface\AddOns\Bagnon\assets\search.blp" setAllPoints="true"/>
+				<PushedTexture file="Interface\AddOns\Bagnon\assets\search-pushed.blp" setAllPoints="true"/>
+				<HighlightTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD" setAllPoints="true"/>
+				<Scripts>
+					<OnClick>
+						BagnonFrameSearch_OnClick(this:GetParent());
+					</OnClick>
+					<OnEnter>
+						BagnonFrameSearch_OnEnter(this);
+					</OnEnter>
+					<OnLeave>
+						BagnonFrameSearch_OnLeave();
+					</OnLeave>
+				</Scripts>
+			</Button>
+
+			<Button name="$parentFreeSlots">
+				<Size x="80" y="18"/>
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentSearchButton" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="-12" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -134,9 +159,9 @@
 							<AbsDimension x="10" y="-2"/>
 						</Offset>
 					</Anchor>
-					<Anchor point="BOTTOMRIGHT" relativeTo="$parentSortButton" relativePoint="BOTTOMLEFT">
+					<Anchor point="BOTTOMRIGHT" relativeTo="$parentFreeSlots" relativePoint="BOTTOMLEFT">
 						<Offset>
-							<AbsDimension x="-80" y="0"/>
+							<AbsDimension x="-6" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

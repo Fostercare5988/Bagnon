@@ -754,7 +754,26 @@ function BagnonFrame_UpdateFreeSlots(frame)
 	if not frame then return end
 	local frameName = frame:GetName()
 	local freeSlotsBtn = getglobal(frameName .. "FreeSlots")
+	local titleBtn = getglobal(frameName .. "Title")
+	local searchBtn = getglobal(frameName .. "SearchButton")
 	if not freeSlotsBtn then return end
+
+	if BagnonSets and BagnonSets.showFreeSlots == 0 then
+		freeSlotsBtn:Hide()
+		if titleBtn and searchBtn then
+			titleBtn:ClearAllPoints()
+			titleBtn:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, -2)
+			titleBtn:SetPoint("BOTTOMRIGHT", searchBtn, "BOTTOMLEFT", -6, 0)
+		end
+		return
+	end
+
+	freeSlotsBtn:Show()
+	if titleBtn then
+		titleBtn:ClearAllPoints()
+		titleBtn:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, -2)
+		titleBtn:SetPoint("BOTTOMRIGHT", freeSlotsBtn, "BOTTOMLEFT", -6, 0)
+	end
 
 	local freeSlots = 0
 	local totalSlots = 0
@@ -917,5 +936,28 @@ function BagnonFrameFreeSlots_OnEnter(button)
 end
 
 function BagnonFrameFreeSlots_OnLeave()
+	GameTooltip:Hide()
+end
+
+--[[
+	Search Button Handlers
+--]]
+
+function BagnonFrameSearch_OnClick(frame)
+	if BagnonSpot_Toggle then
+		BagnonSpot_Toggle(frame)
+	end
+end
+
+function BagnonFrameSearch_OnEnter(button)
+	if not BagnonSets or BagnonSets.showTooltips then
+		GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
+		GameTooltip:SetText(BAGNON_SEARCH_TOOLTIP_TITLE or "Search", 1, 1, 1)
+		GameTooltip:AddLine(BAGNON_SEARCH_TOOLTIP_DESC or "Click to toggle search bar.\nSupports #quality, t:type, s:slot, boe/bop.", 0.8, 0.8, 0.8, 1)
+		GameTooltip:Show()
+	end
+end
+
+function BagnonFrameSearch_OnLeave()
 	GameTooltip:Hide()
 end

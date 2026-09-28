@@ -17,10 +17,10 @@ function BagnonOptions_OnLoad(self)
 		getglobal(frameName .. "Quality"):SetPoint("TOPLEFT", frameName .. "Tooltips", "BOTTOMLEFT")
 
 		getglobal(frameName .. "ShowWhen"):ClearAllPoints()
-		getglobal(frameName .. "ShowWhen"):SetPoint("TOPLEFT", f, "TOPLEFT", 16, 118)
+		getglobal(frameName .. "ShowWhen"):SetPoint("TOPLEFT", f, "TOPLEFT", 16, -174)
 
-		getglobal(frameName .. "ShowWhen"):ClearAllPoints()
-		getglobal(frameName .. "BanknonDiv"):SetPoint("TOPLEFT", f, "TOPLEFT", 16, 118)
+		getglobal(frameName .. "BanknonDiv"):ClearAllPoints()
+		getglobal(frameName .. "BanknonDiv"):SetPoint("TOPRIGHT", f, "TOPRIGHT", -16, -174)
 	end
 end
 
@@ -32,6 +32,8 @@ function BagnonOptions_OnShow(self)
 	getglobal(frameName .. "Tooltips"):SetChecked(BagnonSets.showTooltips)
 	getglobal(frameName .. "ForeverTooltips"):SetChecked(BagnonSets.showForeverTooltips)
 	getglobal(frameName .. "Quality"):SetChecked(BagnonSets.qualityBorders and BagnonSets.qualityBorders ~= 0)
+	getglobal(frameName .. "FreeSlots"):SetChecked(not BagnonSets.showFreeSlots or BagnonSets.showFreeSlots ~= 0)
+	getglobal(frameName .. "Enchants"):SetChecked(not BagnonSets.enchantBadges or BagnonSets.enchantBadges ~= 0)
 
 	getglobal(frameName .. "ShowBagnon1"):SetChecked(BagnonSets.showBagsAtBank)
 	--getglobal(frameName .. "ShowBagnon2"):SetChecked(BagnonSets.showBagsAtVendor)
@@ -89,5 +91,35 @@ function BagnonOptions_ShowQualityBorders(enable)
 
 	if Banknon and Banknon:IsShown() then
 		BagnonFrame_Generate(Banknon)
+	end
+end
+
+function BagnonOptions_ShowFreeSlots(enable)
+	if enable then
+		BagnonSets.showFreeSlots = 1
+	else
+		BagnonSets.showFreeSlots = 0
+	end
+
+	if Bagnon and Bagnon:IsShown() then
+		BagnonFrame_UpdateFreeSlots(Bagnon)
+	end
+	if Banknon and Banknon:IsShown() then
+		BagnonFrame_UpdateFreeSlots(Banknon)
+	end
+end
+
+function BagnonOptions_ShowEnchants(enable)
+	if enable then
+		BagnonSets.enchantBadges = 1
+	else
+		BagnonSets.enchantBadges = 0
+	end
+
+	if Bagnon and Bagnon:IsShown() then
+		BagnonFrame_Update(Bagnon)
+	end
+	if Banknon and Banknon:IsShown() then
+		BagnonFrame_Update(Banknon)
 	end
 end

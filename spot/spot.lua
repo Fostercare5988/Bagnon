@@ -318,16 +318,33 @@ end
 
 --[[ Function Overrides ]]--
 
-BagnonFrame_OnDoubleClick = function(frame, button)
-	local btn = button or arg1
-	if btn == "LeftButton" then
+function BagnonSpot_Toggle(frame)
+	if not frame then return end
+	if BagnonSpot:IsShown() and BagnonSpot.frame == frame then
+		BagnonSpot:Hide()
+	else
 		BagnonSpot:Hide()
 		BagnonSpot.frame = frame
 
 		BagnonSpot:ClearAllPoints()
-		BagnonSpot:SetPoint("TOPLEFT", frame:GetName() .. "Title", "TOPLEFT", -2, 1)
-		BagnonSpot:SetPoint("BOTTOMRIGHT", frame:GetName() .. "Title", "BOTTOMRIGHT", 4, -1)
+		local frameName = frame:GetName()
+		local title = getglobal(frameName .. "Title")
+		local searchBtn = getglobal(frameName .. "SearchButton")
+		if title and searchBtn then
+			BagnonSpot:SetPoint("TOPLEFT", title, "TOPLEFT", -2, 1)
+			BagnonSpot:SetPoint("BOTTOMRIGHT", searchBtn, "BOTTOMLEFT", -6, 0)
+		else
+			BagnonSpot:SetPoint("TOPLEFT", frame, "TOPLEFT", 8, -4)
+			BagnonSpot:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", -40, -22)
+		end
 		BagnonSpot:Show()
+	end
+end
+
+BagnonFrame_OnDoubleClick = function(frame, button)
+	local btn = button or arg1
+	if btn == "LeftButton" then
+		BagnonSpot_Toggle(frame)
 	end
 end
 

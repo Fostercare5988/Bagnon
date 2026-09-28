@@ -3,25 +3,58 @@
 	xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\..\FrameXML\UI.xsd">
 	
 	<EditBox name="BagnonSpot" inherits="BagnonPopupFrame" autoFocus="false">
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parentInstruction" font="GameFontDisableSmall" justifyH="LEFT" text="BAGNON_SEARCH_PLACEHOLDER">
+					<Anchors>
+						<Anchor point="LEFT">
+							<Offset>
+								<AbsDimension x="8" y="0"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
 		<Scripts>
 			<OnLoad>
-				this:SetTextInsets(8, 8, 0, 0)
+				this:SetTextInsets(8, 8, 0, 0);
 			</OnLoad>
 			<OnShow>
-				this:SetFocus()
+				local inst = getglobal(this:GetName() .. "Instruction");
+				if inst then
+					if this:GetText() and this:GetText() ~= "" then
+						inst:Hide();
+					else
+						inst:Show();
+					end
+				end
+				this:SetFocus();
 			</OnShow>
 			<OnHide>
-				this:SetText("")
-				BagnonSpot_ClearSearch()
+				this:SetText("");
+				BagnonSpot_ClearSearch();
 			</OnHide>
 			<OnEscapePressed>
-				this:ClearFocus();
+				this:SetText("");
+				this:Hide();
 			</OnEscapePressed>
+			<OnEnterPressed>
+				this:ClearFocus();
+			</OnEnterPressed>
 			<OnEditFocusLost>
 				this:HighlightText();
 			</OnEditFocusLost>
 			<OnTextChanged>
-				BagnonSpot_Search(this:GetText())
+				local inst = getglobal(this:GetName() .. "Instruction");
+				if inst then
+					if this:GetText() and this:GetText() ~= "" then
+						inst:Hide();
+					else
+						inst:Show();
+					end
+				end
+				BagnonSpot_Search(this:GetText());
 			</OnTextChanged>
 		</Scripts>
 		<FontString font="ChatFontNormal"/>

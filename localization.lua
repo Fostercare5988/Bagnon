@@ -25,6 +25,7 @@ BAGNON_COMMAND_REVERSE = "reverse"
 BAGNON_COMMAND_OVERRIDE_BANK = "overridebank"
 BAGNON_COMMAND_TOGGLE_TOOLTIPS = "tooltips"
 BAGNON_COMMAND_ENCHANTS = "enchants"
+BAGNON_COMMAND_FREESLOTS = "freespace"
 BAGNON_COMMAND_DEBUG_ON = "debug"
 BAGNON_COMMAND_DEBUG_OFF = "nodebug"
 
@@ -35,12 +36,17 @@ BAGNON_HELP_TITLE = "Bagnon commands:"
 BAGNON_HELP_SHOWBAGS = "/bgn " .. BAGNON_COMMAND_SHOWBAGS .. " - Show/Hide Bagnon."
 BAGNON_HELP_SHOWBANK = "/bgn " .. BAGNON_COMMAND_SHOWBANK .. " - Show/Hide Banknon."
 BAGNON_HELP_SORT = "/bgn " .. BAGNON_COMMAND_SORT .. " - Clean up and sort bags."
+BAGNON_HELP_FREESLOTS = "/bgn " .. BAGNON_COMMAND_FREESLOTS .. " - Toggle free bag space display."
 BAGNON_HELP_ENCHANTS = "/bgn " .. BAGNON_COMMAND_ENCHANTS .. " - Toggle weapon enchant badges."
 BAGNON_HELP_HELP = "/bgn " .. BAGNON_COMMAND_HELP .. " - Display slash commands."
 
 --/bgn enchants
 BAGNON_ENCHANTS_ENABLED = "Weapon enchant badges enabled."
 BAGNON_ENCHANTS_DISABLED = "Weapon enchant badges disabled."
+
+--/bgn freespace
+BAGNON_FREESLOTS_ENABLED = "Free bag space display enabled."
+BAGNON_FREESLOTS_DISABLED = "Free bag space display disabled."
 
 --/bgn debug
 BAGNON_DEBUG_ENABLED = "Debugging mode enabled."
@@ -111,8 +117,11 @@ BAGNON_TITLE_TOOLTIP = "<Right-Click> to open up the settings menu."
 BAGNON_BAGS_HIDE = "<Shift-Click> to hide."
 BAGNON_BAGS_SHOW = "<Shift-Click> to show."
 
---Search Tooltip
+--Search Tooltip & Placeholder
 BAGNON_SPOT_TOOLTIP = "<Double-Click> to search."
+BAGNON_SEARCH_TOOLTIP_TITLE = "Search"
+BAGNON_SEARCH_TOOLTIP_DESC = "<Click> to toggle search bar.\nSupports #quality, t:type, s:slot, boe/bop."
+BAGNON_SEARCH_PLACEHOLDER = "Search... (#epic, t:armor, s:ring, boe)"
 
 --[[ Other ]]--
 
@@ -139,6 +148,8 @@ BAGNON_MAINOPTIONS_SHOW_CRAFTING = "When Crafting";
 BAGNON_MAINOPTIONS_SHOW_TOOLTIPS = "Show Tooltips";
 BAGNON_MAINOPTIONS_SHOW_FOREVERTOOLTIPS = "Show Detailed Tooltips";
 BAGNON_MAINOPTIONS_SHOW_BORDERS = "Show Item Quality Borders";
+BAGNON_MAINOPTIONS_SHOW_FREESLOTS = "Show Free Bag Space";
+BAGNON_MAINOPTIONS_SHOW_ENCHANTS = "Show Weapon Enchant Badges";
 
 --[[
 	Bagnon Forever Localization file

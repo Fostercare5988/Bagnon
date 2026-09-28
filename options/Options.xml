@@ -37,7 +37,7 @@
 	
 	<!-- Bagnon Options Menu -->
 	<Frame name="BagnonOptions" movable="true" clampedToScreen="true" enableMouse="true" frameStrata="DIALOG" hidden="true" parent="UIParent">
-		<Size x="254" y="386"/>
+		<Size x="254" y="450"/>
 		
 		<Anchors>
 			<Anchor point="LEFT"/>
@@ -68,7 +68,7 @@
 				<FontString name="$parentShowWhen" font="GameFontNormal" text="BAGNON_MAINOPTIONS_SHOW">
 					<Anchors>
 						<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
-							<Offset x="16" y="-142"/>
+							<Offset x="16" y="-206"/>
 						</Anchor>
 					</Anchors>
 				</FontString>
@@ -76,7 +76,7 @@
 				<FontString name="$parentBanknonDiv" font="GameFontNormal" text="Banknon">
 					<Anchors>
 						<Anchor point="TOPRIGHT" relativeTo="$parent" relativePoint="TOPRIGHT">
-							<Offset x="-16" y="-142"/>
+							<Offset x="-16" y="-206"/>
 						</Anchor>
 					</Anchors>
 				</FontString>
@@ -187,6 +187,34 @@
 				<Scripts>
 					<OnClick>
 						BagnonOptions_ShowQualityBorders(this:GetChecked());
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			
+			<CheckButton name="$parentFreeSlots" inherits="BagnonOptionsCheckButton" text="BAGNON_MAINOPTIONS_SHOW_FREESLOTS">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentQuality" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="0"/>
+					</Anchor>
+				</Anchors>
+
+				<Scripts>
+					<OnClick>
+						BagnonOptions_ShowFreeSlots(this:GetChecked());
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			
+			<CheckButton name="$parentEnchants" inherits="BagnonOptionsCheckButton" text="BAGNON_MAINOPTIONS_SHOW_ENCHANTS">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentFreeSlots" relativePoint="BOTTOMLEFT">
+						<Offset x="0" y="0"/>
+					</Anchor>
+				</Anchors>
+
+				<Scripts>
+					<OnClick>
+						BagnonOptions_ShowEnchants(this:GetChecked());
 					</OnClick>
 				</Scripts>
 			</CheckButton>

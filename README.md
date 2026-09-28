@@ -3,11 +3,11 @@
 Required ClassicAPI version: **v1.15.15+**. This is the maintainer's published support baseline for this addon suite; it is not a claim that every API used here was introduced in v1.15.15. After replacing ClassicAPI.dll, fully restart WoW; `/reload` cannot reload a DLL.
 
 [![Interface: 1.12.1](https://img.shields.io/badge/Interface-1.12.1%20(5875)-orange.svg)](https://github.com/Fostercare5988/Bagnon)
-[![Version: 2.1.0](https://img.shields.io/badge/Version-2.1.0-blue.svg)](https://github.com/Fostercare5988/Bagnon/releases)
+[![Version: 2.1.1](https://img.shields.io/badge/Version-2.1.1-blue.svg)](https://github.com/Fostercare5988/Bagnon/releases)
 [![ClassicAPI: v1.15.15+](https://img.shields.io/badge/ClassicAPI-v1.15.15+-green.svg)](https://github.com/brues-code/ClassicAPI)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Bagnon v2.1.0** is an inventory and bank engine engineered natively for **World of Warcraft 1.12.1 (Build 5875)** running on the **Enhanced Client Extension Stack** (**ClassicAPI v1.15.15+**).
+**Bagnon v2.1.1** is an inventory and bank engine engineered natively for **World of Warcraft 1.12.1 (Build 5875)** running on the **Enhanced Client Extension Stack** (**ClassicAPI v1.15.15+**).
 
 Bagnon merges all fragmented inventory and bank bags into a unified, resizable grid. It enables remote bank viewing from anywhere in the world, live free slot tracking, container autosort exclusion, an advanced zero-GC search syntax engine, cross-character alt item aggregation on tooltips, total realm gold tracking, and modern one-click bag and bank sorting.
 
@@ -52,10 +52,11 @@ Bagnon is engineered around direct engine integration:
 - **Quick Bank Button**: 1-click bank viewer icon integrated directly into the inventory window.
 
 ### 2. Live Free Slot Counter
-- **Event-Driven Header Badge**: Live capacity badge (e.g. `24 / 96 Free`) dynamically rendered in the header bar of both Bagnon and Banknon frames.
+- **Event-Driven Header Badge**: Live capacity badge (e.g. `24 / 96 Free`) dynamically rendered in the header bar of both Bagnon and Banknon frames with generous margin separating metrics from action buttons.
 - **ClassicAPI Engine Integration**: Direct engine calculation via `C_Container.CalculateTotalNumberOfFreeBagSlots()` for player bags, native container free slot resolution, and offline alt aggregation via `BagnonDB`.
 - **Per-Container Breakdown Tooltip**: Hovering over the free slot badge reveals an instant, color-coded capacity breakdown across every active container (Backpack, individual bags, bank slots), highlighting remaining room at a glance.
 - **Zero-GC Updates**: Evaluated strictly on container events (`BAG_UPDATE`, `PLAYERBANKSLOTS_CHANGED`), window initialization, and player switches without background polling loops.
+- **Configurable**: Toggle in the `/bgn` Options dialog ("Show Free Bag Space") or via `/bgn freespace` / `/bgn freeslots`.
 
 ### 3. Sort Exclusion & Bag Ignore (ClassicAPI v1.15.13+)
 - **Container Protection**: Protect specific bags (Backpack and Bank) from being rearranged during automatic sorting routines.
@@ -64,7 +65,9 @@ Bagnon is engineered around direct engine integration:
 - **Visual Status Badges**: Ignored containers display a distinct status badge overlay directly on the bag button, alongside real-time chat notices and informative GameTooltip lines.
 
 ### 4. Advanced Search Engine & Syntax (`spot/spot.lua`)
-- **Instant Interactive Filter**: Double-click the frame title bar to bring up the search bar. Items not matching your query fade in-place without triggering UI reflows or allocations.
+- **Dedicated Header Search Button**: Circular metallic magnifying glass button placed directly alongside Sort and Close buttons in the header toolbar. Clicking it toggles the interactive search bar over the title area.
+- **Contextual Syntax Placeholder**: Displays clear syntax examples (`Search... (#epic, t:armor, s:ring, boe)`) when empty, disappearing immediately upon typing.
+- **Quick Dismissal**: Press `<Escape>` to instantly clear the search query and restore the title header, or click the search button again to toggle it closed.
 - **Zero-GC Hot Path**: Reusable pre-allocated token buffer, immutable item metadata caching, and tooltip scanner binding resolution eliminate memory churn during rapid typing.
 - **Comprehensive Syntax Operators**:
   - **Quality**: `#epic`, `#rare`, `#uncommon`, `#common`, `#poor`, `#legendary`, `q:4`, `q:rare`, `q:3`, `q:epic`, etc.
@@ -89,7 +92,7 @@ Bagnon is engineered around direct engine integration:
 - **Real-Time Enchant Overlays**: Automatically displays active temporary weapon enchants (Rogue poisons, wizard/mana oils, sharpening/weight stones, and Shaman weapon imbues) directly on weapon icons in your bags.
 - **Duration & Charge Indicators**: Color-coded remaining duration and charges badge with warning tints when enchants are near expiration.
 - **Lazy On-Demand Lifecycle**: Overlays and textures are only instantiated when a weapon is detected in bag slots `0..4`, saving hundreds of UI objects at startup.
-- **Toggleable via Slash Command**: Toggle enchant badges on/off at any time using `/bgn enchants`.
+- **Configurable**: Toggle in the `/bgn` Options dialog ("Show Weapon Enchant Badges") or via `/bgn enchants`.
 
 ### 8. Suite Synergy (ItemRack & TrinketMenu)
 - **ItemRack Set Indicators**: Hovering over any item in your bags or bank displays which ItemRack sets it belongs to (`ItemRack: <Set Names>`), preventing accidental vendor sales or bank desynchronization.
@@ -150,6 +153,13 @@ Bagnon is engineered around direct engine integration:
 ---
 
 ## 📜 Changelog
+
+### v2.1.1
+- **Dedicated Header Search Button**: Added a circular metallic magnifying glass button alongside Sort and Close buttons in the header toolbar, matching the sort button design and lighting.
+- **Search Bar UX & Placeholder Hints**: Clicking the search button opens an input field directly in the header with syntax hints (`Search... (#epic, t:armor, s:ring, boe)`), auto-focus, and instant dismissal on `<Escape>`.
+- **Refined Header Geometry & Typography**: Balanced margin between the live free slot counter badge and the action button cluster (`[Search] [Sort] [Close]`), preventing text collision.
+- **Full Options Menu Toggles**: Added "Show Free Bag Space" and "Show Weapon Enchant Badges" checkboxes to the `/bgn` Options dialog, with dynamic re-anchoring when toggled.
+- **Slash Command Ergonomics**: Added `/bgn freespace` (alias `/bgn freeslots`) to toggle the free space counter from chat.
 
 ### v2.1.0
 - **Live Free Slot Counter**: Added a dynamic capacity badge (`24 / 96 Free`) to the header bar of Bagnon and Banknon frames. Powered by `C_Container.CalculateTotalNumberOfFreeBagSlots()`, container slot scans, and offline alt aggregation with an informative per-container capacity tooltip.

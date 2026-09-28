@@ -11,6 +11,7 @@ function BagnonSlash_DisplayHelp()
 	BagnonMsg(BAGNON_HELP_SHOWBAGS);
 	BagnonMsg(BAGNON_HELP_SHOWBANK);
 	BagnonMsg(BAGNON_HELP_SORT);
+	BagnonMsg(BAGNON_HELP_FREESLOTS);
 	BagnonMsg(BAGNON_HELP_ENCHANTS);
 	
 	if BagnonDB then
@@ -54,6 +55,21 @@ SlashCmdList["BagnonCOMMAND"] = function(msg)
 					PlaySound("igMainMenuOption")
 					C_Container.SortBags()
 				end
+			end
+		elseif(cmd == BAGNON_COMMAND_FREESLOTS or cmd == "freeslots") then
+			if not BagnonSets then BagnonSets = {} end
+			if BagnonSets.showFreeSlots == 0 then
+				BagnonSets.showFreeSlots = 1
+				BagnonMsg(BAGNON_FREESLOTS_ENABLED)
+			else
+				BagnonSets.showFreeSlots = 0
+				BagnonMsg(BAGNON_FREESLOTS_DISABLED)
+			end
+			if Bagnon and Bagnon:IsShown() then
+				BagnonFrame_UpdateFreeSlots(Bagnon)
+			end
+			if Banknon and Banknon:IsShown() then
+				BagnonFrame_UpdateFreeSlots(Banknon)
 			end
 		elseif(cmd == BAGNON_COMMAND_ENCHANTS) then
 			if not BagnonSets then BagnonSets = {} end

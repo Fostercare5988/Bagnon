@@ -50,7 +50,7 @@ end
 --[[ Variable Loading ]]--
 
 local function LoadVariables()
-	local currentVersion = GetAddOnMetadata("Bagnon", "Version") or "2.1.0"
+	local currentVersion = GetAddOnMetadata("Bagnon", "Version") or "2.1.1"
 	if not BagnonSets then
 		BagnonSets = {
 			showBagsAtBank = 1,
@@ -59,6 +59,7 @@ local function LoadVariables()
 			showTooltips = 1,
 			qualityBorders = 1,
 			enchantBadges = 1,
+			showFreeSlots = 1,
 			showForeverTooltips = 1,
 			version = currentVersion,
 		}
@@ -66,6 +67,9 @@ local function LoadVariables()
 	else
 		if BagnonSets.enchantBadges == nil then
 			BagnonSets.enchantBadges = 1
+		end
+		if BagnonSets.showFreeSlots == nil then
+			BagnonSets.showFreeSlots = 1
 		end
 		if BagnonSets.version ~= currentVersion then
 			BagnonSets.version = currentVersion
