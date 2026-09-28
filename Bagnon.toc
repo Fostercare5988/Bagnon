@@ -3,7 +3,7 @@
 ## Title: Bagnon
 ## Notes: Single-window inventory and bank engine engineered for World of Warcraft 1.12.1 (ClassicAPI v1.15.15+).
 ## Author: Tuller, McPewPew, Fostercare5988
-## Version: 2.0.1
+## Version: 2.1.0
 ## OptionalDeps: KC_Items
 ## SavedVariablesPerCharacter: BagnonSets
 ## SavedVariables: BagnonForeverData
@@ -15,19 +15,30 @@ localization.lua
 
 core\Utility.lua
 core\Overrides.lua
+core\Bag.lua
+core\Bag.xml
+core\Item.lua
+core\Item.xml
+core\Frame.lua
 core\Frame.xml
 
+menu\Menu.lua
 menu\Menu.xml
+spot\spot.lua
 spot\spot.xml
 
 Slash.lua
 Events.lua
 
 database\database.lua
+database\ui.lua
 database\ui.xml
 BagnonForever.lua
 tooltips.lua
 
+options\Options.lua
 options\Options.xml
+Bagnon.lua
 Bagnon.xml
+Banknon.lua
 Banknon.xml

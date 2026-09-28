@@ -168,6 +168,7 @@ function BagnonFrame_Generate(frame)
 	end
 
 	BagnonFrame_Layout(frame, frameSets.cols, frameSets.space)
+	BagnonFrame_UpdateFreeSlots(frame)
 	--frame:Show()
 end
 
@@ -324,6 +325,8 @@ function BagnonFrame_Update(frame, bagID)
 			BagnonItem_Update(item)
 		end
 	end
+
+	BagnonFrame_UpdateFreeSlots(frame)
 end
 
 function BagnonFrame_UpdateLock(frame)
@@ -739,5 +742,176 @@ function BagnonFrameSort_OnEnter(button)
 end
 
 function BagnonFrameSort_OnLeave()
+	GameTooltip:Hide()
+end
+
+--[[
+	Free Slot Counter
+--]]
+
+function BagnonFrame_UpdateFreeSlots(frame)
+	if not frame then return end
+	local frameName = frame:GetName()
+	local freeSlotsBtn = getglobal(frameName .. "FreeSlots")
+	if not freeSlotsBtn then return end
+
+	local freeSlots = 0
+	local totalSlots = 0
+
+	if Bagnon_IsCachedFrame and Bagnon_IsCachedFrame(frame) then
+		local bags = frame.defaultBags or (BagnonSets[frameName] and BagnonSets[frameName].bags)
+		if bags then
+			for _, bagID in pairs(bags) do
+				if bagID ~= KEYRING_CONTAINER then
+					local bagSize = (BagnonDB and BagnonDB.GetBagData(frame.player, bagID)) or 0
+					if bagSize > 0 then
+						totalSlots = totalSlots + bagSize
+						for slot = 1, bagSize do
+							local link = BagnonDB.GetItemData(frame.player, bagID, slot)
+							if not link then
+								freeSlots = freeSlots + 1
+							end
+						end
+					end
+				end
+			end
+		end
+	elseif frameName == "Banknon" then
+		local bankBags = {-1, 5, 6, 7, 8, 9, 10}
+		for _, bagID in ipairs(bankBags) do
+			local numSlots = GetContainerNumSlots(bagID)
+			if numSlots and numSlots > 0 then
+				totalSlots = totalSlots + numSlots
+				local numFree
+				if C_Container and C_Container.GetContainerNumFreeSlots then
+					numFree = C_Container.GetContainerNumFreeSlots(bagID)
+				elseif GetContainerNumFreeSlots then
+					numFree = GetContainerNumFreeSlots(bagID)
+				end
+				if numFree then
+					freeSlots = freeSlots + numFree
+				else
+					for slot = 1, numSlots do
+						if not GetContainerItemInfo(bagID, slot) then
+							freeSlots = freeSlots + 1
+						end
+					end
+				end
+			end
+		end
+	else
+		-- Bagnon (player bags 0..4)
+		local calcFree
+		if C_Container and C_Container.CalculateTotalNumberOfFreeBagSlots then
+			calcFree = C_Container.CalculateTotalNumberOfFreeBagSlots()
+		end
+
+		for bagID = 0, 4 do
+			local numSlots = GetContainerNumSlots(bagID)
+			if numSlots and numSlots > 0 then
+				totalSlots = totalSlots + numSlots
+				if not calcFree then
+					local numFree
+					if C_Container and C_Container.GetContainerNumFreeSlots then
+						numFree = C_Container.GetContainerNumFreeSlots(bagID)
+					elseif GetContainerNumFreeSlots then
+						numFree = GetContainerNumFreeSlots(bagID)
+					end
+					if numFree then
+						freeSlots = freeSlots + numFree
+					else
+						for slot = 1, numSlots do
+							if not GetContainerItemInfo(bagID, slot) then
+								freeSlots = freeSlots + 1
+							end
+						end
+					end
+				end
+			end
+		end
+
+		if calcFree then
+			freeSlots = calcFree
+		end
+	end
+
+	local text = format(BAGNON_FREE_SLOTS_FORMAT or "%d / %d Free", freeSlots, totalSlots)
+	freeSlotsBtn:SetText(text)
+	freeSlotsBtn.freeSlots = freeSlots
+	freeSlotsBtn.totalSlots = totalSlots
+end
+
+function BagnonFrameFreeSlots_OnEnter(button)
+	local f = button or this
+	if not f then return end
+	local frame = f:GetParent()
+	if not frame then return end
+	local frameName = frame:GetName()
+
+	GameTooltip:SetOwner(f, "ANCHOR_TOPLEFT")
+	GameTooltip:SetText(format(BAGNON_FREE_SLOTS_TITLE or "Free Space: %d / %d", f.freeSlots or 0, f.totalSlots or 0), 1, 1, 1)
+
+	local bags = frame.defaultBags or (BagnonSets[frameName] and BagnonSets[frameName].bags)
+	if bags then
+		for _, bagID in pairs(bags) do
+			if bagID ~= KEYRING_CONTAINER then
+				local bagName, numFree, numTotal
+				if Bagnon_IsCachedFrame and Bagnon_IsCachedFrame(frame) then
+					numTotal = (BagnonDB and BagnonDB.GetBagData(frame.player, bagID)) or 0
+					if numTotal > 0 then
+						numFree = 0
+						for slot = 1, numTotal do
+							if not BagnonDB.GetItemData(frame.player, bagID, slot) then
+								numFree = numFree + 1
+							end
+						end
+						if bagID == 0 then
+							bagName = BACKPACK_TOOLTIP or "Backpack"
+						elseif bagID == -1 then
+							bagName = "Bank"
+						else
+							local _, link = BagnonDB.GetBagData(frame.player, bagID)
+							bagName = link or format("Bag %d", bagID)
+						end
+					end
+				else
+					numTotal = GetContainerNumSlots(bagID)
+					if numTotal and numTotal > 0 then
+						if C_Container and C_Container.GetContainerNumFreeSlots then
+							numFree = C_Container.GetContainerNumFreeSlots(bagID)
+						elseif GetContainerNumFreeSlots then
+							numFree = GetContainerNumFreeSlots(bagID)
+						end
+						if not numFree then
+							numFree = 0
+							for slot = 1, numTotal do
+								if not GetContainerItemInfo(bagID, slot) then
+									numFree = numFree + 1
+								end
+							end
+						end
+						if bagID == 0 then
+							bagName = BACKPACK_TOOLTIP or "Backpack"
+						elseif bagID == -1 then
+							bagName = "Bank"
+						else
+							local invID = ContainerIDToInventoryID(bagID)
+							local link = GetInventoryItemLink("player", invID)
+							bagName = link or format("Bag %d", bagID <= 4 and bagID or (bagID - 4))
+						end
+					end
+				end
+
+				if bagName and numTotal and numTotal > 0 then
+					local color = (numFree == 0 and "|cffff2020") or (numFree <= 2 and "|cffffff60") or "|cff20ff20"
+					GameTooltip:AddDoubleLine(bagName, format("%s%d / %d|r", color, numFree, numTotal), 1, 1, 1)
+				end
+			end
+		end
+	end
+	GameTooltip:Show()
+end
+
+function BagnonFrameFreeSlots_OnLeave()
 	GameTooltip:Hide()
 end

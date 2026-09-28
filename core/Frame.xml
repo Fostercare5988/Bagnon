@@ -2,11 +2,6 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
 	
-	<Include file="Bag.xml"/>
-	<Include file="Item.xml"/>
-	
-	<Script file="Frame.lua"/>
-	
 	<Frame name="BagnonPopupFrame" clampedToScreen="true" enableMouse="true" toplevel="true" parent="UIParent" frameStrata="DIALOG" hidden="true" virtual="true">
 		<Backdrop edgeFile="Interface\Tooltips\UI-Tooltip-Border">
 			<BackgroundInsets>
@@ -101,6 +96,37 @@
 				</Scripts>
 			</Button>
 
+			<Button name="$parentFreeSlots">
+				<Size x="74" y="18"/>
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentSortButton" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="-4" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<ButtonText name="$parentText" setAllPoints="true"/>
+				<NormalFont font="GameFontHighlightSmall" justifyH="RIGHT"/>
+				<HighlightFont font="GameFontNormalSmall" justifyH="RIGHT"/>
+				<Scripts>
+					<OnDragStart>
+						BagnonFrame_StartMoving(this:GetParent());
+					</OnDragStart>
+					<OnMouseDown>
+						BagnonFrame_StartMoving(this:GetParent());
+					</OnMouseDown>
+					<OnMouseUp>
+						BagnonFrame_StopMoving(this:GetParent());
+					</OnMouseUp>
+					<OnEnter>
+						BagnonFrameFreeSlots_OnEnter(this);
+					</OnEnter>
+					<OnLeave>
+						BagnonFrameFreeSlots_OnLeave();
+					</OnLeave>
+				</Scripts>
+			</Button>
+
 			<Button name="$parentTitle">
 				<Anchors>
 					<Anchor point="TOPLEFT">
@@ -110,7 +136,7 @@
 					</Anchor>
 					<Anchor point="BOTTOMRIGHT" relativeTo="$parentSortButton" relativePoint="BOTTOMLEFT">
 						<Offset>
-							<AbsDimension x="-4" y="0"/>
+							<AbsDimension x="-80" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

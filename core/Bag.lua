@@ -90,7 +90,33 @@ end
 
 --[[ Individual Bag Slot Code ]]--
 
---[[ Update Functions ]]--
+function BagnonBag_UpdateSortIgnore(bag)
+	if not bag then return end
+	local bagID = bag:GetID()
+	local isIgnored = false
+	if bagID == 0 and C_Container and C_Container.GetBackpackAutosortDisabled then
+		isIgnored = C_Container.GetBackpackAutosortDisabled()
+	elseif bagID == -1 and C_Container and C_Container.GetBankAutosortDisabled then
+		isIgnored = C_Container.GetBankAutosortDisabled()
+	end
+
+	local badge = bag.sortIgnoreBadge
+	if isIgnored then
+		if not badge then
+			badge = bag:CreateTexture(bag:GetName() .. "SortIgnoreBadge", "OVERLAY")
+			badge:SetWidth(16)
+			badge:SetHeight(16)
+			badge:SetPoint("TOPRIGHT", bag, "TOPRIGHT", 2, 2)
+			badge:SetTexture("Interface\\Buttons\\UI-GroupLoot-Pass-Up")
+			bag.sortIgnoreBadge = badge
+		end
+		badge:Show()
+	else
+		if badge then
+			badge:Hide()
+		end
+	end
+end
 
 function BagnonBag_Update(bag)
 	if not bag then return end
@@ -123,6 +149,7 @@ function BagnonBag_Update(bag)
 		end
 	end
 	BagnonBag_UpdateLock(bag)
+	BagnonBag_UpdateSortIgnore(bag)
 end
 
 function BagnonBag_UpdateLock(bag)
@@ -216,12 +243,49 @@ function BagnonBag_OnShow(self)
 	local b = self or this
 	if not b then return end
 	BagnonBag_UpdateTexture(b:GetParent():GetParent(), b:GetID())
+	BagnonBag_UpdateSortIgnore(b)
 end
 
 function BagnonBag_OnClick(self, mouseButton)
 	local b = self or this
+	local btn = mouseButton or arg1
 	if not b then return end
 	if Bagnon_IsCachedBag(b:GetParent():GetParent().player, b:GetID()) then return end
+
+	local bagID = b:GetID()
+
+	-- Sort Exclusion toggle on Backpack (0) or Bank (-1) via Alt-Click or Right-Click (when cursor has no item)
+	if (IsAltKeyDown() or (btn == "RightButton" and not CursorHasItem())) and (bagID == 0 or bagID == -1) then
+		if bagID == 0 and C_Container and C_Container.SetBackpackAutosortDisabled and C_Container.GetBackpackAutosortDisabled then
+			local newState = not C_Container.GetBackpackAutosortDisabled()
+			C_Container.SetBackpackAutosortDisabled(newState)
+			PlaySound("igMainMenuOption")
+			BagnonBag_UpdateSortIgnore(b)
+			if newState then
+				BagnonMsg(format(BAGNON_AUTOSORT_IGNORE_ENABLED, BACKPACK_TOOLTIP or "Backpack"))
+			else
+				BagnonMsg(format(BAGNON_AUTOSORT_IGNORE_DISABLED, BACKPACK_TOOLTIP or "Backpack"))
+			end
+			if GameTooltip:IsOwned(b) then
+				BagnonBag_OnEnter(b)
+			end
+			return
+		elseif bagID == -1 and C_Container and C_Container.SetBankAutosortDisabled and C_Container.GetBankAutosortDisabled then
+			local newState = not C_Container.GetBankAutosortDisabled()
+			C_Container.SetBankAutosortDisabled(newState)
+			PlaySound("igMainMenuOption")
+			BagnonBag_UpdateSortIgnore(b)
+			if newState then
+				BagnonMsg(format(BAGNON_AUTOSORT_IGNORE_ENABLED, "Bank"))
+			else
+				BagnonMsg(format(BAGNON_AUTOSORT_IGNORE_DISABLED, "Bank"))
+			end
+			if GameTooltip:IsOwned(b) then
+				BagnonBag_OnEnter(b)
+			end
+			return
+		end
+	end
 
 	if not IsShiftKeyDown() then
 		--damn you blizzard for making the keyring specific code!
@@ -278,6 +342,21 @@ function BagnonBag_OnEnter(self)
 		end
 	elseif not GameTooltip:SetInventoryItem("player", ContainerIDToInventoryID(b:GetID())) then
 		GameTooltip:SetText(TEXT(EQUIP_CONTAINER), 1, 1, 1)
+	end
+
+	local bagID = b:GetID()
+	local isIgnored = false
+	if bagID == 0 and C_Container and C_Container.GetBackpackAutosortDisabled then
+		isIgnored = C_Container.GetBackpackAutosortDisabled()
+	elseif bagID == -1 and C_Container and C_Container.GetBankAutosortDisabled then
+		isIgnored = C_Container.GetBankAutosortDisabled()
+	end
+	if isIgnored then
+		GameTooltip:AddLine("|cffff6060" .. BAGNON_AUTOSORT_IGNORED .. "|r")
+	end
+	if (bagID == 0 and C_Container and C_Container.SetBackpackAutosortDisabled) or
+	   (bagID == -1 and C_Container and C_Container.SetBankAutosortDisabled) then
+		GameTooltip:AddLine(BAGNON_AUTOSORT_TOGGLE_IGNORE, 0.6, 0.8, 1)
 	end
 
 	if not Bagnon_IsCachedBag(frame.player, b:GetID()) then

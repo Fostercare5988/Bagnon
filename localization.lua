@@ -76,6 +76,16 @@ BAGNON_SORT_DIRECTION_CHANGED = "Bagnon: Sort direction set to: %s."
 BAGNON_CANNOT_SORT_OFFLINE = "Cannot sort bags of an offline character."
 BAGNON_CANNOT_SORT_BANK_AWAY = "You must be at a bank to sort bank bags."
 
+--Free Slot Counter
+BAGNON_FREE_SLOTS_FORMAT = "%d / %d Free"
+BAGNON_FREE_SLOTS_TITLE = "Free Space: %d / %d"
+
+--Sort Exclusion / Bag Ignore
+BAGNON_AUTOSORT_IGNORED = "Ignored from auto-sort"
+BAGNON_AUTOSORT_TOGGLE_IGNORE = "<Alt-Click> or <Right-Click> to toggle sort ignore."
+BAGNON_AUTOSORT_IGNORE_ENABLED = "Bagnon: %s will now be ignored by auto-sort."
+BAGNON_AUTOSORT_IGNORE_DISABLED = "Bagnon: %s will now be sorted."
+
 --General Options Menu
 BAGNON_MAINOPTIONS_TITLE = "Bagnon Options"
 BAGNON_MAINOPTIONS_SHOW = "Show"

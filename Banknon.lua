@@ -100,6 +100,7 @@ end
 function Banknon_OnShow()
 	Banknon_UpdatePurchaseButtonVis()
 	PlaySound("igMainMenuOpen")
+	BagnonFrame_UpdateFreeSlots(Banknon)
 end
 
 --OnHide

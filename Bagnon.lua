@@ -64,6 +64,7 @@ end
 function Bagnon_OnShow()
 	MainMenuBarBackpackButton:SetChecked(1);
 	PlaySound("igBackPackOpen");
+	BagnonFrame_UpdateFreeSlots(Bagnon);
 end
 
 --OnHide
@@ -122,10 +123,34 @@ function BagnonBlizMainBag_OnEnter()
 		BagnonFrame_HighlightSlots(Bagnon, this:GetID());
 	end
 	bMainBag_OnEnter();
+	if C_Container and C_Container.GetBackpackAutosortDisabled and C_Container.GetBackpackAutosortDisabled() then
+		GameTooltip:AddLine("|cffff6060" .. BAGNON_AUTOSORT_IGNORED .. "|r");
+	end
+	if C_Container and C_Container.SetBackpackAutosortDisabled then
+		GameTooltip:AddLine(BAGNON_AUTOSORT_TOGGLE_IGNORE, 0.6, 0.8, 1);
+	end
+	GameTooltip:Show();
 end
 
 function BagnonBlizMainBag_OnClick()
-	if( IsShiftKeyDown() ) then
+	if (IsAltKeyDown() or (arg1 == "RightButton" and not CursorHasItem())) and C_Container and C_Container.SetBackpackAutosortDisabled and C_Container.GetBackpackAutosortDisabled then
+		local newState = not C_Container.GetBackpackAutosortDisabled()
+		C_Container.SetBackpackAutosortDisabled(newState)
+		PlaySound("igMainMenuOption")
+		if newState then
+			BagnonMsg(format(BAGNON_AUTOSORT_IGNORE_ENABLED, BACKPACK_TOOLTIP or "Backpack"))
+		else
+			BagnonMsg(format(BAGNON_AUTOSORT_IGNORE_DISABLED, BACKPACK_TOOLTIP or "Backpack"))
+		end
+		local bagSlot0 = getglobal("BagnonBags0")
+		if bagSlot0 and BagnonBag_UpdateSortIgnore then
+			BagnonBag_UpdateSortIgnore(bagSlot0)
+		end
+		if GameTooltip:IsOwned(this) then
+			BagnonBlizMainBag_OnEnter()
+		end
+		return
+	elseif( IsShiftKeyDown() ) then
 		BagnonFrame_ToggleBag(Bagnon, this:GetID());
 	else
 		bMainBag_OnClick();
