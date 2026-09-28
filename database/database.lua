@@ -180,7 +180,7 @@ function BagnonDB.GetBagData(player, bagID)
 					link = nil;
 				end
 
-				return size, link, tonumber(count);
+				return tonumber(size), link, tonumber(count);
 			end
 		end
 	end

@@ -190,7 +190,7 @@ function BagnonFrame_AddBag(frame, bagID)
 
 	local bagSize
 	if Bagnon_IsCachedBag(frame.player, bagID) then
-		bagSize = (BagnonDB.GetBagData(frame.player, bagID)) or 0
+		bagSize = tonumber(BagnonDB.GetBagData(frame.player, bagID)) or 0
 	else
 		if bagID == KEYRING_CONTAINER then
 			bagSize = GetKeyRingSize()
@@ -762,8 +762,8 @@ function BagnonFrame_UpdateFreeSlots(frame)
 		local bags = frame.defaultBags or (BagnonSets[frameName] and BagnonSets[frameName].bags)
 		if bags then
 			for _, bagID in pairs(bags) do
-				if bagID ~= KEYRING_CONTAINER then
-					local bagSize = (BagnonDB and BagnonDB.GetBagData(frame.player, bagID)) or 0
+				if tonumber(bagID) ~= KEYRING_CONTAINER then
+					local bagSize = tonumber(BagnonDB and BagnonDB.GetBagData(frame.player, bagID)) or 0
 					if bagSize > 0 then
 						totalSlots = totalSlots + bagSize
 						for slot = 1, bagSize do
@@ -854,10 +854,11 @@ function BagnonFrameFreeSlots_OnEnter(button)
 	local bags = frame.defaultBags or (BagnonSets[frameName] and BagnonSets[frameName].bags)
 	if bags then
 		for _, bagID in pairs(bags) do
-			if bagID ~= KEYRING_CONTAINER then
+			local numBagID = tonumber(bagID)
+			if numBagID and numBagID ~= KEYRING_CONTAINER then
 				local bagName, numFree, numTotal
 				if Bagnon_IsCachedFrame and Bagnon_IsCachedFrame(frame) then
-					numTotal = (BagnonDB and BagnonDB.GetBagData(frame.player, bagID)) or 0
+					numTotal = tonumber(BagnonDB and BagnonDB.GetBagData(frame.player, bagID)) or 0
 					if numTotal > 0 then
 						numFree = 0
 						for slot = 1, numTotal do
@@ -865,13 +866,13 @@ function BagnonFrameFreeSlots_OnEnter(button)
 								numFree = numFree + 1
 							end
 						end
-						if bagID == 0 then
+						if numBagID == 0 then
 							bagName = BACKPACK_TOOLTIP or "Backpack"
-						elseif bagID == -1 then
+						elseif numBagID == -1 then
 							bagName = "Bank"
 						else
 							local _, link = BagnonDB.GetBagData(frame.player, bagID)
-							bagName = link or format("Bag %d", bagID)
+							bagName = link or format("Bag %d", numBagID)
 						end
 					end
 				else
