@@ -8,6 +8,10 @@
 	Why not use a normal dropdown?  It takes a lot of memory
 --]]
 
+if not Bagnon_EngineReady then
+	return
+end
+
 local minWidth = 120
 
 --switch to view a different character's data

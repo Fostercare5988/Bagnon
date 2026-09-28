@@ -5,6 +5,10 @@
 		Built for ClassicAPI v1.15.15+
 --]]
 
+if not Bagnon_EngineReady then
+	return
+end
+
 --[[ Bag Frame Functions ]]--
 
 local function GetBagSlot(bagFrame, index)
@@ -94,9 +98,9 @@ function BagnonBag_UpdateSortIgnore(bag)
 	if not bag then return end
 	local bagID = bag:GetID()
 	local isIgnored = false
-	if bagID == 0 and C_Container and C_Container.GetBackpackAutosortDisabled then
+	if bagID == 0 then
 		isIgnored = C_Container.GetBackpackAutosortDisabled()
-	elseif bagID == -1 and C_Container and C_Container.GetBankAutosortDisabled then
+	elseif bagID == -1 then
 		isIgnored = C_Container.GetBankAutosortDisabled()
 	end
 
@@ -256,7 +260,7 @@ function BagnonBag_OnClick(self, mouseButton)
 
 	-- Sort Exclusion toggle on Backpack (0) or Bank (-1) via Alt-Click or Right-Click (when cursor has no item)
 	if (IsAltKeyDown() or (btn == "RightButton" and not CursorHasItem())) and (bagID == 0 or bagID == -1) then
-		if bagID == 0 and C_Container and C_Container.SetBackpackAutosortDisabled and C_Container.GetBackpackAutosortDisabled then
+		if bagID == 0 then
 			local newState = not C_Container.GetBackpackAutosortDisabled()
 			C_Container.SetBackpackAutosortDisabled(newState)
 			PlaySound("igMainMenuOption")
@@ -270,7 +274,7 @@ function BagnonBag_OnClick(self, mouseButton)
 				BagnonBag_OnEnter(b)
 			end
 			return
-		elseif bagID == -1 and C_Container and C_Container.SetBankAutosortDisabled and C_Container.GetBankAutosortDisabled then
+		elseif bagID == -1 then
 			local newState = not C_Container.GetBankAutosortDisabled()
 			C_Container.SetBankAutosortDisabled(newState)
 			PlaySound("igMainMenuOption")
@@ -346,16 +350,15 @@ function BagnonBag_OnEnter(self)
 
 	local bagID = b:GetID()
 	local isIgnored = false
-	if bagID == 0 and C_Container and C_Container.GetBackpackAutosortDisabled then
+	if bagID == 0 then
 		isIgnored = C_Container.GetBackpackAutosortDisabled()
-	elseif bagID == -1 and C_Container and C_Container.GetBankAutosortDisabled then
+	elseif bagID == -1 then
 		isIgnored = C_Container.GetBankAutosortDisabled()
 	end
 	if isIgnored then
 		GameTooltip:AddLine("|cffff6060" .. BAGNON_AUTOSORT_IGNORED .. "|r")
 	end
-	if (bagID == 0 and C_Container and C_Container.SetBackpackAutosortDisabled) or
-	   (bagID == -1 and C_Container and C_Container.SetBankAutosortDisabled) then
+	if bagID == 0 or bagID == -1 then
 		GameTooltip:AddLine(BAGNON_AUTOSORT_TOGGLE_IGNORE, 0.6, 0.8, 1)
 	end
 

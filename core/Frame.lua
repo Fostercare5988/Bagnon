@@ -15,6 +15,10 @@
 		Potentially, I can make the frame completely dynamically generated and merge Bagnon, Bagnon_Core, and Banknon
 --]]
 
+if not Bagnon_EngineReady then
+	return
+end
+
 --Local constants
 local FRAMESTRATA = {"LOW", "MEDIUM", "HIGH"}
 local DEFAULT_COLS = 10
@@ -675,17 +679,15 @@ function BagnonFrameSort_OnClick(frame, button)
 
 	-- Right-Click: toggle sort direction (Left-to-Right vs Right-to-Left)
 	if btn == "RightButton" then
-		if C_Container and C_Container.SetSortBagsRightToLeft and C_Container.GetSortBagsRightToLeft then
-			local current = C_Container.GetSortBagsRightToLeft()
-			local newOrder = not current
-			C_Container.SetSortBagsRightToLeft(newOrder)
-			PlaySound("igMainMenuOption")
-			local orderStr = newOrder and BAGNON_SORT_RIGHT_TO_LEFT or BAGNON_SORT_LEFT_TO_RIGHT
-			BagnonMsg(format(BAGNON_SORT_DIRECTION_CHANGED, orderStr))
-			local sortBtn = getglobal(frame:GetName() .. "SortButton")
-			if sortBtn and sortBtn:IsShown() and GameTooltip:IsOwned(sortBtn) then
-				BagnonFrameSort_OnEnter(sortBtn)
-			end
+		local current = C_Container.GetSortBagsRightToLeft()
+		local newOrder = not current
+		C_Container.SetSortBagsRightToLeft(newOrder)
+		PlaySound("igMainMenuOption")
+		local orderStr = newOrder and BAGNON_SORT_RIGHT_TO_LEFT or BAGNON_SORT_LEFT_TO_RIGHT
+		BagnonMsg(format(BAGNON_SORT_DIRECTION_CHANGED, orderStr))
+		local sortBtn = getglobal(frame:GetName() .. "SortButton")
+		if sortBtn and sortBtn:IsShown() and GameTooltip:IsOwned(sortBtn) then
+			BagnonFrameSort_OnEnter(sortBtn)
 		end
 		return
 	end
@@ -701,15 +703,11 @@ function BagnonFrameSort_OnClick(frame, button)
 			BagnonMsg(BAGNON_CANNOT_SORT_BANK_AWAY)
 			return
 		end
-		if C_Container and C_Container.SortBankBags then
-			PlaySound("igMainMenuOption")
-			C_Container.SortBankBags()
-		end
+		PlaySound("igMainMenuOption")
+		C_Container.SortBankBags()
 	else
-		if C_Container and C_Container.SortBags then
-			PlaySound("igMainMenuOption")
-			C_Container.SortBags()
-		end
+		PlaySound("igMainMenuOption")
+		C_Container.SortBags()
 	end
 end
 
@@ -728,11 +726,9 @@ function BagnonFrameSort_OnEnter(button)
 		GameTooltip:AddLine(BAGNON_CANNOT_SORT_BANK_AWAY, 1, 0.2, 0.2)
 	else
 		GameTooltip:AddLine(BAGNON_SORT_TOOLTIP_LEFT, 0.8, 0.8, 0.8)
-		if C_Container and C_Container.GetSortBagsRightToLeft then
-			local r2l = C_Container.GetSortBagsRightToLeft()
-			local orderStr = r2l and BAGNON_SORT_RIGHT_TO_LEFT or BAGNON_SORT_LEFT_TO_RIGHT
-			GameTooltip:AddLine(format(BAGNON_SORT_TOOLTIP_RIGHT, orderStr), 0.6, 0.8, 1)
-		end
+		local r2l = C_Container.GetSortBagsRightToLeft()
+		local orderStr = r2l and BAGNON_SORT_RIGHT_TO_LEFT or BAGNON_SORT_LEFT_TO_RIGHT
+		GameTooltip:AddLine(format(BAGNON_SORT_TOOLTIP_RIGHT, orderStr), 0.6, 0.8, 1)
 	end
 	GameTooltip:Show()
 end
@@ -807,57 +803,18 @@ function BagnonFrame_UpdateFreeSlots(frame)
 			local numSlots = GetContainerNumSlots(bagID)
 			if numSlots and numSlots > 0 then
 				totalSlots = totalSlots + numSlots
-				local numFree
-				if C_Container and C_Container.GetContainerNumFreeSlots then
-					numFree = C_Container.GetContainerNumFreeSlots(bagID)
-				elseif GetContainerNumFreeSlots then
-					numFree = GetContainerNumFreeSlots(bagID)
-				end
-				if numFree then
-					freeSlots = freeSlots + numFree
-				else
-					for slot = 1, numSlots do
-						if not GetContainerItemInfo(bagID, slot) then
-							freeSlots = freeSlots + 1
-						end
-					end
-				end
+				freeSlots = freeSlots + (C_Container.GetContainerNumFreeSlots(bagID) or 0)
 			end
 		end
 	else
 		-- Bagnon (player bags 0..4)
-		local calcFree
-		if C_Container and C_Container.CalculateTotalNumberOfFreeBagSlots then
-			calcFree = C_Container.CalculateTotalNumberOfFreeBagSlots()
-		end
-
 		for bagID = 0, 4 do
 			local numSlots = GetContainerNumSlots(bagID)
 			if numSlots and numSlots > 0 then
 				totalSlots = totalSlots + numSlots
-				if not calcFree then
-					local numFree
-					if C_Container and C_Container.GetContainerNumFreeSlots then
-						numFree = C_Container.GetContainerNumFreeSlots(bagID)
-					elseif GetContainerNumFreeSlots then
-						numFree = GetContainerNumFreeSlots(bagID)
-					end
-					if numFree then
-						freeSlots = freeSlots + numFree
-					else
-						for slot = 1, numSlots do
-							if not GetContainerItemInfo(bagID, slot) then
-								freeSlots = freeSlots + 1
-							end
-						end
-					end
-				end
 			end
 		end
-
-		if calcFree then
-			freeSlots = calcFree
-		end
+		freeSlots = C_Container.CalculateTotalNumberOfFreeBagSlots() or 0
 	end
 
 	local text = format(BAGNON_FREE_SLOTS_FORMAT or "%d / %d Free", freeSlots, totalSlots)
@@ -904,19 +861,7 @@ function BagnonFrameFreeSlots_OnEnter(button)
 				else
 					numTotal = GetContainerNumSlots(bagID)
 					if numTotal and numTotal > 0 then
-						if C_Container and C_Container.GetContainerNumFreeSlots then
-							numFree = C_Container.GetContainerNumFreeSlots(bagID)
-						elseif GetContainerNumFreeSlots then
-							numFree = GetContainerNumFreeSlots(bagID)
-						end
-						if not numFree then
-							numFree = 0
-							for slot = 1, numTotal do
-								if not GetContainerItemInfo(bagID, slot) then
-									numFree = numFree + 1
-								end
-							end
-						end
+						numFree = C_Container.GetContainerNumFreeSlots(bagID) or 0
 						if bagID == 0 then
 							bagName = BACKPACK_TOOLTIP or "Backpack"
 						elseif bagID == -1 then

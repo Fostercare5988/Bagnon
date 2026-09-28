@@ -5,6 +5,10 @@
 		Built for ClassicAPI v1.15.15+
 --]]
 
+if not Bagnon_EngineReady then
+	return
+end
+
 function BagnonSlash_DisplayHelp()
 	BagnonMsg(BAGNON_HELP_TITLE);
 	BagnonMsg(BAGNON_HELP_HELP);
@@ -44,14 +48,12 @@ SlashCmdList["BagnonCOMMAND"] = function(msg)
 			BagnonFrame_Toggle("Bagnon");
 		elseif(cmd == BAGNON_COMMAND_SORT) then
 			if Banknon and Banknon:IsShown() and not (Bagnon_IsCachedFrame and Bagnon_IsCachedFrame(Banknon)) and bgn_atBank then
-				if C_Container and C_Container.SortBankBags then
-					PlaySound("igMainMenuOption")
-					C_Container.SortBankBags()
-				end
+				PlaySound("igMainMenuOption")
+				C_Container.SortBankBags()
 			else
 				if Bagnon and Bagnon_IsCachedFrame and Bagnon_IsCachedFrame(Bagnon) then
 					BagnonMsg(BAGNON_CANNOT_SORT_OFFLINE)
-				elseif C_Container and C_Container.SortBags then
+				else
 					PlaySound("igMainMenuOption")
 					C_Container.SortBags()
 				end

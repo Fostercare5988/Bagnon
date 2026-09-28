@@ -5,6 +5,10 @@
 		Built for ClassicAPI v1.15.15+
 --]]
 
+if not Bagnon_EngineReady then
+	return
+end
+
 function BagnonOptions_OnLoad(self)
 	local f = self or this
 	if not f then return end

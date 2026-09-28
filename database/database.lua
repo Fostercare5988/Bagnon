@@ -5,6 +5,10 @@
 		Built for the Enhanced WoW 1.12.1 Client (ClassicAPI v1.15.15+)
 --]]
 
+if not Bagnon_EngineReady then
+	return
+end
+
 --[[ 
 	This check isn't absolutely necessary, but it'll warn users if they're using more than one database addon.
 	Nothing under this block of code should be loaded if BagnonDB already exists.

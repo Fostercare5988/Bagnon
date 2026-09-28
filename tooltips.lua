@@ -5,6 +5,10 @@
 		Built for the Enhanced WoW 1.12.1 Client (ClassicAPI v1.15.15+)
 --]]
 
+if not Bagnon_EngineReady then
+	return
+end
+
 local currentPlayer = UnitName("player")
 local function GetCurrentPlayer()
 	if not currentPlayer or currentPlayer == "" then

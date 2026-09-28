@@ -5,6 +5,10 @@
 		Built for ClassicAPI v1.15.15+
 --]]
 
+if not Bagnon_EngineReady then
+	return
+end
+
 --show the menu
 function BagnonMenu_Show(frame)
 	BagnonMenu.frame = frame;

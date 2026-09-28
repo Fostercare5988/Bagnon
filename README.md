@@ -3,11 +3,11 @@
 Required ClassicAPI version: **v1.15.15+**. This is the maintainer's published support baseline for this addon suite; it is not a claim that every API used here was introduced in v1.15.15. After replacing ClassicAPI.dll, fully restart WoW; `/reload` cannot reload a DLL.
 
 [![Interface: 1.12.1](https://img.shields.io/badge/Interface-1.12.1%20(5875)-orange.svg)](https://github.com/Fostercare5988/Bagnon)
-[![Version: 2.2.0](https://img.shields.io/badge/Version-2.2.0-blue.svg)](https://github.com/Fostercare5988/Bagnon/releases)
+[![Version: 2.2.1](https://img.shields.io/badge/Version-2.2.1-blue.svg)](https://github.com/Fostercare5988/Bagnon/releases)
 [![ClassicAPI: v1.15.15+](https://img.shields.io/badge/ClassicAPI-v1.15.15+-green.svg)](https://github.com/brues-code/ClassicAPI)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Bagnon v2.2.0** is an inventory and bank engine engineered natively for **World of Warcraft 1.12.1 (Build 5875)** running on the **Enhanced Client Extension Stack** (**ClassicAPI v1.15.15+**).
+**Bagnon v2.2.1** is an inventory and bank engine engineered natively for **World of Warcraft 1.12.1 (Build 5875)** running on the **Enhanced Client Extension Stack** (**ClassicAPI v1.15.15+**).
 
 Bagnon merges all fragmented inventory and bank bags into a unified, resizable grid. It enables remote bank viewing from anywhere in the world, live free slot tracking, container autosort exclusion, cross-character alt item aggregation on tooltips, total realm gold tracking, and modern one-click bag and bank sorting.
 
@@ -139,6 +139,12 @@ Bagnon is engineered around direct engine integration:
 ---
 
 ## 📜 Changelog
+
+### v2.2.1
+- **Enhanced Client Modernization & Defensive Shim Purge**: Audited codebase and eliminated all defensive stock-client fallback checks (`if C_Container and ... then ... else ...`), strictly enforcing the enhanced-client API contract.
+- **Direct ClassicAPI v1.15.15+ Container Primitives**: Streamlined all container operations to direct engine calls (`C_Container.CalculateTotalNumberOfFreeBagSlots()`, `C_Container.GetContainerNumFreeSlots()`, `C_Container.GetContainerItemID()`, `C_Container.GetBackpackAutosortDisabled()`, `C_Container.SetBackpackAutosortDisabled()`, `C_Container.GetBankAutosortDisabled()`, `C_Container.SetBankAutosortDisabled()`, `C_Container.SortBags()`, `C_Container.SortBankBags()`, `C_Container.GetSortBagsRightToLeft()`, `C_Container.SetSortBagsRightToLeft()`).
+- **Universal Engine Bootstrap Guards**: Added authoritative `if not Bagnon_EngineReady then return end` guard across all module entry points (`Events.lua`, `core/Overrides.lua`, `core/Bag.lua`, `core/Item.lua`, `core/Frame.lua`, `menu/Menu.lua`, `Slash.lua`, `database/database.lua`, `database/ui.lua`, `options/Options.lua`, `tooltips.lua`), guaranteeing fail-safe execution if minimum requirements are unmet.
+- **Dead Code Cleanup**: Purged vestigial backward-compatibility aliases and redundant link queries.
 
 ### v2.2.0
 - **Complete Search Subsystem Removal**: Thoroughly eradicated all search mechanisms, including the legacy `spot/` module (`spot.lua`, `spot.xml`), the header search button, and query parser.

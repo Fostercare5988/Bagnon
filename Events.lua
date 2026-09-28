@@ -11,6 +11,10 @@
 			The events of showing the bank, tradeskill, auction, and trading can also be set to open the inventory or bank windows.
 --]]
 
+if not Bagnon_EngineReady then
+	return
+end
+
 bgn_atBank = nil --a flag for if the player is at the bank or not
 
 --[[ Local Functions ]]--
@@ -50,7 +54,7 @@ end
 --[[ Variable Loading ]]--
 
 local function LoadVariables()
-	local currentVersion = GetAddOnMetadata("Bagnon", "Version") or "2.2.0"
+	local currentVersion = GetAddOnMetadata("Bagnon", "Version") or "2.2.1"
 	if not BagnonSets then
 		BagnonSets = {
 			showBagsAtBank = 1,

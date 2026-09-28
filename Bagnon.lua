@@ -123,17 +123,15 @@ function BagnonBlizMainBag_OnEnter()
 		BagnonFrame_HighlightSlots(Bagnon, this:GetID());
 	end
 	bMainBag_OnEnter();
-	if C_Container and C_Container.GetBackpackAutosortDisabled and C_Container.GetBackpackAutosortDisabled() then
+	if C_Container.GetBackpackAutosortDisabled() then
 		GameTooltip:AddLine("|cffff6060" .. BAGNON_AUTOSORT_IGNORED .. "|r");
 	end
-	if C_Container and C_Container.SetBackpackAutosortDisabled then
-		GameTooltip:AddLine(BAGNON_AUTOSORT_TOGGLE_IGNORE, 0.6, 0.8, 1);
-	end
+	GameTooltip:AddLine(BAGNON_AUTOSORT_TOGGLE_IGNORE, 0.6, 0.8, 1);
 	GameTooltip:Show();
 end
 
 function BagnonBlizMainBag_OnClick()
-	if (IsAltKeyDown() or (arg1 == "RightButton" and not CursorHasItem())) and C_Container and C_Container.SetBackpackAutosortDisabled and C_Container.GetBackpackAutosortDisabled then
+	if (IsAltKeyDown() or (arg1 == "RightButton" and not CursorHasItem())) then
 		local newState = not C_Container.GetBackpackAutosortDisabled()
 		C_Container.SetBackpackAutosortDisabled(newState)
 		PlaySound("igMainMenuOption")

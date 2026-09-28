@@ -7,6 +7,10 @@
 	OpenBackpack, and CloseBackPack are called automatically
 --]]
 
+if not Bagnon_EngineReady then
+	return
+end
+
 local function BagIsControlledByBagnon(id)
 	return Bagnon_IsAddOnEnabled("Bagnon") and 
 			((not BagnonSets["Bagnon"] and Bagnon_IsInventoryBag(id)) or Bagnon_FrameHasBag("Bagnon", id))

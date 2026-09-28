@@ -5,6 +5,10 @@
 		Built for ClassicAPI v1.15.15+
 --]]
 
+if not Bagnon_EngineReady then
+	return
+end
+
 --[[ OnX Handlers ]]--
 
 local function OnClick(self, button)
@@ -397,34 +401,17 @@ function BagnonItem_UpdateEnchant(item)
 	end
 
 	-- Fast empty check via C_Container
-	local cid
-	if C_Container and C_Container.GetContainerItemID then
-		cid = C_Container.GetContainerItemID(bagID, slotID)
-		if not cid then
-			if item.enchantOverlay then
-				item.enchantOverlay:Hide()
-			end
-			return
+	local cid = C_Container.GetContainerItemID(bagID, slotID)
+	if not cid then
+		if item.enchantOverlay then
+			item.enchantOverlay:Hide()
 		end
+		return
 	end
 
 	-- Fast C++ weapon check via itemEquipLoc (INVTYPE_WEAPON, 2HWEAPON, WEAPONMAINHAND, WEAPONOFFHAND)
 	-- Skip 98%+ of bag slots (armor, potions, reagents, quest items) in nanoseconds without tooltip scanning
-	local itemEquipLoc
-	if cid then
-		local _, _, _, _, _, _, _, eqLoc = GetItemInfo(cid)
-		itemEquipLoc = eqLoc
-	else
-		local link = GetContainerItemLink(bagID, slotID)
-		if not link then
-			if item.enchantOverlay then
-				item.enchantOverlay:Hide()
-			end
-			return
-		end
-		local _, _, _, _, _, _, _, eqLoc = GetItemInfo(link)
-		itemEquipLoc = eqLoc
-	end
+	local _, _, _, _, _, _, _, itemEquipLoc = GetItemInfo(cid)
 
 	if itemEquipLoc ~= "INVTYPE_WEAPON" and itemEquipLoc ~= "INVTYPE_2HWEAPON" and
 	   itemEquipLoc ~= "INVTYPE_WEAPONMAINHAND" and itemEquipLoc ~= "INVTYPE_WEAPONOFFHAND" then
@@ -485,7 +472,7 @@ function BagnonItem_UpdateBorder(button, quality, player)
 		if not quality then
 			-- Tier 0: ClassicAPI direct CGItem resolution (zero string allocations, 0 GC churn)
 			local itemID
-			if C_Container and C_Container.GetContainerItemID then
+			if not (player and Bagnon_IsCachedItem(button)) then
 				itemID = C_Container.GetContainerItemID(bagID, slotID)
 			end
 
@@ -534,9 +521,6 @@ function BagnonItem_UpdateBorder(button, quality, player)
 		end
 	end
 end
-
--- Backward compatibility alias
-BagnonItem_UpdateLinkBorder = BagnonItem_UpdateBorder
 
 --Update cooldown
 function BagnonItem_UpdateCooldown(container, button)
