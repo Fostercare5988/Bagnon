@@ -156,7 +156,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT">
 						<Offset>
-							<AbsDimension x="10" y="-2"/>
+							<AbsDimension x="32" y="-2"/>
 						</Offset>
 					</Anchor>
 					<Anchor point="BOTTOMRIGHT" relativeTo="$parentFreeSlots" relativePoint="BOTTOMLEFT">

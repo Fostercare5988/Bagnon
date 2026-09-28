@@ -110,7 +110,7 @@ function BagnonFrame_Load(frame, bags, title)
 
 		local dropdownButton = CreateFrame("Button", frameName .. "DropDown", frame, "BagnonDBUIDropDownButton")
 		dropdownButton:SetAlpha(frame:GetAlpha())
-		getglobal(frameName .. "Title"):SetPoint("TOPLEFT", dropdownButton, "TOPRIGHT", 2, 2)
+		getglobal(frameName .. "Title"):SetPoint("TOPLEFT", dropdownButton, "TOPRIGHT", 4, 2)
 	end
 
 	BagnonFrame_OrderBags(frame, BagnonSets[frameName].reverse)
@@ -758,21 +758,30 @@ function BagnonFrame_UpdateFreeSlots(frame)
 	local searchBtn = getglobal(frameName .. "SearchButton")
 	if not freeSlotsBtn then return end
 
-	if BagnonSets and BagnonSets.showFreeSlots == 0 then
-		freeSlotsBtn:Hide()
-		if titleBtn and searchBtn then
-			titleBtn:ClearAllPoints()
-			titleBtn:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, -2)
-			titleBtn:SetPoint("BOTTOMRIGHT", searchBtn, "BOTTOMLEFT", -6, 0)
-		end
-		return
-	end
-
-	freeSlotsBtn:Show()
+	local dropdownBtn = getglobal(frameName .. "DropDown")
 	if titleBtn then
 		titleBtn:ClearAllPoints()
-		titleBtn:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, -2)
-		titleBtn:SetPoint("BOTTOMRIGHT", freeSlotsBtn, "BOTTOMLEFT", -6, 0)
+		if dropdownBtn and dropdownBtn:IsShown() then
+			titleBtn:SetPoint("TOPLEFT", dropdownBtn, "TOPRIGHT", 4, 2)
+		else
+			titleBtn:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, -2)
+		end
+
+		if BagnonSets and BagnonSets.showFreeSlots == 0 then
+			freeSlotsBtn:Hide()
+			if searchBtn then
+				titleBtn:SetPoint("BOTTOMRIGHT", searchBtn, "BOTTOMLEFT", -6, 0)
+			end
+			return
+		else
+			freeSlotsBtn:Show()
+			titleBtn:SetPoint("BOTTOMRIGHT", freeSlotsBtn, "BOTTOMLEFT", -6, 0)
+		end
+	elseif BagnonSets and BagnonSets.showFreeSlots == 0 then
+		freeSlotsBtn:Hide()
+		return
+	else
+		freeSlotsBtn:Show()
 	end
 
 	local freeSlots = 0
