@@ -39,7 +39,8 @@ end
 --a shortened item link is either the item:w:x:y:z form without the 'item:' part, or just the item's ID (the 'w' part)
 function BagnonForever_HyperlinkToShortLink(hyperLink)
 	if(hyperLink) then
-		local _, _, w, x, y, z = string.find(hyperLink, "item:(%d+):(%d+):(%d+):(%d+)");
+		local _, _, w, x, y, z = string.find(hyperLink, "item:(%d+):(%-?%d+):(%-?%d+):(%-?%d+)");
+		if not w then return nil end
 		if(tonumber(x) == 0 and tonumber(y) == 0 and tonumber(z) == 0) then
 			return w;
 		else
@@ -62,7 +63,7 @@ local function SaveItemData(bagID, itemSlot)
 	
 	if(texture) then
 		data = BagnonForever_HyperlinkToShortLink( GetContainerItemLink(bagID, itemSlot) );
-		if(count > 1) then
+		if(data and count and count > 1) then
 			data = data .. "," .. count;
 		end
 	end

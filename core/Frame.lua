@@ -26,6 +26,14 @@ local DEFAULT_SPACING = 2
 local DEFAULT_ALPHA = 0.85
 local DEFAULT_BG = {r = 0, g = 0, b = 0, a = 1}
 
+local function SavedNumber(value, default, minimum, maximum)
+	local number = tonumber(value)
+	if not number or number ~= number or number == math.huge or number == -math.huge then return default end
+	if minimum and number < minimum then return default end
+	if maximum and number > maximum then return default end
+	return number
+end
+
 --[[
 	Load settings for the frame
 --]]
@@ -38,7 +46,7 @@ function BagnonFrame_Load(frame, bags, title)
 	tinsert(UISpecialFrames, frameName)
 
 	--initialize variables for the frame if there are none
-	if not BagnonSets[frameName] then
+	if type(BagnonSets[frameName]) ~= "table" then
 		BagnonSets[frameName] = {
 			stayOnScreen = 1,
 			cols = DEFAULT_COLS,
@@ -58,7 +66,7 @@ function BagnonFrame_Load(frame, bags, title)
 		if BagnonSets[frameName].alpha == nil then
 			BagnonSets[frameName].alpha = DEFAULT_ALPHA
 		end
-		if not BagnonSets[frameName].bg or tonumber(BagnonSets[frameName].bg) then
+		if type(BagnonSets[frameName].bg) ~= "table" then
 			BagnonSets[frameName].bg = {r = 0, g = 0, b = 0, a = 1}
 		end
 		if BagnonSets[frameName].stayOnScreen == nil then
@@ -72,8 +80,21 @@ function BagnonFrame_Load(frame, bags, title)
 		end
 	end
 
+	local settings = BagnonSets[frameName]
+	settings.cols = math.floor(SavedNumber(settings.cols, DEFAULT_COLS, 1, 32))
+	settings.space = SavedNumber(settings.space, DEFAULT_SPACING, 0, 32)
+	settings.alpha = SavedNumber(settings.alpha, DEFAULT_ALPHA, 0, 1)
+	settings.strata = math.floor(SavedNumber(settings.strata, 3, 1, 3))
+	settings.scale = SavedNumber(settings.scale, 1, 0.01)
+	settings.parentScale = SavedNumber(settings.parentScale, nil, 0.01)
+	settings.top = SavedNumber(settings.top, nil)
+	settings.left = SavedNumber(settings.left, nil)
+	for channel, default in pairs(DEFAULT_BG) do
+		settings.bg[channel] = SavedNumber(settings.bg[channel], default, 0, 1)
+	end
+
 	--add what bags are controlled by the frame
-	if not BagnonSets[frameName].bags then
+	if type(BagnonSets[frameName].bags) ~= "table" then
 		BagnonSets[frameName].bags = bags
 	end
 
@@ -136,6 +157,7 @@ end
 
 function BagnonFrame_Generate(frame)
 	frame.size = 0
+	frame.bagSizes = {}
 	local frameName = frame:GetName()
 	local frameSets = BagnonSets[frameName]
 	local bags
@@ -188,6 +210,14 @@ local function CreateDummyBag(parent, bagID)
 	return dummyBag
 end
 
+local function LiveBagSize(bagID)
+	if bagID == KEYRING_CONTAINER then return GetKeyRingSize() end
+	if bagID <= 0 or GetInventoryItemTexture("player", ContainerIDToInventoryID(bagID)) then
+		return GetContainerNumSlots(bagID)
+	end
+	return 0
+end
+
 function BagnonFrame_AddBag(frame, bagID)
 	local frameName = frame:GetName()
 	local slot = frame.size
@@ -197,15 +227,9 @@ function BagnonFrame_AddBag(frame, bagID)
 		local size = BagnonDB and BagnonDB.GetBagData(frame.player, bagID)
 		bagSize = tonumber(size) or 0
 	else
-		if bagID == KEYRING_CONTAINER then
-			bagSize = GetKeyRingSize()
-		--HACK, GetContainerNumSlots does not return proper amounts for empty bank slots if you happen to move a bank bag to your bank slots
-		elseif bagID <= 0 or GetInventoryItemTexture("player", ContainerIDToInventoryID(bagID)) then
-			bagSize = GetContainerNumSlots(bagID)
-		else
-			bagSize = 0
-		end
+		bagSize = LiveBagSize(bagID)
 	end
+	frame.bagSizes[bagID] = bagSize
 
 	--update used slots
 	local dummyBag = getglobal(frameName .. "DummyBag" .. bagID) or CreateDummyBag(frame, bagID)
@@ -294,6 +318,14 @@ function BagnonFrame_Update(frame, bagID)
 	if not frame.size or Bagnon_IsCachedFrame(frame) then return end
 
 	local frameName = frame:GetName()
+	-- Rebind buttons before partial updates when a container's size changes.
+	-- The bag-bar event handler may be hidden, or run after this handler.
+	for _, bag in pairs(BagnonSets[frameName].bags) do
+		if not frame.bagSizes or frame.bagSizes[bag] ~= LiveBagSize(bag) then
+			BagnonFrame_Generate(frame)
+			return
+		end
+	end
 	local startSlot = 1
 	local endSlot
 
@@ -303,25 +335,14 @@ function BagnonFrame_Update(frame, bagID)
 	else
 		for _, bag in pairs(BagnonSets[frameName].bags) do
 			if bag == bagID then
-				if bag == KEYRING_CONTAINER then
-					endSlot = startSlot + GetKeyRingSize() - 1
-				elseif bag == -1 then
-					endSlot = startSlot + 23
-				else
-					endSlot = startSlot + GetContainerNumSlots(bag) - 1
-				end
+				endSlot = startSlot + frame.bagSizes[bag] - 1
 				break
 			else
-				if bag == KEYRING_CONTAINER then
-					startSlot = startSlot + GetKeyRingSize()
-				elseif bag == -1 then
-					startSlot = startSlot + 24
-				else
-					startSlot = startSlot + GetContainerNumSlots(bag)
-				end
+				startSlot = startSlot + frame.bagSizes[bag]
 			end
 		end
 	end
+	if not endSlot then return end
 
 	--update the necessary slots
 	for slot = startSlot, endSlot do
@@ -673,6 +694,21 @@ end
 	Modern Bag/Bank Sorting (ClassicAPI v1.15.0+, v1.15.13+ equipment slot grouping)
 --]]
 
+function Bagnon_RequestSort(bank)
+	local excluded
+	if bank then excluded = C_Container.GetBankAutosortDisabled()
+	else excluded = C_Container.GetBackpackAutosortDisabled() end
+	-- ClassicAPI 1.15.15 retains a temporary exclusion-list pointer between
+	-- merge and placement. Keep this gate until a native fix is verified.
+	if excluded then
+		BagnonMsg("Sorting with an excluded backpack or bank is unavailable until the native sorting fix is verified. Your exclusion setting is preserved.")
+		return false
+	end
+	PlaySound("igMainMenuOption")
+	if bank then C_Container.SortBankBags() else C_Container.SortBags() end
+	return true -- request dispatched, not confirmed completion
+end
+
 function BagnonFrameSort_OnClick(frame, button)
 	local btn = button or arg1
 	if not frame then return end
@@ -703,11 +739,9 @@ function BagnonFrameSort_OnClick(frame, button)
 			BagnonMsg(BAGNON_CANNOT_SORT_BANK_AWAY)
 			return
 		end
-		PlaySound("igMainMenuOption")
-		C_Container.SortBankBags()
+		Bagnon_RequestSort(true)
 	else
-		PlaySound("igMainMenuOption")
-		C_Container.SortBags()
+		Bagnon_RequestSort(false)
 	end
 end
 

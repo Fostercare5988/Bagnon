@@ -55,7 +55,7 @@ end
 
 local function LoadVariables()
 	local currentVersion = GetAddOnMetadata("Bagnon", "Version") or "2.2.1"
-	if not BagnonSets then
+	if type(BagnonSets) ~= "table" then
 		BagnonSets = {
 			showBagsAtBank = 1,
 			showBagsAtAH = 1,

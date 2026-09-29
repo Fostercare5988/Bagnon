@@ -216,8 +216,9 @@ function BagnonDB.GetItemData(player, bagID, itemSlot)
 		if bagData then
 			local itemData = bagData[itemSlot];
 			
-			if itemData then
-				local _, _, itemLink, count = string.find(itemData, "([%d:]+),*(%d*)");
+			if type(itemData) == "string" then
+				local _, _, itemLink, count = string.find(itemData, "^([%d:%-]+),?(%d*)$");
+				if not itemLink then return nil end
 				if tonumber(itemLink) then
 					itemLink = itemLink .. ":0:0:0";
 				end

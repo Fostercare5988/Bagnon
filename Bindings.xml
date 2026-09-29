@@ -6,6 +6,6 @@
 		BagnonFrame_Toggle("Banknon");
 	</Binding>
 	<Binding name="BAGNON_SORT" description="Sort Bags">
-		if C_Container and C_Container.SortBags then PlaySound("igMainMenuOption"); C_Container.SortBags(); end
+		if Bagnon_RequestSort then Bagnon_RequestSort(false); end
 	</Binding>
 </Bindings>

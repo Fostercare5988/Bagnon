@@ -1,5 +1,13 @@
 # Bagnon
 
+The [2026-09-29 integration review](docs/INTEGRATION_REVIEW_2026-09-29.md) covers
+exact enchant metadata, bag-resize ownership, saved settings and cached item
+identity. **Sorting with an excluded backpack or main bank is temporarily
+blocked** because ClassicAPI 1.15.15 retains an invalid deferred bag-list pointer.
+Your exclusion settings are preserved. All three sort entry points share the
+guard; it remains until a native fix is verified. 14 Lua regressions pass;
+in-game acceptance is pending.
+
 Required ClassicAPI version: **v1.15.15+**. This is the maintainer's published support baseline for this addon suite; it is not a claim that every API used here was introduced in v1.15.15. After replacing ClassicAPI.dll, fully restart WoW; `/reload` cannot reload a DLL.
 
 [![Interface: 1.12.1](https://img.shields.io/badge/Interface-1.12.1%20(5875)-orange.svg)](https://github.com/Fostercare5988/Bagnon)
@@ -27,7 +35,7 @@ Bagnon is engineered around direct engine integration:
 
 | Engine Component | Minimum Version | Architectural Role & Implementation |
 | :--- | :--- | :--- |
-| **ClassicAPI** | `v1.15.15+` | C++ hardware timers (`C_Timer.After`), modern EditBox text manipulation, native `table.wipe` memory recycling, native container sorting with Baganator-style equipment slot grouping (`C_Container.SortBags`, `C_Container.SortBankBags`), and source-rewritten Lua 5.1 syntax. |
+| **ClassicAPI** | `v1.15.15+` | Container state and native sorting (`C_Container`), exact temporary-enchant metadata (`C_Item`), spell textures (`C_Spell`), `table.wipe`, hooks/frame methods and Lua 5.1 support. |
 
 ### Elimination of 2006 Legacy Techniques
 - **Zero OnUpdate Polling**: Eradicated legacy per-button `OnUpdate` polling loops across all 120+ bag/bank item slots; item slot states update exclusively on native events (`BAG_UPDATE`, `BAG_UPDATE_COOLDOWN`, `ITEM_LOCK_CHANGED`).
@@ -35,7 +43,7 @@ Bagnon is engineered around direct engine integration:
 - **Direct Cooldown Loop Traversals**: Refactored `BAG_UPDATE_COOLDOWN` to iterate directly across pre-cached item arrays, eliminating string allocations during cooldown ticks.
 - **O(1) Alt Inventory Tooltip Cache**: Introduced memoized `playerTotalsCache` in `database/database.lua`, replacing $O(\text{alts} \times \text{slots})$ regex scans with $O(1)$ lookups on tooltip hover.
 - **Tooltip Composition**: Adds historical holdings and optional ItemRack/TrinketMenu lines after item tooltip calls, using their read-only queries and clearing line guards when the tooltip resets.
-- **Lazy Weapon Enchant Overlays**: Eliminated >600 eagerly allocated overlay UI elements across 120+ bag and bank slots, instantiating overlays on-demand only for weapons in bag slots `0..4`.
+- **Lazy Weapon Enchant Overlays**: Eliminated >600 eagerly allocated overlay UI elements across 120+ bag and bank slots, instantiating overlays on-demand only for active temporary enchants in bag slots `0..4`.
 - **Library Modernization & Dead Code Elimination**: Removed obsolete wrapper libraries (`lib/Infield.lua`, `lib/TLib.lua`) in favor of native ClassicAPI frame methods and clean event dispatching; purged unused startup item queries and legacy `MerchantRepairAllIcon` tampering.
 - **Strict Mouse Passthrough (Rule C8)**: Cooldown model frames (`item.cooldown`) have mouse capture explicitly disabled (`EnableMouse(false)`), guaranteeing 100% of the item slot square captures clicks, drag operations, and item splits without dead zones.
 - **Native Memory Recycling**: Integrated native C++ `table.wipe` across character list iterators and internal buffers, eliminating heap allocation churn.
@@ -57,8 +65,8 @@ Bagnon is engineered around direct engine integration:
 - **Zero-GC Updates**: Evaluated strictly on container events (`BAG_UPDATE`, `PLAYERBANKSLOTS_CHANGED`), window initialization, and player switches without background polling loops.
 - **Configurable**: Toggle in the `/bgn` Options dialog ("Show Free Bag Space") or via `/bgn freespace` / `/bgn freeslots`.
 
-### 3. Sort Exclusion & Bag Ignore (ClassicAPI v1.15.13+)
-- **Container Protection**: Protect specific bags (Backpack and Bank) from being rearranged during automatic sorting routines.
+### 3. Sort Exclusion & Bag Ignore (temporarily guarded)
+- **Container Protection**: Exclusion settings are preserved. Sorting a container set with its backpack/main bank excluded is blocked pending a verified native fix.
 - **Engine-Native State**: Driven natively via `C_Container.SetBackpackAutosortDisabled` and `C_Container.SetBankAutosortDisabled`.
 - **Intuitive Toggling**: `<Alt-Click>` or `<Right-Click>` directly on the Backpack slot or Bank slot in Bagnon's bag bar or the standard Blizzard menu bar to toggle sort ignore on or off.
 - **Visual Status Badges**: Ignored containers display a distinct status badge overlay directly on the bag button, alongside real-time chat notices and informative GameTooltip lines.
@@ -75,9 +83,9 @@ Bagnon is engineered around direct engine integration:
 - **Realm Gold Aggregator**: Hover over the money display to view total gold aggregated across all your alts on the current realm.
 
 ### 6. Lazy Weapon Enchant Badges
-- **Real-Time Enchant Overlays**: Automatically displays active temporary weapon enchants (Rogue poisons, wizard/mana oils, sharpening/weight stones, and Shaman weapon imbues) directly on weapon icons in your bags.
-- **Duration & Charge Indicators**: Color-coded remaining duration and charges badge with warning tints when enchants are near expiration.
-- **Lazy On-Demand Lifecycle**: Overlays and textures are only instantiated when a weapon is detected in bag slots `0..4`, saving hundreds of UI objects at startup.
+- **Exact Enchant Overlays**: Reads active temporary enchants from the current bag/slot using `C_Item.GetItemTempEnchantInfo`. Spell metadata supplies the icon; missing metadata uses a neutral question mark. No English tooltip matching or poison-name guessing.
+- **Duration & Charge Indicators**: Remaining duration and charges are sampled on bag redraw/reopen, with warning colors for low time/charges. This is not a continuous countdown.
+- **Lazy On-Demand Lifecycle**: Overlays and textures are instantiated only when an active temporary enchant is detected in bag slots `0..4`.
 - **Configurable**: Toggle in the `/bgn` Options dialog ("Show Weapon Enchant Badges") or via `/bgn enchants`.
 
 ### 7. Suite Synergy (ItemRack & TrinketMenu)
