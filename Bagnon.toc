@@ -1,0 +1,44 @@
+## X-Maintainer: Fostercare5988
+## Interface: 11200
+## X-ClassicAPI-Min-Version: 1.15.15
+## X-ClassicAPI-Required-Capabilities: BAG_UPDATE_DELAYED, GET_ITEM_INFO_RECEIVED, C_Timer.NewTimer, C_Timer.NewTicker
+## Title: Bagnon
+## Notes: Unified inventory, bank and cached character bags for WoW 1.12.1.
+## Author: Tuller, McPewPew, Fostercare5988
+## Version: 1.0.0
+## OptionalDeps: KC_Items
+## SavedVariablesPerCharacter: BagnonSets
+## SavedVariables: BagnonForeverData
+## X-Category: Inventory & Bank
+## X-Website: https://github.com/Fostercare5988
+
+Bootstrap.lua
+localization.lua
+
+core\Utility.lua
+core\Overrides.lua
+core\Bag.lua
+core\Bag.xml
+core\Item.lua
+core\Item.xml
+core\Frame.lua
+core\Frame.xml
+
+menu\Menu.lua
+menu\Menu.xml
+
+Slash.lua
+Events.lua
+
+database\database.lua
+database\ui.lua
+database\ui.xml
+BagnonForever.lua
+tooltips.lua
+
+options\Options.lua
+options\Options.xml
+Bagnon.lua
+Bagnon.xml
+Banknon.lua
+Banknon.xml
