@@ -2,7 +2,7 @@
 	Options.lua
 		Main configuration dialog for Bagnon (/bgn)
 		Author: Tuller, McPewPew, Fostercare5988
-		Built for ClassicAPI v1.15.15+
+		Built for ClassicAPI v1.16.0+
 --]]
 
 if not Bagnon_EngineReady then

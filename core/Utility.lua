@@ -2,7 +2,7 @@
 	Utility.lua
 		Functions that don't belong anywhere else
 		Author: Tuller, McPewPew, Fostercare5988
-		Built for the Enhanced WoW 1.12.1 Client (ClassicAPI v1.15.15+)
+		Built for the Enhanced WoW 1.12.1 Client (ClassicAPI v1.16.0+)
 --]]
 
 if not Bagnon_EngineReady then

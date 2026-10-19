@@ -1,5 +1,5 @@
 -- Enhanced Client startup contract for Bagnon.
-local MIN_CLASSIC_API = 11515
+local MIN_CLASSIC_API = 11600
 
 Bagnon_EngineReady = CLASSIC_API_VERSION
 	and type(CLASSIC_API_VERSION) == "number"
@@ -19,7 +19,7 @@ Bagnon_EngineReady = CLASSIC_API_VERSION
 
 if not Bagnon_EngineReady then
 	if DEFAULT_CHAT_FRAME then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffff2020[Bagnon Fatal Error]|r Bagnon requires the Enhanced 1.12.1 engine (ClassicAPI v1.15.15+ with bag batching, timers, container sorting and item enchant metadata).", 1, 0.2, 0.2)
+		DEFAULT_CHAT_FRAME:AddMessage("|cffff2020[Bagnon Fatal Error]|r Bagnon requires the Enhanced 1.12.1 engine (ClassicAPI v1.16.0+ with bag batching, timers, container sorting and item enchant metadata).", 1, 0.2, 0.2)
 	end
 	return
 end
