@@ -30,7 +30,7 @@
 		</Layers>
 
 		<Frames>
-			<Model name="$parentCooldown" inherits="CooldownFrameTemplate"/>
+			<Cooldown name="$parentCooldown" inherits="CooldownFrameTemplate"/>
 		</Frames>
 
 		<NormalTexture name="$parentNormalTexture" file="Interface\Buttons\UI-Quickslot2">
