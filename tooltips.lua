@@ -2,7 +2,7 @@
 	tooltips.lua
 		Tooltip integration for Bagnon
 		Author: Tuller, McPewPew, Fostercare5988
-		Built for the Enhanced WoW 1.12.1 Client (ClassicAPI v1.16.0+)
+		Built for the Enhanced WoW 1.12.1 Client (ClassicAPI v1.17.7+)
 --]]
 
 if not Bagnon_EngineReady then
