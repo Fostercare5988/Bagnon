@@ -2,7 +2,7 @@
 	Database.lua
 		BagnonForever's implementation of BagnonDB
 		Author: Tuller, McPewPew, Fostercare5988
-		Built for the Enhanced WoW 1.12.1 Client (ClassicAPI v1.17.7+)
+		Built for the Enhanced WoW 1.12.1 Client (ClassicAPI)
 --]]
 
 if not Bagnon_EngineReady then

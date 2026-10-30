@@ -13,7 +13,7 @@ A unified inventory and bank for World of Warcraft 1.12.1.
 
 ## Requirements
 
-WoW 1.12.1, build 5875, with [ClassicAPI 1.17.7 or later](https://github.com/brues-code/ClassicAPI).
+WoW 1.12.1, build 5875, with [ClassicAPI](https://github.com/brues-code/ClassicAPI).
 
 ## Installation
 

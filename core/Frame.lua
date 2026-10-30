@@ -2,7 +2,7 @@
 	Frame.lua
 		Functionality for Bagnon Inventory/Bank frames
 		Author: Tuller, McPewPew, Fostercare5988
-		Built for the Enhanced WoW 1.12.1 Client (ClassicAPI v1.17.7+)
+		Built for the Enhanced WoW 1.12.1 Client (ClassicAPI)
 
 	BagSlots:
 		-2: Key (1.11)
@@ -729,7 +729,7 @@ function BagnonFrame_OrderBags(frame, reverse)
 end
 
 --[[
-	Modern Bag/Bank Sorting (ClassicAPI v1.15.0+, v1.15.13+ equipment slot grouping)
+	Modern Bag/Bank Sorting (ClassicAPI, v1.15.13+ equipment slot grouping)
 --]]
 
 function Bagnon_RequestSort(bank)

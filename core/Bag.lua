@@ -2,7 +2,7 @@
 	Bag.lua
 		Functions used by Bagnon Bags
 		Author: Tuller, McPewPew, Fostercare5988
-		Built for ClassicAPI v1.17.7+
+		Built for ClassicAPI
 --]]
 
 if not Bagnon_EngineReady then

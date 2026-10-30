@@ -2,7 +2,7 @@
 	Slash.lua
 		This is the slash command handler for Bagnon
 		Author: Tuller, McPewPew, Fostercare5988
-		Built for ClassicAPI v1.17.7+
+		Built for ClassicAPI
 --]]
 
 if not Bagnon_EngineReady then
