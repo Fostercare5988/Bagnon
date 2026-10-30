@@ -127,3 +127,25 @@ function BagnonOptions_ShowEnchants(enable)
 		BagnonFrame_Update(Banknon)
 	end
 end
+
+-- Game Menu > AddOn Options > Bagnon (ClassicAPI).
+local entry = CreateFrame("Frame", "BagnonOptionsEntry")
+entry.name = "Bagnon"
+local entryTitle = entry:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+entryTitle:SetPoint("TOPLEFT", entry, "TOPLEFT", 16, -16)
+entryTitle:SetText("Bagnon")
+local entryText = entry:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+entryText:SetPoint("TOPLEFT", entryTitle, "BOTTOMLEFT", 0, -8)
+entryText:SetWidth(380)
+entryText:SetJustifyH("LEFT")
+entryText:SetText("One bag window for your bags and bank. Type /bagnon to open the settings at any time.")
+local entryOpen = CreateFrame("Button", "BagnonOptionsEntryOpen", entry, "UIPanelButtonTemplate")
+entryOpen:SetWidth(172); entryOpen:SetHeight(22)
+entryOpen:SetPoint("TOPLEFT", entry, "TOPLEFT", 16, -80)
+entryOpen:SetText("Open settings")
+entryOpen:SetScript("OnClick", function()
+    if InterfaceOptionsFrame and InterfaceOptionsFrame:IsShown() then InterfaceOptionsFrame:Hide() end
+    if GameMenuFrame and GameMenuFrame:IsShown() then HideUIPanel(GameMenuFrame) end
+    BagnonOptions:Show()
+end)
+InterfaceOptions_AddCategory(entry)
