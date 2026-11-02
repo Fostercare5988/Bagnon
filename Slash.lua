@@ -28,8 +28,7 @@ SlashCmdList["BagnonCOMMAND"] = function(msg)
 		BagnonOptions_Toggle()
 	else
 		table.wipe(argsBuffer)
-		local word
-		for word in string.gfind(msg, "[^%s]+") do
+		for word in string.gmatch(msg, "[^%s]+") do
 			table.insert(argsBuffer, word)
 		end
 		local cmd = string.lower(argsBuffer[1] or "")
