@@ -88,8 +88,8 @@ function BagnonFrame_Load(frame, bags, title)
 	--set the frame's layer (low, medium, or high)
 	BagnonFrame_SetStrata(frame, settings.strata)
 
-	local bagFrame = getglobal(frameName .. "Bags")
-	local showBagsBtn = getglobal(frameName .. "ShowBags")
+	local bagFrame = _G[frameName .. "Bags"]
+	local showBagsBtn = _G[frameName .. "ShowBags"]
 	if bagFrame then
 		if settings.bagsShown == 1 then
 			bagFrame:Show()
@@ -109,13 +109,13 @@ function BagnonFrame_Load(frame, bags, title)
 
 	local dropdownButton = CreateFrame("Button", frameName .. "DropDown", frame, "BagnonDBUIDropDownButton")
 	dropdownButton:SetAlpha(frame:GetAlpha())
-	getglobal(frameName .. "Title"):SetPoint("TOPLEFT", dropdownButton, "TOPRIGHT", 4, 2)
+	_G[frameName .. "Title"]:SetPoint("TOPLEFT", dropdownButton, "TOPRIGHT", 4, 2)
 
 	BagnonFrame_OrderBags(frame, settings.reverse)
 
 	--set the frame's title
 	frame.title = title
-	getglobal(frameName .. "Title"):SetText(format(frame.title, UnitName("player")))
+	_G[frameName .. "Title"]:SetText(format(frame.title, UnitName("player")))
 	frame:RegisterForClicks("LeftButtonDown", "LeftButtonUp", "RightButtonUp")
 
 	--create the frame
@@ -159,7 +159,7 @@ function BagnonFrame_Generate(frame)
 		BagnonFrame_AddBag(frame, bagID)
 	end
 
-	getglobal(frameName .. "SortButton"):SetAlpha(cached and 0.4 or 1.0)
+	_G[frameName .. "SortButton"]:SetAlpha(cached and 0.4 or 1.0)
 	BagnonSearch_Update(frame, cached)
 
 	BagnonFrame_Layout(frame, frameSets.cols, frameSets.space)
@@ -263,7 +263,7 @@ function BagnonFrame_TrimToSize(frame)
 	end
 
 	--adjust for the bag frame, if present
-	local bagFrame = getglobal(frame:GetName() .. "Bags")
+	local bagFrame = _G[frame:GetName() .. "Bags"]
 
 	if bagFrame and bagFrame:IsShown() then
 		frame:SetHeight(height + bagFrame:GetHeight() + BAG_BAR_GAP)
@@ -406,7 +406,7 @@ end
 --]]
 
 function BagnonFrame_Open(frameName, automatic)
-	local frame = getglobal(frameName)
+	local frame = _G[frameName]
 	if not frame then
 		return
 	end
@@ -426,7 +426,7 @@ function BagnonFrame_Open(frameName, automatic)
 end
 
 function BagnonFrame_Close(frameName, automatic)
-	local frame = getglobal(frameName)
+	local frame = _G[frameName]
 	if frame then
 		if not(automatic and frame.manOpened) then
 			frame:Hide()
@@ -436,7 +436,7 @@ function BagnonFrame_Close(frameName, automatic)
 end
 
 function BagnonFrame_Toggle(frameName)
-	local frame = getglobal(frameName)
+	local frame = _G[frameName]
 	if not frame then
 		return
 	end
@@ -598,13 +598,13 @@ function BagnonFrameMoney_OnClick(f)
 	local parent = f:GetParent()
 	local parentName = parent:GetName()
 
-	if MouseIsOver(getglobal(parentName .. "GoldButton")) then
+	if MouseIsOver(_G[parentName .. "GoldButton"]) then
 		OpenCoinPickupFrame(COPPER_PER_GOLD, MoneyTypeInfo[parent.moneyType].UpdateFunc(), parent)
 		parent.hasPickup = 1
-	elseif MouseIsOver(getglobal(parentName .. "SilverButton")) then
+	elseif MouseIsOver(_G[parentName .. "SilverButton"]) then
 		OpenCoinPickupFrame(COPPER_PER_SILVER, MoneyTypeInfo[parent.moneyType].UpdateFunc(), parent)
 		parent.hasPickup = 1
-	elseif MouseIsOver(getglobal(parentName .. "CopperButton")) then
+	elseif MouseIsOver(_G[parentName .. "CopperButton"]) then
 		OpenCoinPickupFrame(1, MoneyTypeInfo[parent.moneyType].UpdateFunc(), parent)
 		parent.hasPickup = 1
 	end
@@ -691,7 +691,7 @@ function BagnonFrameSort_OnClick(frame, btn)
 		PlaySound("igMainMenuOption")
 		local orderStr = newOrder and BAGNON_SORT_RIGHT_TO_LEFT or BAGNON_SORT_LEFT_TO_RIGHT
 		BagnonMsg(format(BAGNON_SORT_DIRECTION_CHANGED, orderStr))
-		local sortBtn = getglobal(frame:GetName() .. "SortButton")
+		local sortBtn = _G[frame:GetName() .. "SortButton"]
 		if GameTooltip:IsOwned(sortBtn) then
 			BagnonFrameSort_OnEnter(sortBtn)
 		end
@@ -759,12 +759,12 @@ end
 function BagnonFrame_UpdateFreeSlots(frame)
 	if not frame then return end
 	local frameName = frame:GetName()
-	local freeSlotsBtn = getglobal(frameName .. "FreeSlots")
-	local titleBtn = getglobal(frameName .. "Title")
-	local sortBtn = getglobal(frameName .. "SortButton")
-	local closeBtn = getglobal(frameName .. "CloseButton")
+	local freeSlotsBtn = _G[frameName .. "FreeSlots"]
+	local titleBtn = _G[frameName .. "Title"]
+	local sortBtn = _G[frameName .. "SortButton"]
+	local closeBtn = _G[frameName .. "CloseButton"]
 
-	local dropdownBtn = getglobal(frameName .. "DropDown")
+	local dropdownBtn = _G[frameName .. "DropDown"]
 	local dropdownShown = dropdownBtn:IsShown() and true or false
 	local showFree = BagnonSets.showFreeSlots ~= 0
 	local showSort = BagnonSets.showSortButton ~= 0

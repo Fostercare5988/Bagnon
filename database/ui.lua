@@ -19,13 +19,13 @@ function BagnonDBUI_ChangePlayer(frame, player)
 	frame.player = player
 
 	--update the frame's title
-	getglobal(frame:GetName() .. "Title"):SetText(string.format(frame.title, player))
+	_G[frame:GetName() .. "Title"]:SetText(string.format(frame.title, player))
 
 	--update the frame's contents
 	BagnonFrame_Generate(frame)
 
 	--update the frame's bags, if they exist and are shown
-	local bagFrame = getglobal(frame:GetName() .. "Bags")
+	local bagFrame = _G[frame:GetName() .. "Bags"]
 	if bagFrame and bagFrame:IsShown() then
 		for i = 1, 10 do
 			BagnonBag_UpdateTexture(frame, i)
@@ -46,7 +46,7 @@ local function CreatePlayerButton(id, parent)
 	if id == 1 then
 		button:SetPoint("TOPLEFT", parent, "TOPLEFT", 6, -4)
 	else
-		button:SetPoint("TOP", getglobal(parent:GetName() .. (id - 1) ), "BOTTOM", 0, 6)
+		button:SetPoint("TOP", _G[parent:GetName() .. (id - 1)], "BOTTOM", 0, 6)
 	end
 	return button
 end
@@ -61,7 +61,7 @@ function BagnonDBUI_ShowCharacterList(parentFrame)
 	for player in BagnonDB.GetPlayers(true) do
 		index = index + 1
 
-		local button = getglobal("BagnonDBUICharacterList" .. index) or CreatePlayerButton(index, BagnonDBUICharacterList)
+		local button = _G["BagnonDBUICharacterList" .. index] or CreatePlayerButton(index, BagnonDBUICharacterList)
 		button:SetText(player)
 		if button:GetTextWidth() + 40 > width then
 			width = button:GetTextWidth() + 40
@@ -76,8 +76,8 @@ function BagnonDBUI_ShowCharacterList(parentFrame)
 	end
 
 	local i = index + 1
-	while getglobal("BagnonDBUICharacterList" .. i) do
-		getglobal("BagnonDBUICharacterList" .. i):Hide()
+	while _G["BagnonDBUICharacterList" .. i] do
+		_G["BagnonDBUICharacterList" .. i]:Hide()
 		i = i + 1
 	end
 

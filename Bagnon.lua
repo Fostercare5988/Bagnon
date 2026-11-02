@@ -85,10 +85,10 @@ function Bagnon_AddBagHooks()
 
 	bBagSlotButton_OnEnter = BagSlotButton_OnEnter;
 	BagSlotButton_OnEnter = BagnonBlizBag_OnEnter;
-	bBagSlotButton_OnClick = getglobal("CharacterBag0Slot"):GetScript("OnClick");
+	bBagSlotButton_OnClick = CharacterBag0Slot:GetScript("OnClick");
 	for i = 0, 3 do
-		getglobal("CharacterBag" .. i .. "Slot"):SetScript("OnLeave", BagnonBlizBag_OnLeave);
-		getglobal("CharacterBag" .. i .. "Slot"):SetScript("OnClick", BagnonBlizBag_OnClick);
+		_G["CharacterBag" .. i .. "Slot"]:SetScript("OnLeave", BagnonBlizBag_OnLeave);
+		_G["CharacterBag" .. i .. "Slot"]:SetScript("OnClick", BagnonBlizBag_OnClick);
 	end
 
 	bKeyRingButton_OnEnter = KeyRingButton:GetScript("OnEnter");

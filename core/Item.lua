@@ -57,9 +57,9 @@ function BagnonItem_Create(name, parent)
 	item:SetAlpha(parent:GetParent():GetAlpha())
 
 	-- Child widgets are looked up once, here
-	item.cooldown = getglobal(name .. "Cooldown")
+	item.cooldown = _G[name .. "Cooldown"]
 	item.cooldown:EnableMouse(false)
-	item.normalTexture = getglobal(name .. "NormalTexture")
+	item.normalTexture = _G[name .. "NormalTexture"]
 
 	-- Native modern rarity border frame
 	local qBorder = CreateFrame("Frame", name .. "QualityBorder", item)

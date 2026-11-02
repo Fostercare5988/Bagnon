@@ -20,7 +20,7 @@ local function GetBagSlot(bagFrame, index)
 	end
 	local bag = bags[index]
 	if not bag then
-		bag = getglobal(bagFrame:GetName() .. index)
+		bag = _G[bagFrame:GetName() .. index]
 		if bag then
 			bags[index] = bag
 		end
@@ -215,7 +215,7 @@ end
 --]]
 function BagnonBag_UpdateTexture(frame, bagID)
 	if not frame then return end
-	local bagFrame = getglobal(frame:GetName() .. "Bags")
+	local bagFrame = _G[frame:GetName() .. "Bags"]
 	local bag = GetBagSlot(bagFrame, bagID)
 	if not bag or bag:GetID() <= 0 then return end
 
@@ -246,7 +246,7 @@ function BagnonBag_SetCount(button, count)
 	if not count then count = 0 end
 
 	button.count = count
-	local countText = button.countText or getglobal(button:GetName() .. "Count")
+	local countText = button.countText or _G[button:GetName() .. "Count"]
 	if not button.countText then
 		button.countText = countText
 	end

@@ -46,7 +46,7 @@ end
 
 function Banknon_Load(frame)
 	local sortTex = "Interface\\AddOns\\Bagnon\\assets\\sort.blp"
-	local sortBtn = getglobal(frame:GetName() .. "SortButton")
+	local sortBtn = _G[frame:GetName() .. "SortButton"]
 	sortBtn:SetNormalTexture(sortTex)
 	sortBtn:SetPushedTexture(sortTex)
 

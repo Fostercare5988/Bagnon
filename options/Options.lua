@@ -19,7 +19,7 @@ local panel, ShowTab
 local refresh = {}
 
 local function Window()
-	return getglobal(selected)
+	return _G[selected]
 end
 
 local function Sets()

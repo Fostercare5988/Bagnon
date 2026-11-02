@@ -10,11 +10,11 @@ if not Bagnon_EngineReady then
 end
 
 local function Box(frame)
-	return getglobal(frame:GetName() .. "Search")
+	return _G[frame:GetName() .. "Search"]
 end
 
 local function ShowHint(box)
-	local hint = getglobal(box:GetName() .. "Hint")
+	local hint = _G[box:GetName() .. "Hint"]
 	if box.focused or box:GetText() ~= "" then hint:Hide() else hint:Show() end
 end
 
