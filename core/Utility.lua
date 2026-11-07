@@ -66,20 +66,17 @@ end
 
 --returns the bag's family bitmask: 0 for a plain bag, 1 quiver, 2 ammo pouch, 4 soul bag,
 --and the profession bags above that (C_Item.GetItemFamily). The backpack, bank and keyring have none.
---A cached player's bag reads the family of its saved link; a live bag reads it from the client.
---ClassicAPI answers a bag family for the bags 1..4 only, so a bank bag reads its item.
+--A cached player's bag reads the family of its saved link; a live bag asks ClassicAPI,
+--which answers the carried bags and, while it is open, the bank's (1.19.3). A bag that
+--is not there has no family.
 function Bagnon_BagFamily(bagID, player)
 	if bagID <= 0 then return 0 end
 	if player then
 		local _, link = BagnonDB.GetBagData(player, bagID)
 		return link and C_Item.GetItemFamily(link) or 0
 	end
-	if bagID <= 4 then
-		local _, family = C_Container.GetContainerNumFreeSlots(bagID)
-		return family
-	end
-	local link = GetInventoryItemLink("player", ContainerIDToInventoryID(bagID))
-	return link and C_Item.GetItemFamily(link) or 0
+	local _, family = C_Container.GetContainerNumFreeSlots(bagID)
+	return family or 0
 end
 
 --[[ Detection for Cached Frames.  Only works if we have cached data available ]]--

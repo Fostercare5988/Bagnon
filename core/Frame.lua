@@ -743,19 +743,6 @@ end
 	Free Slot Counter
 --]]
 
--- ClassicAPI counts free slots for the backpack and bags 1..4 only; it answers 0 for
--- the bank and its bags, so those are counted slot by slot.
-local function FreeSlotsOf(bagID, numSlots)
-	if bagID >= 0 and bagID <= 4 then
-		return C_Container.GetContainerNumFreeSlots(bagID) or 0
-	end
-	local free = 0
-	for slot = 1, numSlots do
-		if not GetContainerItemInfo(bagID, slot) then free = free + 1 end
-	end
-	return free
-end
-
 function BagnonFrame_UpdateFreeSlots(frame)
 	if not frame then return end
 	local frameName = frame:GetName()
@@ -812,13 +799,14 @@ function BagnonFrame_UpdateFreeSlots(frame)
 	else
 		-- Every bag of the frame's own range, the way the tooltip counts them.
 		-- CalculateTotalNumberOfFreeBagSlots leaves specialty bags out of the free count
-		-- while the total here includes them.
+		-- while the total here includes them. ClassicAPI counts the bank too while it
+		-- is open (1.19.3), the only time the bank frame is live.
 		local liveBags = frameName == "Banknon" and BANK_BAGS or PLAYER_BAGS
 		for _, bagID in ipairs(liveBags) do
 			local numSlots = GetContainerNumSlots(bagID)
 			if numSlots and numSlots > 0 then
 				totalSlots = totalSlots + numSlots
-				freeSlots = freeSlots + FreeSlotsOf(bagID, numSlots)
+				freeSlots = freeSlots + C_Container.GetContainerNumFreeSlots(bagID)
 			end
 		end
 	end
@@ -858,7 +846,7 @@ function BagnonFrameFreeSlots_OnEnter(f)
 				else
 					numTotal = GetContainerNumSlots(bagID)
 					if numTotal and numTotal > 0 then
-						numFree = FreeSlotsOf(bagID, numTotal)
+						numFree = C_Container.GetContainerNumFreeSlots(bagID)
 						if bagID == 0 then
 							bagName = BACKPACK_TOOLTIP or "Backpack"
 						elseif bagID == -1 then
