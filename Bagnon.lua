@@ -36,7 +36,7 @@ function Bagnon_Load()
 	BagnonSortButton:SetNormalTexture(sortTex)
 	BagnonSortButton:SetPushedTexture(sortTex)
 
-	BagnonFrame_Load(Bagnon, {-2, 0, 1, 2, 3, 4}, BAGNON_INVENTORY_TITLE);
+	BagnonFrame_Load(Bagnon, {-2, 0, 1, 2, 3, 4}, "%s's Inventory");
 	Bagnon_AddBagHooks();
 end
 
@@ -60,11 +60,11 @@ function Bagnon_ToggleBags(btn)
 	if( not BagnonBags:IsShown() ) then
 		BagnonBags:Show();
 		BagnonSets["Bagnon"].bagsShown = 1;
-		btn:SetText(BAGNON_HIDEBAGS)
+		btn:SetText("Hide Bags")
 	else
 		BagnonBags:Hide();
 		BagnonSets["Bagnon"].bagsShown = 0;
-		btn:SetText(BAGNON_SHOWBAGS)
+		btn:SetText("Show Bags")
 	end
 
 	BagnonFrame_TrimToSize(Bagnon);
@@ -105,9 +105,9 @@ function BagnonBlizMainBag_OnEnter()
 	end
 	bMainBag_OnEnter();
 	if C_Container.GetBackpackAutosortDisabled() then
-		GameTooltip:AddLine("|cffff6060" .. BAGNON_AUTOSORT_IGNORED .. "|r");
+		GameTooltip:AddLine("|cffff6060Ignored from auto-sort|r");
 	end
-	GameTooltip:AddLine(BAGNON_AUTOSORT_TOGGLE_IGNORE, 0.6, 0.8, 1);
+	GameTooltip:AddLine("<Alt-Click> or <Right-Click> to toggle sort ignore.", 0.6, 0.8, 1);
 	GameTooltip:Show();
 end
 

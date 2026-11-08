@@ -137,7 +137,7 @@ function Bagnon_ToggleSortIgnore(bag)
 	local ignore = not C_Container.GetBackpackAutosortDisabled()
 	C_Container.SetBackpackAutosortDisabled(ignore)
 	PlaySound("igMainMenuOption")
-	BagnonMsg(format(ignore and BAGNON_AUTOSORT_IGNORE_ENABLED or BAGNON_AUTOSORT_IGNORE_DISABLED, BACKPACK_TOOLTIP))
+	BagnonMsg(format(ignore and "Bagnon: %s will now be ignored by auto-sort." or "Bagnon: %s will now be sorted.", BACKPACK_TOOLTIP))
 	BagnonBag_UpdateSortIgnore(bag)
 end
 
@@ -352,18 +352,18 @@ function BagnonBag_OnEnter(b)
 	end
 
 	if SortIgnored(bagID) then
-		GameTooltip:AddLine("|cffff6060" .. BAGNON_AUTOSORT_IGNORED .. "|r")
+		GameTooltip:AddLine("|cffff6060Ignored from auto-sort|r")
 	end
 	if bagID == 0 then
-		GameTooltip:AddLine(BAGNON_AUTOSORT_TOGGLE_IGNORE, 0.6, 0.8, 1)
+		GameTooltip:AddLine("<Alt-Click> or <Right-Click> to toggle sort ignore.", 0.6, 0.8, 1)
 	end
 
 	--add the shift click to hide/show tooltip
 	if not cached then
 		if Bagnon_FrameHasBag(frame:GetName(), bagID) then
-			GameTooltip:AddLine(BAGNON_BAGS_HIDE)
+			GameTooltip:AddLine("<Shift-Click> to hide.")
 		else
-			GameTooltip:AddLine(BAGNON_BAGS_SHOW)
+			GameTooltip:AddLine("<Shift-Click> to show.")
 		end
 	end
 	GameTooltip:Show()

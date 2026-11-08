@@ -20,12 +20,12 @@ local function AddOwners(frame, id)
 			local invCount, bankCount = BagnonDB.GetPlayerItemTotals(id, player)
 
 			if (invCount + bankCount) > 0 then
-				local tooltipString = player .. " " .. BAGNON_FOREVER_HAS
+				local tooltipString = player .. " has"
 				if invCount > 0 then
-					tooltipString = tooltipString .. " " .. invCount .. " " .. BAGNON_FOREVER_BAGS
+					tooltipString = tooltipString .. " " .. invCount .. " (Bags)"
 				end
 				if bankCount > 0 then
-					tooltipString = tooltipString .. " " .. bankCount .. " " .. BAGNON_FOREVER_BANK
+					tooltipString = tooltipString .. " " .. bankCount .. " (Bank)"
 				end
 				frame:AddLine(tooltipString, 1, 1, 0)
 				added = true
@@ -84,7 +84,7 @@ function BagnonFrameMoney_OnEnter(f)
 	else
 		GameTooltip:SetOwner(f, "ANCHOR_RIGHT")
 	end
-	GameTooltip:SetText(string.format(BAGNON_FOREVER_MONEY_ON_REALM, GetRealmName()))
+	GameTooltip:SetText(string.format("Total On %s", GetRealmName()))
 
 	SetTooltipMoney(GameTooltip, BagnonDB.GetTotalMoney())
 	GameTooltip:Show()

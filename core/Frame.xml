@@ -233,7 +233,7 @@
 				</TextInsets>
 				<Layers>
 					<Layer level="OVERLAY">
-						<FontString name="$parentHint" inherits="GameFontDisableSmall" text="BAGNON_SEARCH_HINT">
+						<FontString name="$parentHint" inherits="GameFontDisableSmall" text="Search">
 							<Anchors>
 								<Anchor point="LEFT">
 									<Offset>

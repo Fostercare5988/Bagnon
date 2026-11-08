@@ -61,8 +61,8 @@ end
 
 function BagnonSearch_OnEnter(box)
 	GameTooltip:SetOwner(box, "ANCHOR_TOP")
-	GameTooltip:SetText(BAGNON_SEARCH, 1, 1, 1)
-	GameTooltip:AddLine(BAGNON_SEARCH_TOOLTIP, 0.8, 0.8, 0.8, 1)
+	GameTooltip:SetText("Search items", 1, 1, 1)
+	GameTooltip:AddLine("Type a name, a type or a slot, for example Potion, Cloth or Head. Items that do not match are dimmed. Escape clears it.", 0.8, 0.8, 0.8, 1)
 	GameTooltip:Show()
 end
 

@@ -93,10 +93,10 @@ function BagnonFrame_Load(frame, bags, title)
 	if bagFrame then
 		if settings.bagsShown == 1 then
 			bagFrame:Show()
-			showBagsBtn:SetText(BAGNON_HIDEBAGS)
+			showBagsBtn:SetText("Hide Bags")
 		else
 			bagFrame:Hide()
-			showBagsBtn:SetText(BAGNON_SHOWBAGS)
+			showBagsBtn:SetText("Show Bags")
 		end
 	end
 
@@ -576,7 +576,7 @@ function BagnonFrame_OnEnter(f)
 	GameTooltip:SetPoint("TOPLEFT", f, "BOTTOMLEFT", -2, 0)
 	GameTooltip:SetOwner(f, "ANCHOR_PRESERVE")
 	GameTooltip:SetText(f:GetText(), 1, 1, 1)
-	GameTooltip:AddLine(BAGNON_TITLE_TOOLTIP)
+	GameTooltip:AddLine("<Right-Click> to open up the settings menu.")
 	GameTooltip:Show()
 end
 
@@ -689,8 +689,8 @@ function BagnonFrameSort_OnClick(frame, btn)
 		local newOrder = not current
 		C_Container.SetSortBagsRightToLeft(newOrder)
 		PlaySound("igMainMenuOption")
-		local orderStr = newOrder and BAGNON_SORT_RIGHT_TO_LEFT or BAGNON_SORT_LEFT_TO_RIGHT
-		BagnonMsg(format(BAGNON_SORT_DIRECTION_CHANGED, orderStr))
+		local orderStr = newOrder and "Bottom-Right to Top-Left" or "Top-Left to Bottom-Right"
+		BagnonMsg(format("Bagnon: Sort direction set to: %s.", orderStr))
 		local sortBtn = _G[frame:GetName() .. "SortButton"]
 		if GameTooltip:IsOwned(sortBtn) then
 			BagnonFrameSort_OnEnter(sortBtn)
@@ -700,13 +700,13 @@ function BagnonFrameSort_OnClick(frame, btn)
 
 	-- Left-Click: execute sort
 	if Bagnon_IsCachedFrame(frame) then
-		BagnonMsg(BAGNON_CANNOT_SORT_OFFLINE)
+		BagnonMsg("Cannot sort bags of an offline character.")
 		return
 	end
 
 	if frame:GetName() == "Banknon" then
 		if not Bagnon_AtBank() then
-			BagnonMsg(BAGNON_CANNOT_SORT_BANK_AWAY)
+			BagnonMsg("You must be at a bank to sort bank bags.")
 			return
 		end
 		Bagnon_RequestSort(true)
@@ -720,17 +720,17 @@ function BagnonFrameSort_OnEnter(f)
 	local isBank = (frame and frame:GetName() == "Banknon")
 
 	GameTooltip:SetOwner(f, "ANCHOR_TOPRIGHT")
-	GameTooltip:SetText(isBank and BAGNON_SORT_BANK or BAGNON_SORT_BAGS, 1, 1, 1)
+	GameTooltip:SetText(isBank and "Sort Bank" or "Sort Bags", 1, 1, 1)
 
 	if Bagnon_IsCachedFrame(frame) then
-		GameTooltip:AddLine(BAGNON_CANNOT_SORT_OFFLINE, 1, 0.2, 0.2)
+		GameTooltip:AddLine("Cannot sort bags of an offline character.", 1, 0.2, 0.2)
 	elseif isBank and not Bagnon_AtBank() then
-		GameTooltip:AddLine(BAGNON_CANNOT_SORT_BANK_AWAY, 1, 0.2, 0.2)
+		GameTooltip:AddLine("You must be at a bank to sort bank bags.", 1, 0.2, 0.2)
 	else
-		GameTooltip:AddLine(BAGNON_SORT_TOOLTIP_LEFT, 0.8, 0.8, 0.8)
+		GameTooltip:AddLine("<Left-Click> to clean up and sort items.", 0.8, 0.8, 0.8)
 		local r2l = C_Container.GetSortBagsRightToLeft()
-		local orderStr = r2l and BAGNON_SORT_RIGHT_TO_LEFT or BAGNON_SORT_LEFT_TO_RIGHT
-		GameTooltip:AddLine(format(BAGNON_SORT_TOOLTIP_RIGHT, orderStr), 0.6, 0.8, 1)
+		local orderStr = r2l and "Bottom-Right to Top-Left" or "Top-Left to Bottom-Right"
+		GameTooltip:AddLine(format("<Right-Click> to toggle sort direction (Currently: %s).", orderStr), 0.6, 0.8, 1)
 	end
 	GameTooltip:Show()
 end
@@ -812,7 +812,7 @@ function BagnonFrame_UpdateFreeSlots(frame)
 	end
 
 	if freeSlotsBtn.freeSlots ~= freeSlots or freeSlotsBtn.totalSlots ~= totalSlots then
-		freeSlotsBtn:SetText(format(BAGNON_FREE_SLOTS_FORMAT or "%d / %d Free", freeSlots, totalSlots))
+		freeSlotsBtn:SetText(format("%d / %d Free", freeSlots, totalSlots))
 		freeSlotsBtn.freeSlots = freeSlots
 		freeSlotsBtn.totalSlots = totalSlots
 	end
@@ -823,7 +823,7 @@ function BagnonFrameFreeSlots_OnEnter(f)
 	local frameName = frame:GetName()
 
 	GameTooltip:SetOwner(f, "ANCHOR_TOPLEFT")
-	GameTooltip:SetText(format(BAGNON_FREE_SLOTS_TITLE or "Free Space: %d / %d", f.freeSlots or 0, f.totalSlots or 0), 1, 1, 1)
+	GameTooltip:SetText(format("Free Space: %d / %d", f.freeSlots or 0, f.totalSlots or 0), 1, 1, 1)
 
 	local bags = frame.defaultBags or (BagnonSets[frameName] and BagnonSets[frameName].bags)
 	if bags then

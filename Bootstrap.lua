@@ -17,6 +17,12 @@ Bagnon_EngineReady = CLASSIC_API_VERSION
 	and C_Spell and C_Spell.GetSpellTexture
 	and table.wipe
 
+-- Key Bindings screen labels (looked up by name, so they stay global).
+BINDING_HEADER_BAGNON = "Bagnon"
+BINDING_NAME_BAGNON_TOGGLE = "Toggle Bagnon"
+BINDING_NAME_BANKNON_TOGGLE = "Toggle Banknon"
+BINDING_NAME_BAGNON_SORT = "Sort Bags"
+
 if not Bagnon_EngineReady then
 	if DEFAULT_CHAT_FRAME then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffff2020[Bagnon Fatal Error]|r Bagnon requires the Enhanced 1.12.1 engine (ClassicAPI with bag batching, timers, container sorting and item enchant metadata).", 1, 0.2, 0.2)

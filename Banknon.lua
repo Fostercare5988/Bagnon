@@ -50,7 +50,7 @@ function Banknon_Load(frame)
 	sortBtn:SetNormalTexture(sortTex)
 	sortBtn:SetPushedTexture(sortTex)
 
-	BagnonFrame_Load(frame, {-1, 5, 6, 7, 8, 9, 10}, BAGNON_BANK_TITLE)
+	BagnonFrame_Load(frame, {-1, 5, 6, 7, 8, 9, 10}, "%s's Bank")
 
 	frame:RegisterEvent("PLAYER_MONEY")
 	frame:RegisterEvent("PLAYERBANKBAGSLOTS_CHANGED")
@@ -82,11 +82,11 @@ function Banknon_ToggleSlots(btn)
 	if not BanknonBags:IsShown() then
 		BanknonBags:Show()
 		BagnonSets["Banknon"].bagsShown = 1
-		btn:SetText(BAGNON_HIDEBAGS)
+		btn:SetText("Hide Bags")
 	else
 		BanknonBags:Hide()
 		BagnonSets["Banknon"].bagsShown = 0
-		btn:SetText(BAGNON_SHOWBAGS)
+		btn:SetText("Show Bags")
 	end
 
 	Banknon_UpdatePurchaseButtonVis(BagnonSets["Banknon"].bagsShown ~= 1)

@@ -147,7 +147,7 @@
 				</Anchors>
 			</Frame>
 
-			<Button name="$parentShowBags" text="BAGNON_HIDEBAGS">
+			<Button name="$parentShowBags" text="Hide Bags">
 				<Size x="72" y="32"/>
 
 				<Anchors>
