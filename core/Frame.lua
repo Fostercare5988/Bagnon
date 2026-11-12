@@ -21,11 +21,19 @@ end
 
 --Local constants
 local FRAMESTRATA = {"LOW", "MEDIUM", "HIGH"}
-local DEFAULT_COLS = 10
-local DEFAULT_SPACING = 2
-local DEFAULT_ALPHA = 0.85
+local DEFAULT_COLS = 12
+local DEFAULT_SPACING = 3
+local DEFAULT_ALPHA = 1
 local DEFAULT_BG = {r = 0, g = 0, b = 0, a = 1}
-local FRAME_DEFAULTS = {stayOnScreen = 1, cols = DEFAULT_COLS, space = DEFAULT_SPACING, alpha = DEFAULT_ALPHA, strata = 3, bagsShown = 1}
+local FRAME_DEFAULTS = {stayOnScreen = 0, cols = DEFAULT_COLS, space = DEFAULT_SPACING, alpha = DEFAULT_ALPHA, strata = 3, bagsShown = 1}
+-- What a first install starts with, per window. The place is in UIParent units
+-- at interface scale 0.8 and is used only where it fits the screen.
+local FIRST_INSTALL = {
+	Bagnon = {bagsShown = 0, bgAlpha = 0.81, left = 1078, top = 495},
+	Banknon = {left = 192, top = 898},
+}
+local FIRST_INSTALL_SCALE = 0.8
+local FIRST_INSTALL_WIDTH = 500	-- 12 columns of 37 with spacing 3, and the border
 local PLAYER_BAGS = {0, 1, 2, 3, 4}
 local BANK_BAGS = {-1, 5, 6, 7, 8, 9, 10}
 local BAG_BAR_GAP = 8	-- between the bag icons and the bottom row, as wide as between the grid and the icons
@@ -42,16 +50,27 @@ end
 	Load settings for the frame
 --]]
 
-function BagnonFrame_Load(frame, bags, title)
+-- The settings of a window that has none yet.
+local function FirstInstall(frame)
+	local first = FIRST_INSTALL[frame:GetName()] or {}
+	local settings = {bagsShown = first.bagsShown, bg = {r = 0, g = 0, b = 0, a = first.bgAlpha or 1}}
+	local parent = frame:GetParent() or UIParent
+	local parentScale = parent:GetScale() or 1
+	if first.left and parentScale > 0 then
+		local ratio = FIRST_INSTALL_SCALE / parentScale
+		if first.left * ratio + FIRST_INSTALL_WIDTH <= (parent:GetWidth() or 0) and first.top * ratio <= (parent:GetHeight() or 0) then
+			settings.left, settings.top = first.left, first.top
+			settings.scale, settings.parentScale = 1, FIRST_INSTALL_SCALE
+		end
+	end
+	return settings
+end
+
+-- The frame's saved settings, with whatever they lack filled in.
+function BagnonFrame_Settings(frame, bags)
 	local frameName = frame:GetName()
-	frame.items = frame.items or {}
-
-	--make frame close on escape
-	tinsert(UISpecialFrames, frameName)
-
-	--fill in whatever the saved settings of the frame lack
 	if type(BagnonSets[frameName]) ~= "table" then
-		BagnonSets[frameName] = {}
+		BagnonSets[frameName] = FirstInstall(frame)
 	end
 	local settings = BagnonSets[frameName]
 	for key, default in pairs(FRAME_DEFAULTS) do
@@ -76,6 +95,22 @@ function BagnonFrame_Load(frame, bags, title)
 	if type(settings.bags) ~= "table" then
 		settings.bags = bags
 	end
+	return settings
+end
+
+--[[
+	Load settings for the frame
+--]]
+
+function BagnonFrame_Load(frame, bags, title)
+	local frameName = frame:GetName()
+	frame.items = frame.items or {}
+
+	--make frame close on escape
+	tinsert(UISpecialFrames, frameName)
+
+	local settings = BagnonFrame_Settings(frame, bags)
+
 
 	--set the frame's transparency
 	frame:SetAlpha(settings.alpha)

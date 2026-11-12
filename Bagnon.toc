@@ -3,7 +3,8 @@
 ## Title: |cffff9e38Bagnon|r |cffffd6a8[Fostercare5988]|r
 ## Notes: Unified inventory, bank and cached character bags for WoW 1.12.1.
 ## Author: Tuller, McPewPew, Fostercare5988
-## Version: 1.0.1
+## Version: 1.0.2
+
 ## OptionalDeps: GearRack
 ## SavedVariablesPerCharacter: BagnonSets
 ## SavedVariables: BagnonForeverData
