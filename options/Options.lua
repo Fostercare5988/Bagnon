@@ -109,39 +109,33 @@ local function BuildGeneral(page)
 			BagnonSets.showBagsAtAH = value and 1 or nil
 		end)
 
-	UI.Heading(page, "Bank", 28, -204)
-	local bankAtBank = UI.Switch("Bagnon_BankAtBank", page, "Use Bagnon's bank window",
-		"Show the bank in Bagnon's window instead of the standard bank window.", 28, -228, function(value)
-			BagnonSets.showBankAtBank = value and 1 or nil
-		end)
-
-	UI.Heading(page, "Show", 28, -274)
+	UI.Heading(page, "Show", 28, -204)
 	local freeSlots = UI.Switch("Bagnon_FreeSlots", page, "Free bag space",
-		"Show the free slots in the window header. Hover it for every bag.", 28, -298, function(value)
+		"Show the free slots in the window header. Hover it for every bag.", 28, -228, function(value)
 			BagnonSets.showFreeSlots = value and 1 or 0
 			BagnonOptions_RefreshHeader()
 		end)
 	local sortButton = UI.Switch("Bagnon_SortButton", page, "Sort button",
-		"Show the broom in the window header. /bgn sort and the key binding keep working.", 28, -334, function(value)
+		"Show the broom in the window header. /bgn sort and the key binding keep working.", 28, -264, function(value)
 			BagnonSets.showSortButton = value and 1 or 0
 			BagnonOptions_RefreshHeader()
 		end)
 	local search = UI.Switch("Bagnon_Search", page, "Search box",
-		"Show the search box at the bottom of the window.", 28, -370, function(value)
+		"Show the search box at the bottom of the window.", 28, -300, function(value)
 			BagnonSets.showSearch = value and 1 or 0
 			BagnonOptions_RefreshHeader()
 		end)
 	local enchants = UI.Switch("Bagnon_Enchants", page, "Weapon enchant badges",
-		"Show the time or charges left of a poison or oil on weapons in your bags.", 28, -406, function(value)
+		"Show the time or charges left of a poison or oil on weapons in your bags.", 28, -336, function(value)
 			BagnonSets.enchantBadges = value and 1 or 0
 			BagnonOptions_RefreshItems()
 		end)
-	UI.Label(page, "Right-click a window title to set up that window.", 28, -450, "GameFontDisableSmall")
+	UI.Label(page, "Right-click a window title to set up that window.", 28, -380, "GameFontDisableSmall")
 
 	refresh[1] = function()
 		UI.Sync(atBank, BagnonSets.showBagsAtBank)
 		UI.Sync(atAH, BagnonSets.showBagsAtAH)
-		UI.Sync(bankAtBank, BagnonSets.showBankAtBank)
+
 		UI.Sync(freeSlots, BagnonSets.showFreeSlots ~= 0)
 		UI.Sync(sortButton, BagnonSets.showSortButton ~= 0)
 		UI.Sync(search, BagnonSets.showSearch ~= 0)

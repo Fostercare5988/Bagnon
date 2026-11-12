@@ -80,28 +80,14 @@ end
 local function OpenIF(frameName, condition)
 	if condition then
 		BagnonFrame_Open(frameName, 1)
-		return true
 	end
 end
+
 
 local function CloseIF(frameName, condition)
 	if condition then
 		BagnonFrame_Close(frameName, 1)
 	end
-end
-
---[[
-	Taken from Blizzard's code
-	Shows the normal bank frame
---]]
-local function ShowBlizBank()
-	BankFrameTitleText:SetText(UnitName("npc"))
-	SetPortraitTexture(BankPortraitTexture,"npc")
-	ShowUIPanel(BankFrame)
-	if not BankFrame:IsVisible() then
-		CloseBankFrame()
-	end
-	UpdateBagSlotStatus()
 end
 
 --[[ Variable Loading ]]--
@@ -110,6 +96,7 @@ end
 local RETIRED_SETTINGS = {
 	"version", "showTooltips", "qualityBorders", "showForeverTooltips", "showBagsAtVendor", "showBagsAtMail", "showBagsAtTrade", "showBagsAtCraft",
 	"showBankAtVendor", "showBankAtAH", "showBankAtMail", "showBankAtTrade", "showBankAtCraft",
+	"showBankAtBank",	-- the bank always opens in Bagnon's window
 }
 
 local function LoadVariables()
@@ -117,7 +104,6 @@ local function LoadVariables()
 		BagnonSets = {
 			showBagsAtBank = 1,
 			showBagsAtAH = 1,
-			showBankAtBank = 1,
 			enchantBadges = 1,
 			showFreeSlots = 1,
 		}
@@ -191,14 +177,9 @@ local function OnEvent(f, ev, a1, a2)
 		Banknon.manOpened = nil
 		BanknonTitle:SetText(format(Banknon.title, Banknon.player))
 		OpenIF("Bagnon", BagnonSets.showBagsAtBank)
-		if not OpenIF("Banknon", BagnonSets.showBankAtBank) then
-			-- An already visible cached bank becomes the live player's bank even
-			-- when automatic bank-window opening is disabled.
-			if Banknon:IsShown() then BagnonFrame_Open("Banknon", 1) end
-			ShowBlizBank()
-		end
+		BagnonFrame_Open("Banknon", 1)
 		-- A bank window that was already open now buys slots and sorts like the live one.
-		if Banknon:IsShown() then Banknon_UpdatePurchaseButtonVis() end
+		Banknon_UpdatePurchaseButtonVis()
 	elseif ev == "BANKFRAME_CLOSED" then
 		Bagnon_SetAtBank(nil)
 		Banknon.manOpened = nil
