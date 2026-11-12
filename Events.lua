@@ -83,7 +83,6 @@ local function OpenIF(frameName, condition)
 	end
 end
 
-
 local function CloseIF(frameName, condition)
 	if condition then
 		BagnonFrame_Close(frameName, 1)

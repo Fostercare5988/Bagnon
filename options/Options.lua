@@ -135,7 +135,6 @@ local function BuildGeneral(page)
 	refresh[1] = function()
 		UI.Sync(atBank, BagnonSets.showBagsAtBank)
 		UI.Sync(atAH, BagnonSets.showBagsAtAH)
-
 		UI.Sync(freeSlots, BagnonSets.showFreeSlots ~= 0)
 		UI.Sync(sortButton, BagnonSets.showSortButton ~= 0)
 		UI.Sync(search, BagnonSets.showSearch ~= 0)

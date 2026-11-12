@@ -17,7 +17,6 @@ end
 
 local function BagIsControlledByBanknon(id)
 	return Bagnon_FrameHasBag("Banknon", id)
-
 end
 
 local bToggleBag = ToggleBag
