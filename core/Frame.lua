@@ -47,7 +47,7 @@ local function SavedNumber(value, default, minimum, maximum)
 end
 
 --[[
-	Load settings for the frame
+	Saved settings of the frame
 --]]
 
 -- The settings of a window that has none yet.
@@ -110,7 +110,6 @@ function BagnonFrame_Load(frame, bags, title)
 	tinsert(UISpecialFrames, frameName)
 
 	local settings = BagnonFrame_Settings(frame, bags)
-
 
 	--set the frame's transparency
 	frame:SetAlpha(settings.alpha)

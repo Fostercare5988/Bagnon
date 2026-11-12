@@ -37,7 +37,6 @@ function Bagnon_Load()
 	BagnonSortButton:SetPushedTexture(sortTex)
 
 	BagnonFrame_Load(Bagnon, {0, 1, 2, 3, 4}, "%s's Inventory");
-
 	Bagnon_AddBagHooks();
 end
 
