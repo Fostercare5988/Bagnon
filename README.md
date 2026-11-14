@@ -42,7 +42,7 @@ code small.
 
 ## Installation
 
-1. Download this repository as a ZIP (**Code**, then **Download ZIP**).
+1. Download `Bagnon.zip` from the [latest release](https://github.com/Fostercare5988/Bagnon/releases/latest).
 2. Extract the `Bagnon` folder into `Interface/AddOns`, so the TOC is at
    `Interface/AddOns/Bagnon/Bagnon.toc`.
 3. Start the game and enable Bagnon.
