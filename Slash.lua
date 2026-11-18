@@ -1,7 +1,7 @@
 --[[
 	Slash.lua
 		This is the slash command handler for Bagnon
-		Author: Tuller, McPewPew, Fostercare5988
+		Author: Fostercare5988
 		Built for ClassicAPI
 --]]
 

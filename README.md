@@ -3,7 +3,7 @@
 One window for your bags and one for your bank, with search, native sorting and
 the inventory of every character you play. For World of Warcraft 1.12.1.
 
-Bagnon is built on the original addon by Tuller and rebuilt for
+Bagnon is built for
 [ClassicAPI](https://github.com/brues-code/ClassicAPI): it takes its data and
 events from the client's extension DLLs, does no work per frame, and keeps its
 code small.
@@ -81,7 +81,3 @@ own bank.
 bank and sorting are under **Key Bindings**, **Bagnon**.
 
 See the [user guide](docs/USER_GUIDE.md) for more.
-
-## Credits
-
-Original Bagnon by Tuller. Maintained by McPewPew and Fostercare5988.

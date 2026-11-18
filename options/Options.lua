@@ -3,7 +3,7 @@
 		Settings window for Bagnon (/bagnon, or right-click a window title), in the ForgeUI style.
 		General: when the windows open by themselves and what the header shows.
 		Windows: the layout of the inventory and of the bank window.
-		Author: Tuller, McPewPew, Fostercare5988
+		Author: Fostercare5988
 --]]
 
 if not Bagnon_EngineReady then

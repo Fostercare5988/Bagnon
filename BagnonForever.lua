@@ -1,7 +1,7 @@
 --[[
 	BagnonForever.lua
 		Records inventory data about the current player
-		Author: Tuller, McPewPew, Fostercare5988
+		Author: Fostercare5988
 		Built for the Enhanced WoW 1.12.1 Client (ClassicAPI)
 
 	BagnonForeverData has the following format, which was adapted from KC_Items

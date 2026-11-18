@@ -1,7 +1,7 @@
 --[[
 	Overrides.lua
 		Function Overrides for Bagnon
-		Author: Tuller, McPewPew, Fostercare5988
+		Author: Fostercare5988
 		Built for ClassicAPI
 
 	OpenBackpack, and CloseBackPack are called automatically

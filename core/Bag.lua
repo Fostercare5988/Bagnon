@@ -1,7 +1,7 @@
 --[[
 	Bag.lua
 		Functions used by Bagnon Bags
-		Author: Tuller, McPewPew, Fostercare5988
+		Author: Fostercare5988
 		Built for ClassicAPI
 --]]
 

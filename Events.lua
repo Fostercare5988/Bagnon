@@ -1,7 +1,7 @@
 --[[
 	Events.lua
 		The main event handler for Bagnon and Banknon.
-		Author: Tuller, McPewPew, Fostercare5988
+		Author: Fostercare5988
 		It controls when the frames update, and when and when they are not shown.
 
 		The UI by default fully supports showing/hiding the inventory frame at a vendor and the mailbox

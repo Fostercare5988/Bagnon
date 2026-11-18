@@ -1,7 +1,7 @@
 --[[
 	Frame.lua
 		Functionality for Bagnon Inventory/Bank frames
-		Author: Tuller, McPewPew, Fostercare5988
+		Author: Fostercare5988
 		Built for the Enhanced WoW 1.12.1 Client (ClassicAPI)
 
 	BagSlots:

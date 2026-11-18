@@ -1,7 +1,7 @@
 --[[
 	Banknon
 		Combines the player's bank into a single frame
-		Author: Tuller, McPewPew, Fostercare5988
+		Author: Fostercare5988
 		Built for the Enhanced WoW 1.12.1 Client (ClassicAPI)
 --]]
 

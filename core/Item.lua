@@ -1,7 +1,7 @@
 --[[
 	Item.lua
 		Functions used by the item slots in Bagnon
-		Author: Tuller, McPewPew, Fostercare5988
+		Author: Fostercare5988
 		Built for ClassicAPI
 --]]
 
